@@ -1,0 +1,21 @@
+#!/usr/bin/env sh
+
+command="$1"
+
+print_usage () {
+	printf "Usage:\n"
+	printf "  set [1|0]		activate/deactivate boost\n"
+	printf "  get			get boost state\n"
+}
+
+case "$command" in
+	"set")	# Setting boost mode
+		mode="$2"
+		echo "$mode" | tee /sys/devices/system/cpu/cpufreq/boost;;
+	"get")	# Getting boost mode
+		cat /sys/devices/system/cpu/cpufreq/boost;;
+			
+	*)	# Printing usage
+		print_usage;;	
+esac
+

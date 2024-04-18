@@ -1,0 +1,89 @@
+# Refresh every 5 seconds
+set period 5
+# Show size and directory information
+set info size
+set dircounts
+# Sixel support
+set sixel
+# Field separator
+set ifs "\n"
+# Enable icons
+set icons
+
+# Previewer config
+set previewer ~/.config/lf/previewer.sh
+# File opener config
+cmd open $~/.config/lf/opener.sh "$f"
+
+cmd unzip %{{
+  if [ -e "${f%.*}" ]; then
+    echo "${f%.*} already exists"
+  else
+    mkdir -v "${f%.*}"
+    unzip -d "${f%.*}" "$f" > /dev/null
+  fi
+}}
+
+cmd copy_path &{{
+  echo "$f" | wl-copy
+}}
+
+cmd copy_file &{{
+  file_size=$(stat -c %s "$f")
+  size_limit=$((32 * 1024 * 1024)) # 32 megs
+  if [ $file_size -gt $size_limit ]; then
+    echo "Won't copy ${f}: file size too big"
+  else
+    wl-copy <"$f"
+  fi
+}}
+
+cmd make_dir %{{
+  echo -n "Directory name: "
+  read dirname
+  if [ -z "$dirname" ]; then
+    exit
+  fi
+  if [ -d "$dirname" ]; then
+    echo "$dirname already exists"
+  fi
+
+  mkdir --parents "$dirname"
+}}
+
+cmd make_file %{{
+  echo -n "File name: " read filename 
+  if [ -z "$filename" ]; then
+    exit
+  fi
+  if [ -f "$filename" ]; then
+    echo "$filename already exists"
+  fi
+
+  touch "$filename"
+}}
+
+cmd delete %{{
+  if [ ! -d ~/.trash ]; then
+    mkdir ~/.trash
+  fi
+  
+  if [ -n "$fs" ]; then
+    paths="$fs"
+  else
+    paths="$f"
+  fi
+
+  IFS=$'\n' echo "$paths" | xargs -- mv -bt ~/.trash/ --
+}}
+
+map y
+map yy copy
+map yp copy_path
+map yf copy_file
+
+map m
+map md make_dir
+map mf make_file
+
+#set cursoractivefmt "\033[38;2;0,255,0m%s"

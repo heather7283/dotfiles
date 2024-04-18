@@ -1,0 +1,24 @@
+[colors]
+alpha=1.0
+
+background=232A2E
+foreground=D3C6AA
+
+regular0=232A2E # black
+regular1=f85552 # red
+regular2=8da101 # green
+regular3=dfa000 # yellow
+regular4=3a94c5 # blue
+regular5=df69ba # magenta
+regular6=35a77c # cyan
+regular7=D3C6AA # white
+
+bright0=4F585E # black
+bright1=E67E80 # red
+bright2=A7C080 # green
+bright3=DBBC7F # yellow
+bright4=7FBBB3 # blue
+bright5=D699B6 # magenta
+bright6=83C092 # cyan
+bright7=D3C6AA # white
+

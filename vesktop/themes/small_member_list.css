@@ -1,0 +1,15 @@
+/* small member list */
+.container_f79ab4 {
+    width: 0px!important;
+    padding-left: var(--members-min)!important;
+}
+.container_f79ab4:hover {
+    width: var(--members-max)!important;
+    padding-left: initial!important;
+}
+/* edit it */
+:root {
+    --members-min: 24px;
+    --members-max: 240px; /* normal member list size */
+}
+

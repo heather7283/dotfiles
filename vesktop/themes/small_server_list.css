@@ -1,0 +1,15 @@
+/* small server list */
+.guilds__2b93a {
+    width: 0px!important;
+    padding-left: var(--guild-mini)!important;
+}
+.guilds__2b93a:hover {
+    width: var(--guild-max)!important;
+    padding-left: initial!important;
+}
+/* edit it */
+:root {
+    --guild-mini: 24px;
+    --guild-max: 72px; /* normal server list size */ 
+}
+

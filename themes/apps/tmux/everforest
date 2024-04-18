@@ -1,0 +1,34 @@
+# Status bar style
+set -g status-style 'bg=#343F44,fg=terminal'
+# Left part of the status bar
+set -g status-left ' #{session_name} |'
+#set -g status-left-style 'bg=#323232,fg=terminal'
+# Right part of the status bar
+set -g status-right '#{user}@#{host_short} '
+#set -g status-right-style 'bg=#323232,fg=terminal'
+
+# Window indicators
+set -g window-status-format ' #{window_index} '
+#set -g window-status-style ''
+set -g window-status-current-format ' #{window_index} '
+set -g window-status-current-style 'bg=#475258,fg=terminal'
+set -g window-status-separator ''
+
+# Panes separator
+set -g pane-border-lines heavy
+set -g pane-border-style 'fg=#343F44'
+set -g pane-active-border-style 'fg=#475258'
+
+# Popups
+set -g popup-style 'bg=#3D484D'
+set -g popup-border-style 'bg=#3D484D'
+set -g popup-border-lines none
+
+# Style of command prompt (message-command-style for vi mode)
+set -g message-style 'bg=#A7C080,fg=#232A2E'
+set -g message-command-style 'bg=#A7C080,fg=#232A2E'
+
+# Colors in copy mode
+set -g copy-mode-match-style 'bg=#A7C080,fg=#232A2E'
+set -g copy-mode-current-match-style 'bg=#A7C080,fg=#232A2E,bold'
+set -g mode-style 'bg=#A7C080,fg=#232A2E'
