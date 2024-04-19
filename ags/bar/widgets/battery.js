@@ -5,7 +5,7 @@ const Battery = () => Widget.Box({
     Widget.Icon({
       icon: 'battery-symbolic'
     }).hook(battery, self => {
-      const level = Math.floor(battery.percent / 10)
+      const level = Math.min(Math.floor(battery.percent / 10) + 1, 10)
       if (battery.charging) {
         self.icon = `battery-level-${level}0-charging-symbolic`
       }
