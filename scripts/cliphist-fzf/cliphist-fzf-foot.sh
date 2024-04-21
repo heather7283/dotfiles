@@ -17,6 +17,8 @@ cliphist list | fzf \
   --info hidden \
   --no-scrollbar \
   --no-clear \
+  --with-nth 2 \
+  --delimiter $'\t' \
   --preview \
   'if echo {} | grep -q binary\ data; \
     then echo {} | cliphist decode | chafa \
