@@ -14,7 +14,8 @@
         "percent": {
             "type": 9
         }, // colored percent number
-        "color": "green"
+        "color": "green",
+        "disableLinewrap": true,
     },
     "modules": [
         "title",
