@@ -40,7 +40,7 @@
 	--settingsicons:		1;				                    /*	Use Settings Icons in User Settings  */
 	--font:				      "JetBrainsMonoNL Nerd Font";	/*	general font	*/
 	
-	--accentcolor: 			53,167,124;		    /*	Blurple			    */
+	--accentcolor: 			167,192,128;		    /*	Blurple			    */
 	--accentcolor2: 		223,105,186;		  /*	Boostpink		    */
 	--linkcolor: 			  58,148,197;			  /*	Link Color	    */
 	--mentioncolor: 		53,167,124;			  /*	Highlight Color	*/
