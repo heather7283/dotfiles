@@ -48,7 +48,7 @@ for filename in filenames:
     if not is_hidden and name and entry["exec"]:
         entries[name] = entry
         names.append(name)
-        sys.stdout.write(name + "\t" + filename + "\n")
+        sys.stdout.write(name + "\t" + f"({filename.split('/')[-1]})" + "\t" + filename + "\n")
         #sys.stdout.write(name + "\n")
         sys.stdout.flush()
 
