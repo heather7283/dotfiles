@@ -64,17 +64,21 @@ cmd make_file %{{
 }}
 
 cmd delete %{{
-  if [ ! -d ~/.trash ]; then
-    mkdir ~/.trash
-  fi
-  
   if [ -n "$fs" ]; then
     paths="$fs"
   else
     paths="$f"
   fi
+  
+  if [ -z "$paths" ]; then exit 1; fi
+  
+  if [ ! -d ~/.trash ]; then mkdir ~/.trash/ || exit 1; fi
+  
+  dir="$(date '+%Y-%m-%dT%H:%M:%S')"
+  if [ -z "$dir" ]; then exit 1; fi
 
-  IFS=$'\n' echo "$paths" | xargs -- mv -bt ~/.trash/ --
+  mkdir ~/.trash/$dir || exit 1
+  IFS=$'\n' echo "$paths" | xargs -- mv -t ~/.trash/$dir --
 }}
 
 map y
