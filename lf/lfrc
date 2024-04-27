@@ -63,23 +63,8 @@ cmd make_file %{{
   touch "$filename"
 }}
 
-cmd delete %{{
-  if [ -n "$fs" ]; then
-    paths="$fs"
-  else
-    paths="$f"
-  fi
-  
-  if [ -z "$paths" ]; then exit 1; fi
-  
-  if [ ! -d ~/.trash ]; then mkdir ~/.trash/ || exit 1; fi
-  
-  dir="$(date '+%Y-%m-%dT%H:%M:%S')"
-  if [ -z "$dir" ]; then exit 1; fi
-
-  mkdir ~/.trash/$dir || exit 1
-  IFS=$'\n' echo "$paths" | xargs -- mv -t ~/.trash/$dir --
-}}
+cmd delete %exec ~/.config/lf/scripts/delete.sh
+cmd rename %exec ~/.config/lf/scripts/rename.sh
 
 map y
 map yy copy
