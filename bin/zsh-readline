@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# HOW THIS WORKS
+# zsh ALWAYS reads /etc/zsh/zshenv first. You can't overwrite it
+# my /etc/zsh/zshenv contains `export ZDOTDIR="$HOME/.config/zsh/"`
+# so I can't just set ZDOTDIR in this script, as
+# it will be overwritten in aforementioned file
+#
+# Instead, I overwrite $HOME before calling zsh;
+# this way, ZDOTDIR gets assigned new path:
+# /home/heather/.config/zsh/zsh-read-line/.config/zsh/
+#
+# Yes, this is stupid and ugly, but I can't think of any other way
+HOME="$HOME/.config/zsh/zsh-read-line/" \
+  ZSH_READLINE_INITIAL_STRING="$1" \
+  exec zsh -i 
+
