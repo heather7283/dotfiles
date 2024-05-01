@@ -66,6 +66,11 @@ cmd make_file %{{
 cmd delete %exec ~/.config/lf/scripts/delete.sh
 cmd rename %exec ~/.config/lf/scripts/rename.sh
 
+cmd quit-cd &{{
+  echo -n "$PWD" >"$lf_cd_file"
+  lf -remote "send $id quit"
+}}
+
 map y
 map yy copy
 map yp copy_path
@@ -74,5 +79,7 @@ map yf copy_file
 map m
 map md make_dir
 map mf make_file
+
+map Q quit-cd
 
 #set cursoractivefmt "\033[38;2;0,255,0m%s"

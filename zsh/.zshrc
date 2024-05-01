@@ -123,6 +123,20 @@ path=(. $path)
 
 
 # ========== Functions ==========
+# Wrapper for lf that allows to cd into last selected directory
+lf() {
+  export lf_cd_file="/tmp/lfcd.$$"
+  
+  command lf $@
+ 
+  __dir="$(cat "$lf_cd_file")"
+  if [ -n "$__dir" ]; then cd "$__dir"; fi
+  
+  unset __dir
+  rm "$lf_cd_file"
+  unset lf_cd_file
+}
+
 # Create a directory and cd into it
 mkcd() {
 	mkdir --verbose --parents "$1"
