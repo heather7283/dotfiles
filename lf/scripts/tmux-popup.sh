@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Usage: tmux-popup.sh [-w WIDTH] [-h HEIGHT] [-E] -- COMMAND
+# Usage: lmux-popup.sh [-w WIDTH] [-h HEIGHT] [-E] [ARGS] -- COMMAND
 #
 # Display tmux popup running COMMAND centered in currently active pane
 #
@@ -24,6 +24,8 @@ fi
 
 height="70%"
 width="70%"
+e_count="0"
+extra_args=""
 
 # Parse command line options
 while true; do
@@ -45,7 +47,10 @@ while true; do
       fi
       ;;
     '-E')
-      e_flag="-E"
+      e_count="$(( e_count + 1 ))"
+      ;;
+    '-EE')
+      e_flag="-EE"
       ;;
     '--')
       shift 1
@@ -58,6 +63,14 @@ while true; do
 
   shift 1
 done
+
+if [ -z "$e_flag" ]; then
+  if [ "$e_count" -ge "2" ]; then
+    e_flag="-EE"
+  elif [ "$e_count" -eq "1" ]; then
+    e_flag="-E"
+  fi
+fi
 
 if [[ "$width" =~ %$ ]]; then w_percent=1; else w_percent=0; fi
 if [[ "$height" =~ %$ ]]; then h_percent=1; else h_percent=0; fi
