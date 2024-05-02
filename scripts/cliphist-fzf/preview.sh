@@ -9,7 +9,7 @@ if [[ "$item" =~ binary\ data ]]; then
     --align center \
     --optimize 9 \
     --view-size ${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES};
-elif [[ "$item" =~ ^#?[0-9A-Fa-f]{6}$ ]]; then
+elif [[ "$item" =~ ^(#|0x)?[0-9a-fA-F]{6,8}$ ]]; then
   item="${item/#\#/}"
   r="$((16#${item:0:2}))"
   g="$((16#${item:2:2}))"
