@@ -1,5 +1,64 @@
 #!/usr/bin/env bash
 
+print_usage() {
+  exec 1>&2
+  echo "Invokes zsh to read one line of user input,"
+  echo "printing result to stdout"
+  echo ""
+  echo "Args:"
+  echo "  -m|--mode     initial zle mode, can be normal or insert"
+  echo "  -s|--string   set initial edit buffer to string"
+  echo "  -p|--prompt   set prompt"
+  exit 1
+}
+
+die() {
+  if [ -n "$1" ]; then
+    echo "$1" >&2
+  else
+    echo "error" >&2
+  fi
+  exit 1
+}
+
+initial_mode="insert"
+initial_string=""
+
+# Parse command line options
+while true; do
+  case "$1" in
+    '-m'|'--mode')
+      shift 1
+      if [ "$1" = "i" ] || [ "$1" = "insert" ]; then
+        initial_mode="insert"
+      elif [ "$1" = "n" ] || [ "$1" = "normal" ]; then
+        initial_mode="normal"
+      else
+        die "wrong mode: $1"
+      fi
+      ;;
+    '-s'|'--string')
+      shift 1
+      initial_string="$1"
+      ;;
+    '-p'|'--prompt')
+      shift 1
+      prompt="$1"
+      ;;
+    '-h'|'--help')
+      print_usage
+      ;;
+    '')
+      break
+      ;;
+    *)
+      print_usage
+      ;;
+  esac
+
+  shift 1
+done
+
 # HOW THIS WORKS
 # zsh ALWAYS reads /etc/zsh/zshenv first. You can't overwrite it
 # my /etc/zsh/zshenv contains `export ZDOTDIR="$HOME/.config/zsh/"`
@@ -12,6 +71,8 @@
 #
 # Yes, this is stupid and ugly, but I can't think of any other way
 HOME="$HOME/.config/zsh/zsh-read-line/" \
-  ZSH_READLINE_INITIAL_STRING="$1" \
+  ZSH_READLINE_INITIAL_STRING="$initial_string" \
+  ZSH_READLINE_INITIAL_MODE="$initial_mode" \
+  ZSH_READLINE_PROMPT="$prompt" \
   exec zsh -i 
 

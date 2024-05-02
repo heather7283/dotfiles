@@ -3,18 +3,22 @@
 
 bindkey -v
 
-export PROMPT="> "
-
-# If ZSH_READLINE_INITIAL_STRING is set, its value is set to be initial string
-if [ -n "$ZSH_READLINE_INITIAL_STRING" ]; then
-  initial_string="$ZSH_READLINE_INITIAL_STRING"
-  
-  zle-line-init() {
-    BUFFER="$initial_string"
-    CURSOR="$#BUFFER"
-  }
-  zle -N zle-line-init
+if [ -n "$ZSH_READLINE_PROMPT" ]; then
+  export PROMPT="$ZSH_READLINE_PROMPT"
+else
+  export PROMPT="> "
 fi
+
+# Set ZSH_READLINE_INITIAL_STRING to be initial string
+zle-line-init() {
+  BUFFER="$ZSH_READLINE_INITIAL_STRING"
+  CURSOR="$#BUFFER"
+  # if ZSH_READLINE_INITIAL_MODE is set to 'normal', enter vicmd mode 
+  if [ "$ZSH_READLINE_INITIAL_MODE" = "normal" ]; then
+    zle vi-cmd-mode
+  fi
+}
+zle -N zle-line-init
 
 # After user hits enter, print buffer contents to stdout and exit
 accept-line() {
