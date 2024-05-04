@@ -3,11 +3,10 @@
 die() {
   echo -n "rename error" >&2
   if [ -n "$1" ]; then echo -n ": $1" >&2; fi
-  echo
   exit 1
 }
 
-IFS=$'\n'
+export IFS=$'\t\n'
 
 if [ -z "$f" ]; then die "no file selected"; fi
 file="$f"
@@ -22,22 +21,25 @@ if [ -z "$TMUX" ]; then
   dir_name="$(dirname "$file")"
   mv -v "$file" "$dir_name/$new_name"
 else
-  fifo_up="$(mktemp --dry-run /tmp/lf-rename.XXXXXX.up)"
-  mkfifo "$fifo_up" || die "failed to create fifo $fifo_up"
-  echo "$file" >"$fifo_up" &
+  #fifo_up="$(mktemp --dry-run /tmp/lf-rename.XXXXXX.up)"
+  #mkfifo "$fifo_up" || die "failed to create fifo $fifo_up"
+  #echo "$file" >"$fifo_up" &
 
   ~/.config/lf/scripts/tmux-popup.sh -w 70% -h 2 -E -- bash -c '
-    IFS=$'\''\n'\''
+    IFS='"$(printf '%q' "$IFS")"'
+    #fifo_up='"$(printf '%q' "$fifo_up")"'
+    file='"$(printf '%q' "$file")"'
     
-    fifo_up="$0"
-    file="$(cat "$fifo_up")"
+    cd '"$(printf '%q' "$PWD")"'
+    
+    #file="$(cat "$fifo_up")"
 
     old_name="$(basename "$file")"
     dir_name="$(dirname "$file")"
 
     echo "enter new filename:"
 
-    new_name="$(zsh-readline "$old_name")"
+    new_name="$(zsh-readline --string "$old_name" --mode normal)"
     if [ -z "$new_name" ]; then
       echo "Empty new name"
       exit 1
@@ -48,9 +50,9 @@ else
     fi
     
     mv -v "$file" "$dir_name/$new_name"
-  ' "$fifo_up"
+  '
   
-  rm "$fifo_up"
+  #rm "$fifo_up"
 fi
 
 

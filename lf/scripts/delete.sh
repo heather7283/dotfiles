@@ -3,59 +3,122 @@
 die() {
   echo -n "delete" >&2
   if [ -n "$1" ]; then echo -n ": $1"; fi
-  echo
   exit 1
 }
 
-IFS=$'\n'
+# IFS: required to split filenames properly
+export IFS=$'\t\n'
 
+# Die if there are no selected files; yes, it can happen
 if [ -z "$fx" ]; then die "no files selected"; fi
-if [ ! -d ~/.trash ]; then mkdir ~/.trash/ || die "can't create trash dir"; fi
 
-file_count="$(echo "$fx" | wc -l)"
-if [ "$file_count" = 1 ]; then
-  dir="$(date '+%Y-%m-%dT%H:%M:%S')"
-  if [ -z "$dir" ]; then die "failed to get current time"; fi
-  mkdir ~/.trash/$dir || die "failed to create $dir dir in trash"
-  mv -v --backup=numbered -t ~/.trash/$dir -- $fx
+# Generate name for trash subdir (current datetime)
+dir="$(date '+%Y-%m-%dT%H:%M:%S')"
+if [ -z "$dir" ]; then die "failed to get current time"; fi
+trash_dir=~/.trash/"$dir"
 
-  exit 0
+# Determine if trash will be used
+# If file is not under HOME, don't use trash
+# (maybe check if files are on the same fs instead?)
+if echo "$fx" | grep -qvEe '^/home/heather/.*$'; then
+  printf "\033[31mWARN: not using trash!\033[0m "
+  use_trash=0
+else
+  use_trash=1
 fi
 
+# stderr from rm and mv commands will be redirected to this file
+stderr_file="/tmp/lf-delete-stderr.$$"
+
+# Command that will be called to delete files depends on
+# whether we using trash or not
+if [ "$use_trash" = 1 ]; then
+  delete_command() {
+    mkdir -p "$trash_dir" || die "failed to create $dir"
+    mv -v --backup=numbered -t "$trash_dir" -- $fx 2>"$stderr_file"
+  }
+else
+  delete_command() {
+    rm -vrf $fx 2>"$stderr_file"
+  }
+fi
+
+# Wrapper for delete command that shows error message if 
+# command returned non-zero exit status
+delete_wrapper() {
+  delete_command
+  exit_status="$?"
+  if [ "$exit_status" = 0 ]; then
+    rm "$stderr_file"
+  else
+    if [ -n "$TMUX" ]; then
+      printf "\033[31m[%d]: check %s for details\033[0m" "$exit_status" "$stderr_file"
+      ~/.config/lf/scripts/tmux-popup.sh -E -- nvim "$stderr_file"
+      rm "$stderr_file"
+    else
+      printf "\033[31m[%d]: check %s for details\033[0m" "$exit_status" "$stderr_file"
+    fi
+  fi
+}
+
+# Don't confirm deletion if only 1 file is selected
+# But still confirm deletion if not using trash
+file_count="$(echo "$fx" | wc -l)"
+if [ "$file_count" = 1 ]; then
+  if [ "$use_trash" = 1 ]; then
+    delete_wrapper
+  else
+    printf "delete anyway? [y/N] "
+    read -r answer
+    if [[ "$answer" =~ ^(y|Y|yes|Yes|YES)$ ]]; then
+      delete_wrapper
+    else
+      die "aborted by user"
+    fi
+  fi
+  exit 
+fi
+
+# When not running in tmux
 if [ -z "$TMUX" ]; then
   echo -n "delete $file_count files? [y/N] "
   read -r answer
-  if echo -n "$answer" | grep -qEe '^y$|^Y$|^yes$|^Yes$'; then :; else die "aborted by user"; fi
-
-  dir="$(date '+%Y-%m-%dT%H:%M:%S')"
-  if [ -z "$dir" ]; then die "failed to get current time"; fi
-  mkdir ~/.trash/$dir || die "failed to create $dir dir in trash"
-
-  mv -t --backup=numbered ~/.trash/$dir -- $fx
+  if [[ ! "$answer" =~ ^(y|Y|yes|Yes|YES)$ ]]; then
+    die "abort";
+  fi
+  
+  delete_wrapper
+# When running in tmux
 else
-  fifo_up="$(mktemp --dry-run /tmp/lf-delete.XXXXXX.up)"
-  mkfifo "$fifo_up" || die "failed to create fifo $fifo_up"
-  echo "$fx" >"$fifo_up" &
+  # Behold: The most cursed piece of shell code I have written so far
+  # We need to transfer some envvars from this script to the script 
+  # that will be running in tmux popup
+  # and the best way I came up with is to literally just engrave those
+  # vars into the command string itself
+  if ~/.config/lf/scripts/tmux-popup.sh -w 70% -h 2 -E -- bash -c '
+    IFS='"$(printf '%q' "$IFS")"'
+    file_count='"$(printf '%q' "$file_count")"'
+    use_trash='"$(printf '%q' "$use_trash")"'
+    trash_dir='"$(printf '%q' "$trash_dir")"'
 
-  ~/.config/lf/scripts/tmux-popup.sh -w 70% -h 70% -- bash -c '
-    IFS=$'\''\n'\''
+    cd '"$(printf '%q' "$PWD")"'
+    #cd '\'''"$PWD"\''''  # Ill leave this here for historical purposes and giggles
     
-    fifo_up="$0"
-    fx="$(cat "$fifo_up")"
-
-    file_count="$1"
+    if [ "$use_trash" = 0 ]; then
+      printf "\033[31mFiles will NOT be trashed\033[0m\n";
+    else
+      echo "Files will be moved to $trash_dir"
+    fi
+    
     echo -n "delete $file_count files? [y/N] "
     read answer
-    if echo -n "$answer" | grep -qEe "^y$|^Y$|^yes$|^Yes$"; then
-      dir="$(date "+%Y-%m-%dT%H:%M:%S")"
-      if [ -z "$dir" ]; then echo "failed to get current time" >&2; exit 1; fi
-      mkdir ~/.trash/$dir || { echo "failed to create $dir dir in trash"; exit 1; }
-
-      mv -v --backup=numbered -t ~/.trash/$dir -- $fx
+    if [[ "$answer" =~ ^(y|Y|yes|Yes|YES)$ ]]; then
+      exit 0
     fi
-  ' "$fifo_up" "$file_count"
-  
-  rm "$fifo_up"
-fi
 
+    exit 1
+  '; then
+    delete_wrapper
+  fi
+fi
 

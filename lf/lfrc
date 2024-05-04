@@ -6,9 +6,16 @@ set dircounts
 # Sixel support
 set sixel
 # Field separator
-set ifs "\n"
+# This will most likely shit itself if we encounter a file with \t\n in its name
+# but this is so unlikely to happen that I will ignore such possibility (clueless)
+set ifs "\t\n"
+set filesep "\t\n"
 # Enable icons
 set icons
+# Enable mouse input
+set mouse
+# Tab is 4 spaces
+set tabstop 4
 
 # Previewer config
 set previewer ~/.config/lf/previewer.sh
@@ -24,11 +31,11 @@ cmd unzip %{{
   fi
 }}
 
-cmd copy_path &{{
+cmd copy-path &{{
   echo "$f" | wl-copy
 }}
 
-cmd copy_file &{{
+cmd copy-file &{{
   file_size=$(stat -c %s "$f")
   size_limit=$((32 * 1024 * 1024)) # 32 megs
   if [ $file_size -gt $size_limit ]; then
@@ -38,33 +45,34 @@ cmd copy_file &{{
   fi
 }}
 
-cmd make_dir %{{
+cmd make-dir %{{
   echo -n "Directory name: "
   read dirname
   if [ -z "$dirname" ]; then
     exit
   fi
   if [ -d "$dirname" ]; then
+    echo "Error:"
     echo "$dirname already exists"
   fi
-
+  
+  echo "Creating directory $dirname"
   mkdir --parents "$dirname"
 }}
 
-cmd make_file %{{
-  echo -n "File name: " read filename 
-  if [ -z "$filename" ]; then
-    exit
-  fi
-  if [ -f "$filename" ]; then
-    echo "$filename already exists"
-  fi
-
-  touch "$filename"
-}}
+cmd make-file %exec ~/.config/lf/scripts/make-file.sh
+cmd make-dir %exec ~/.config/lf/scripts/make-dir.sh
+cmd make-symlink %exec ~/.config/lf/scripts/make-symlink.sh
 
 cmd delete %exec ~/.config/lf/scripts/delete.sh
 cmd rename %exec ~/.config/lf/scripts/rename.sh
+cmd paste %exec ~/.config/lf/scripts/paste.sh
+
+cmd paste-hardlink %exec ~/.config/lf/scripts/paste-link.sh hard
+cmd paste-symlink-absolute %exec ~/.config/lf/scripts/paste-link.sh symbolic absolute
+cmd paste-symlink-relative %exec ~/.config/lf/scripts/paste-link.sh symbolic relative
+
+cmd chmod %chmod +x "$f"
 
 cmd quit-cd &{{
   echo -n "$PWD" >"$lf_cd_file"
@@ -73,12 +81,19 @@ cmd quit-cd &{{
 
 map y
 map yy copy
-map yp copy_path
-map yf copy_file
+map yp copy-path
+map yf copy-file
+
+map p
+map pp paste
+map pl paste-symlink-absolute
+map pL paste-symlink-relative
+map ph paste-hardlink
 
 map m
-map md make_dir
-map mf make_file
+map md make-dir
+map mf make-file
+map ml make-symlink
 
 map Q quit-cd
 
