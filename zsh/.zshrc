@@ -129,11 +129,11 @@ lf() {
   
   command lf $@
  
-  __dir="$(cat "$lf_cd_file")"
+  __dir="$(cat "$lf_cd_file" 2>/dev/null)"
   if [ -n "$__dir" ]; then cd "$__dir"; fi
   
   unset __dir
-  rm "$lf_cd_file"
+  rm "$lf_cd_file" 2>/dev/null
   unset lf_cd_file
 }
 
