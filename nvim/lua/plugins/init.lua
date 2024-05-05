@@ -50,10 +50,7 @@ local plugins = {
     config = function()
       require("everforest").setup {
         background = "medium",
-        -- ui_contrast = "high",
-        colours_override = function(palette)
-          palette.bg0 = "#232A2E"
-        end,
+        transparent_background_level = 1,
       }
       require("everforest").load()
     end,
