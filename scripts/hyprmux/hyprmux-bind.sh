@@ -162,7 +162,7 @@ setup-window
 setup-hooks
 
 echo_important "calling inital hook"
-~/hyprmux-hook "initial" "$target_tmux_pane_id" "$source_hyprland_window_address" "$target_hyprland_window_address" >/dev/null
+~/.config/scripts/hyprmux/hyprmux-hook.sh "initial" "$target_tmux_pane_id" "$source_hyprland_window_address" "$target_hyprland_window_address" >/dev/null
 
 # hyprland socket listener that will stop the script if either source or target windows are closed
 listener() {
