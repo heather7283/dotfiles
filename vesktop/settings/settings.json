@@ -250,7 +250,8 @@
             "enabled": false
         },
         "NoBlockedMessages": {
-            "enabled": false
+            "enabled": true,
+            "ignoreBlockedMessages": false
         },
         "NoDevtoolsWarning": {
             "enabled": false
@@ -391,9 +392,6 @@
             "displayNames": false,
             "inReplies": false
         },
-        "ShowTimeouts": {
-            "enabled": false
-        },
         "SilentMessageToggle": {
             "enabled": false
         },
@@ -510,7 +508,12 @@
             "enabled": true
         },
         "ReviewDB": {
-            "enabled": false
+            "enabled": true,
+            "notifyReviews": true,
+            "showWarning": false,
+            "hideTimestamps": true,
+            "hideBlockedUsers": false,
+            "reviewsDropdownState": true
         },
         "BetterRoleContext": {
             "enabled": false
@@ -526,6 +529,12 @@
         },
         "ResurrectHome": {
             "enabled": false
+        },
+        "UnlockedAvatarZoom": {
+            "enabled": false
+        },
+        "ShowHiddenThings": {
+            "enabled": false
         }
     },
     "notifications": {
@@ -538,6 +547,6 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1712782584648
+        "settingsSyncVersion": 1714555095726
     }
 }
