@@ -1,0 +1,7 @@
+[Unit]
+Description=CapsLock LED indicator of microphone activity
+
+[Service]
+Type=simple
+ExecStart=/home/heather/.config/scripts/capslock-mic-indicator.sh
+

@@ -1,0 +1,7 @@
+[Unit]
+Description=Hyprland's idle daemon
+
+[Service]
+Type=simple
+ExecStart=hypridle
+
