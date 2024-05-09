@@ -169,7 +169,7 @@ listener() {
   socat - "UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r line; do
     event="${line%%>>*}"
     args="${line#*>>}"
-    echo "event:$event, args:$args"
+
     case "$event" in
       closewindow)
         addr="0x${args}"
@@ -185,9 +185,7 @@ listener() {
   done
 }
 echo_important "starting hyprland socket listener"
-listener&
-
-wait
+listener
 
 cleanup
 
