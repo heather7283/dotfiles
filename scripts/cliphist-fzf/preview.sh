@@ -17,6 +17,14 @@ elif [[ "$item" =~ ^(#|0x)?[0-9a-fA-F]{6,8}$ ]]; then
   echo "#$item"
   echo "$r $g $b"
   printf "\033[48;2;${r};${g};${b}m %*s \033[0m" "$FZF_PREVIEW_COLUMNS" ""
+elif [[ "$item" =~ ^https:\/\/www.youtube.com\/watch\?v= ]]; then
+  url="${item#https://www.youtube.com/watch?v=}"
+  curl --no-progress-meter "https://img.youtube.com/vi/$url/3.jpg" | chafa \
+    -f sixels \
+    --align center \
+    --optimize 9 \
+    --view-size ${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES} \
+    --scale max
 else
   echo -n "$item_raw" | cliphist decode | sed -e "s/.\{${FZF_PREVIEW_COLUMNS}\}/&\n/g";
 fi
