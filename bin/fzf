@@ -11,9 +11,5 @@ if [ -f ~/.config/fzf/flags ]; then
   default_args="$(tr '\n' ' ' <~/.config/fzf/flags)"
 fi
 
-if [ -f ~/.config/themes/apps/fzf/current ]; then
-  theme_args="$(tr '\n' ' ' <~/.config/themes/apps/fzf/current)"
-fi
-
-exec /usr/bin/fzf $default_args $theme_args "${new_args[@]}"
+exec /usr/bin/fzf $default_args "${new_args[@]}"
 

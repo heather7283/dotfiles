@@ -36,8 +36,8 @@ which fzf > /dev/null && if [ -f "$_zsh_plugins_dir/fzf-tab/fzf-tab.plugin.zsh" 
   source "$_zsh_plugins_dir/fzf-tab/fzf-tab.plugin.zsh"
   zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
   zstyle ':fzf-tab:*' default-color ''
-  if [ -f ~/.config/themes/apps/fzf-tab/current ]; then
-    zstyle ":fzf-tab:*" fzf-flags $(tr '\n' ' ' <~/.config/themes/apps/fzf-tab/current)
+  if [ -f ~/.config/fzf/flags ]; then
+    zstyle ":fzf-tab:*" fzf-flags $(tr '\n' ' ' <~/.config/fzf/flags)
   fi
 fi
 if [ -f "$_zsh_plugins_dir/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
