@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Vesktop
+Type=Application
+# makes vesktop unable to use nvidia GPU
+Exec=bwrap --dev-bind / / --ro-bind /dev/dri/by-name/nvidia-render /dev/dri/by-name/nvidia-render --ro-bind /dev/dri/by-name/nvidia-card /dev/dri/by-name/nvidia-card /usr/bin/vesktop --enable-features="VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,VaapiVideoDecoder" --ozone-platform="wayland"
+Terminal=false
