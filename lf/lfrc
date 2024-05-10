@@ -99,6 +99,20 @@ cmd quit-cd &{{
   lf -remote "send $id quit"
 }}
 
+cmd goto-symlink-target &{{
+  if [ ! -L "$f" ]; then
+    exit
+  fi
+
+  target="$(realpath "$f")"
+  if [ -f "$target" ]; then
+    target_dir="$(dirname "$target")"
+    lf -remote "send $id select $(printf '%q' "$target")"
+  elif [ -d "$target" ]; then
+    lf -remote "send $id cd $(printf '%q' "$target")"
+  fi
+}}
+
 map y
 map yy copy
 map yp copy-path
@@ -118,5 +132,7 @@ map ml make-symlink
 map C unselect
 
 map Q quit-cd
+
+map gt goto-symlink-target
 
 #set cursoractivefmt "\033[38;2;0,255,0m%s"
