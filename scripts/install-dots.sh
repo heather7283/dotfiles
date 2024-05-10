@@ -18,17 +18,15 @@ if [ ! -d ~/.config/bin ]; then
   echo "~/.config/bin doesn't exist, what have you done? clone the repo properly"
   exit 1
 fi
-rm -rfv ~/bin 2> /dev/null
-ln -v ~/.config/bin/ ~/bin
+rm -rfv ~/bin
+ln -v .config/bin/ ~/bin
 
 if [ ! -d ~/.config/applications/ ]; then
   echo "~/.config/applications/ not found, fix your repo bruh"
   exit 1
 fi
 rm -rfv ~/.local/share/applications
-ln -v ~/.config/applications/ ~/.local/share/applications/
-
-~/.config/scripts/select_theme.sh
+ln -v .config/applications/ ~/.local/share/applications/
 
 echo "Done"
 echo "Make sure to put this in /etc/zsh/zshenv or whatever:"
