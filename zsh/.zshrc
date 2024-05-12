@@ -108,11 +108,16 @@ zle-keymap-select() {
   esac
 }
 zle -N zle-keymap-select
+zle-line-init() {
+  zle -K viins
+  echo -ne '\e[6 q'
+}
+zle -N zle-line-init
 # set beam cursor for each new prompt
 reset_cursor() {echo -ne '\e[6 q'}
 preexec_functions+=(reset_cursor)
 # start shell with beam cursor
-echo "hello"; echo -ne '\e[6 q'
+echo -ne '\e[6 q'
 # ========== ZLE ==========
 
 
