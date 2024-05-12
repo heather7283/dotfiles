@@ -11,27 +11,29 @@ no_cache=0
 mime_description=$(file --brief --mime -- "$filename")
 case "$mime_description" in
   image/*)
-    chafa \
+    if chafa \
       --format sixel \
       --polite on \
       --colors full \
       --optimize 9 \
       --animate off \
-      --size "${size_x}x${size_y}" \
-      "$filename" && { success="yes"; no_cache=1; }
+      --size "$((size_x))x$((size_y - 1))" \
+      "$filename";
+    then success="yes"; no_cache=1; fi
     ;;
   video/*)
     tmpfile="/tmp/$$_lfvideopreview.png"
-    ffmpeg -i "$filename" -vframes 1 "$tmpfile" && \
+    if ffmpeg -i "$filename" -vframes 1 "$tmpfile" && \
     chafa \
       --format=sixel \
       --polite=on \
       --colors=full \
       --optimize=9 \
       --animate=off \
-      --size="${size_x}x${size_y}" \
-      "$tmpfile" && { success="yes"; no_cache=1; }
-    rm "$tmpfile"
+      --size="$((size_x))x$((size_y - 1))" \
+      "$tmpfile";
+    then success="yes"; no_cache=1; fi
+    rm -f "$tmpfile" 
     ;;
   audio/*)
     mediainfo "$filename" && success="yes"
