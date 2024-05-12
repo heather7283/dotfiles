@@ -40,8 +40,11 @@ which fzf > /dev/null && if [ -f "$_zsh_plugins_dir/fzf-tab/fzf-tab.plugin.zsh" 
     zstyle ":fzf-tab:*" fzf-flags $(tr '\n' ' ' <~/.config/fzf/flags)
   fi
 fi
-if [ -f "$_zsh_plugins_dir/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
-  source "$_zsh_plugins_dir/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+if [ -f "$_zsh_plugins_dir/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]; then
+  source  "$_zsh_plugins_dir/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+  fast-theme ~/.config/zsh/fsh-theme-overlay.ini >/dev/null
+  # Prevents visual artifacts when pasting
+  zle_highlight+=('paste:none')
 fi
 if [ -f "$_zsh_plugins_dir/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
   source "$_zsh_plugins_dir/zsh-autosuggestions/zsh-autosuggestions.zsh"
@@ -64,8 +67,8 @@ zsh-plugins-install() {
   if [ ! -d "$_zsh_plugins_dir/zsh-autosuggestions/" ]; then
     git clone 'https://github.com/zsh-users/zsh-autosuggestions' "$_zsh_plugins_dir/zsh-autosuggestions"
   fi
-  if [ ! -d "$_zsh_plugins_dir/zsh-syntax-highlighting/" ]; then
-    git clone 'https://github.com/zsh-users/zsh-syntax-highlighting/' "$_zsh_plugins_dir/zsh-syntax-highlighting"
+  if [ ! -d "$_zsh_plugins_dir/fast-syntax-highlighting/" ]; then
+    git clone 'https://github.com/zdharma-continuum/fast-syntax-highlighting' "$_zsh_plugins_dir/fast-syntax-highlighting"
   fi
   if [ ! -d "$_zsh_plugins_dir/zsh-completions/" ]; then
     git clone 'https://github.com/zsh-users/zsh-completions.git' "$_zsh_plugins_dir/zsh-completions"
