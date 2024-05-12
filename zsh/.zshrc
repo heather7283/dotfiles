@@ -99,6 +99,23 @@ zsh-plugins-update() {
 # ========== Plugins ==========
 
 
+# ========== ZLE ==========
+# change cursor shape depending on mode
+zle-keymap-select() {
+  case $KEYMAP in
+  vicmd) echo -ne '\e[2 q';; # block
+  viins|main) echo -ne '\e[6 q';; # beam
+  esac
+}
+zle -N zle-keymap-select
+# set beam cursor for each new prompt
+reset_cursor() {echo -ne '\e[6 q'}
+preexec_functions+=(reset_cursor)
+# start shell with beam cursor
+echo "hello"; echo -ne '\e[6 q'
+# ========== ZLE ==========
+
+
 # ========== Aliases ==========
 which eza >/dev/null && alias ll='eza --color=auto --icons=auto --long' || alias ll='ls -lhF --color=auto'
 which doas >/dev/null && alias sudo='doas'
