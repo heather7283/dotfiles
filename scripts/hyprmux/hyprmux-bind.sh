@@ -142,12 +142,14 @@ setup-window() {
     hyprctl_wrapper dispatch pin address:"$source_hyprland_window_address"
   fi
   # Make window unable to focus (TODO: focus it when switching to this window's pane)
-  hyprctl_wrapper setprop address:"$source_hyprland_window_address" nofocus 1
+  hyprctl_wrapper setprop address:"$source_hyprland_window_address" nofocus 1 lock
+  hyprctl_wrapper setprop address:"$source_hyprland_window_address" forcenoborder 1 lock
 }
 
 reset-window() {
   echo_important "resetting window properties"
   hyprctl_wrapper setprop address:"$source_hyprland_window_address" nofocus 0
+  hyprctl_wrapper setprop address:"$source_hyprland_window_address" forcenoborder 0 lock
 }
 
 cleanup() {
