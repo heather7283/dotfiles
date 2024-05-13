@@ -134,7 +134,7 @@ bindkey -M viins '\C-k' vi-up-line-or-history
 
 
 # ========== Aliases ==========
-which eza >/dev/null && alias ll='eza --color=auto --icons=auto --long' || alias ll='ls -lhF --color=auto'
+which eza >/dev/null && alias ll='eza --color=auto --icons=auto --long --no-quotes' || alias ll='ls -lhF --color=auto'
 which doas >/dev/null && alias sudo='doas'
 alias grep='grep --color=auto'
 alias neofetch='fastfetch'
