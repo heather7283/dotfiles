@@ -124,6 +124,12 @@ reset_cursor() {set-cursor-shape beam}
 preexec_functions+=(reset_cursor)
 # start shell with beam cursor
 set-cursor-shape beam
+
+# move cursor in insert mode with Ctrl+hjkl
+bindkey -M viins '\C-h' vi-backward-char
+bindkey -M viins '\C-l' vi-forward-char
+bindkey -M viins '\C-j' vi-down-line-or-history
+bindkey -M viins '\C-k' vi-up-line-or-history
 # ========== ZLE ==========
 
 
