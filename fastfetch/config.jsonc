@@ -8,13 +8,13 @@
             "top": 0
         },
         "type": "sixel",
-        "source": "~/.config/fastfetch/fastfetch.png"
+        "source": "~/.config/fastfetch/logo.png"
     },
     "display": {
         "percent": {
-            "type": 9
-        }, // colored percent number
-        "color": "green",
+            "type": 0
+        }, // disable percent
+        "color": "1;38;2;167;192;128",
         "disableLinewrap": true,
     },
     "modules": [
