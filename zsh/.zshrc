@@ -101,23 +101,29 @@ zsh-plugins-update() {
 
 # ========== ZLE ==========
 # change cursor shape depending on mode
+set-cursor-shape() {
+  case "$1" in
+    block) echo -ne '\e[2 q';;
+    beam) echo -ne '\e[6 q';;
+  esac
+}
 zle-keymap-select() {
   case $KEYMAP in
-  vicmd) echo -ne '\e[2 q';; # block
-  viins|main) echo -ne '\e[6 q';; # beam
+  vicmd) set-cursor-shape block;;
+  viins|main) set-cursor-shape beam;;
   esac
 }
 zle -N zle-keymap-select
 zle-line-init() {
   zle -K viins
-  echo -ne '\e[6 q'
+  set-cursor-shape beam
 }
 zle -N zle-line-init
 # set beam cursor for each new prompt
-reset_cursor() {echo -ne '\e[6 q'}
+reset_cursor() {set-cursor-shape beam}
 preexec_functions+=(reset_cursor)
 # start shell with beam cursor
-echo -ne '\e[6 q'
+set-cursor-shape beam
 # ========== ZLE ==========
 
 
