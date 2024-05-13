@@ -1,8 +1,8 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 print_usage() {
   exec 1>&2
-  echo "Invokes zsh to read one line of user input,"
+  echo "Invokes zle vared to read one line of user input,"
   echo "printing result to stdout"
   echo ""
   echo "Args:"
@@ -21,18 +21,19 @@ die() {
   exit 1
 }
 
-initial_mode="insert"
+initial_mode="viins"
 initial_string=""
+prompt=""
 
 # Parse command line options
 while true; do
   case "$1" in
     '-m'|'--mode')
       shift 1
-      if [ "$1" = "i" ] || [ "$1" = "insert" ]; then
-        initial_mode="insert"
-      elif [ "$1" = "n" ] || [ "$1" = "normal" ]; then
-        initial_mode="normal"
+      if [ "$1" = "i" ] || [ "$1" = "insert" ] || [ "$1" = "viins" ]; then
+        initial_mode="viins"
+      elif [ "$1" = "n" ] || [ "$1" = "normal" ] || [ "$1" = "vicmd" ]; then
+        initial_mode="vicmd"
       else
         die "wrong mode: $1"
       fi
@@ -59,20 +60,43 @@ while true; do
   shift 1
 done
 
-# HOW THIS WORKS
-# zsh ALWAYS reads /etc/zsh/zshenv first. You can't overwrite it
-# my /etc/zsh/zshenv contains `export ZDOTDIR="$HOME/.config/zsh/"`
-# so I can't just set ZDOTDIR in this script, as
-# it will be overwritten in aforementioned file
-#
-# Instead, I overwrite $HOME before calling zsh;
-# this way, ZDOTDIR gets assigned new path:
-# /home/heather/.config/zsh/zsh-read-line/.config/zsh/
-#
-# Yes, this is stupid and ugly, but I can't think of any other way
-HOME="$HOME/.config/zsh/zsh-read-line/" \
-  ZSH_READLINE_INITIAL_STRING="$initial_string" \
-  ZSH_READLINE_INITIAL_MODE="$initial_mode" \
-  ZSH_READLINE_PROMPT="$prompt" \
-  exec zsh -i 
+bindkey -v
+bindkey -M viins '\C-h' vi-backward-char
+bindkey -M viins '\C-l' vi-forward-char
+
+# change cursor shape depending on mode
+set-cursor-shape() {
+  # >/dev/tty redirection prevents escape sequences to get into a variable
+  case "$1" in
+    block) echo -ne '\e[2 q' >/dev/tty;;
+    beam) echo -ne '\e[6 q' >/dev/tty;;
+  esac
+}
+zle-keymap-select() {
+  case $KEYMAP in
+  vicmd) set-cursor-shape block;;
+  viins|main) set-cursor-shape beam;;
+  esac
+}
+zle -N zle-keymap-select
+zle-line-init() {
+  zle -K viins
+  set-cursor-shape beam
+}
+zle -N zle-line-init
+# set beam cursor for each new prompt
+reset_cursor() {set-cursor-shape beam}
+preexec_functions+=(reset_cursor)
+# start shell with beam cursor
+set-cursor-shape beam
+
+set_initial_mode() {
+  zle -K "$initial_mode"
+}
+zle -N set_initial_mode
+
+var="$initial_string"
+vared -e -p "$prompt" -i set_initial_mode var
+
+echo -nE "$var"
 
