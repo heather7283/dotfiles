@@ -1,7 +1,8 @@
+-- shamelessly stolen from nvchad
+
 local cmp = require("cmp")
 
--- shamelessly stolen from nvchad
-cmp.setup {
+local options = {
   completion = {
     completeopt = "menu,menuone",
   },
@@ -61,11 +62,14 @@ cmp.setup {
     }),
   },
   sources = cmp.config.sources {
-    { name = "nvim_lsp" },
+    { name = "vimtex" },
     { name = "luasnip" },
+    { name = "nvim_lsp" },
     { name = "buffer" },
     { name = "nvim_lua" },
     { name = "path" },
   },
 }
+
+return options
 

@@ -1,5 +1,3 @@
-require("config.keybinds")
-
 -- shamelessly stolen from nvchad config
 local opt = vim.opt
 local o = vim.o
@@ -52,3 +50,7 @@ g["loaded_node_provider"] = 0
 g["loaded_python3_provider"] = 0
 g["loaded_perl_provider"] = 0
 g["loaded_ruby_provider"] = 0
+
+o.scrolloff = 8
+o.smoothscroll = true
+
