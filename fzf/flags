@@ -1,9 +1,9 @@
 --tabstop=4
 --preview-window=border-sharp
 --color=fg:#D3C6AA:regular
---color=fg+:#232A2E:regular
+--color=fg+:#2D353B:regular
 --color=hl:#A7C080:bold
---color=hl+:#232A2E:bold
+--color=hl+:#2D353B:bold
 --color=bg+:#A7C080
 --color=gutter:-1
 --color=prompt:#3D484D
