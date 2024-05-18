@@ -1,15 +1,23 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-new_args=()
+# --ansi flag breaks theme, drop it
+declare -a new_args
 for arg in "$@"; do
   if [[ $arg != "--ansi" ]]; then
     new_args+=("$arg")
   fi
 done
 
+# add some default args from config file
+declare -a default_args
 if [ -f ~/.config/fzf/flags ]; then
-  default_args="$(tr '\n' ' ' <~/.config/fzf/flags)"
+  while read -r arg; do
+    default_args+=( "$arg" );
+  done <~/.config/fzf/flags
 fi
 
-exec /usr/bin/fzf $default_args "${new_args[@]}"
+# beam cursor to make it more intuitive that we're in "insert mode"
+echo -ne '\e[6 q' >/dev/tty
+
+exec /usr/bin/fzf "${default_args[@]}" "${new_args[@]}"
 

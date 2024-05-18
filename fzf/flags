@@ -9,3 +9,5 @@
 --color=prompt:#3D484D
 --color=pointer:#A7C080
 --no-scrollbar
+--bind=ctrl-l:forward-char
+--bind=ctrl-h:backward-char
