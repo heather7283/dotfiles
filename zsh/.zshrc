@@ -151,7 +151,7 @@ alias apt='apt --no-install-recommends'
 
 
 # ========== Envvars ==========
-which nvim >/dev/null && export MANPAGER='nvim +Man!'
+which nvim >/dev/null && export MANPAGER='nvim -c ":set signcolumn=no" -c "Man!"'
 export LESS='--use-color --RAW-CONTROL-CHARS'
 
 typeset -U path
