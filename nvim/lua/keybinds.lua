@@ -26,6 +26,6 @@ map("i", "<C-k>", "<Up>", "Move up")
 map("i", "<C-l>", "<Right>", "Move right")
 
 -- Allow moving the cursor through wrapped lines with j, k
-map("n", "j", "gj", { expr = true, noremap = false })
-map("n", "k", "gk", { expr = true, noremap = false })
+map("n", "j", "gj", "Move up", { expr = true, noremap = false })
+map("n", "k", "gk", "Move up", { expr = true, noremap = false })
 
