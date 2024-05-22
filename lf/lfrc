@@ -113,6 +113,24 @@ cmd goto-symlink-target &{{
   fi
 }}
 
+cmd fzf-jump ${{
+  # dont make -maxdepth too big uwu
+  res="$(find . -maxdepth 5 2>/dev/null | fzf --reverse --no-clear)"
+  if [ -z "$res" ]; then exit; fi
+
+  if [ -d "$res" ]; then
+    cmd="cd"
+  else
+    cmd="select"
+    if [[ "$(basename "$res")" =~ ^. ]]; then
+      lf -remote "send $id set hidden true"
+    fi
+  fi
+  # no idea what this sed does lol I copied it from lf wiki xdd
+  res="$(printf '%s' "$res" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+  lf -remote "send $id $cmd \"$res\""
+}}
+
 map y
 map yy copy
 map yp copy-path
@@ -135,4 +153,5 @@ map Q quit-cd
 
 map gt goto-symlink-target
 
-#set cursoractivefmt "\033[38;2;0,255,0m%s"
+map f fzf-jump
+
