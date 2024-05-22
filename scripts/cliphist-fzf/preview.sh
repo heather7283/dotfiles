@@ -10,7 +10,6 @@ if [[ "$item" =~ binary\ data ]]; then
     --align center \
     --optimize 9 \
     --view-size ${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES};
-  echo "Hello world"
 # hex colors
 elif [[ "$item" =~ ^(#|0x)?[0-9a-fA-F]{6,8}$ ]]; then
   item="${item/#\#/}"
