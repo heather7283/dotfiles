@@ -155,3 +155,7 @@ map gt goto-symlink-target
 
 map f fzf-jump
 
+# https://github.com/gokcehan/lf/issues/442
+cmap <backspace> cmd-left
+cmap <c-l> cmd-right
+
