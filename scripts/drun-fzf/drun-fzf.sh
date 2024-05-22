@@ -1,4 +1,14 @@
 #!/usr/bin/env bash
 
-hyprctl dispatch exec \[float\;pin\;stayfocused\] -- foot --override colors.background=3D484D ~/.config/scripts/drun-fzf/drun-fzf-foot.sh >/dev/null
+IFS=$'\t' read -r name filename filepath < <(~/.config/scripts/drun-fzf/parse-desktop-files.py | fzf \
+  --no-clear \
+  --with-nth 1..2 \
+  --nth 1..2 \
+  --delimiter $'\t')
+
+if [ -z "$filepath" ]; then
+  exit 1
+fi
+
+~/.config/scripts/run-desktop-file.sh "$filepath"
 
