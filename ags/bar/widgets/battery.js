@@ -5,12 +5,13 @@ const Battery = () => Widget.Box({
     Widget.Icon({
       icon: 'battery-symbolic'
     }).hook(battery, self => {
-      const level = Math.floor(battery.percent / 10)
+      const level = Math.floor(battery.percent / 10) * 10
+      print(level)
       if (battery.charging) {
-        self.icon = `battery-level-${level}0-charging-symbolic`
+        self.icon = `battery-level-${level}-charging-symbolic`
       }
       else {
-        self.icon = `battery-level-${level}0-symbolic`   
+        self.icon = `battery-level-${level}-symbolic`
       }
     }),
     Widget.Label({
