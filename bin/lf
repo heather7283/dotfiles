@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+export LF_DATA_HOME=/tmp/
+
+# set TERM to xterm bc without it colors are weird
+TERM=xterm-256color exec /usr/bin/lf "$@"
+

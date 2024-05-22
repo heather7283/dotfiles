@@ -164,8 +164,7 @@ path=(. $path)
 lf() {
   export lf_cd_file="/tmp/lfcd.$$"
   
-  # work around colors being weird in lf
-  TERM=xterm-256color command lf $@
+  command lf $@
  
   __dir="$(cat "$lf_cd_file" 2>/dev/null)"
   if [ -n "$__dir" ]; then cd "$__dir"; fi

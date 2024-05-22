@@ -3,5 +3,5 @@ Type=Application
 Name=lf
 Terminal=true
 # TERM envvar works around messed up colors in lf
-Exec=tmux new-session -- env TERM=xterm-256color lf
+Exec=tmux new-session -- lf
 MimeType=inode/directory;
