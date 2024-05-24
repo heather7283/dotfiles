@@ -2,7 +2,8 @@
 # vi keybinds
 bindkey -v
 # Load completions
-autoload -Uz compinit && compinit
+if [ ! -d ~/.cache/zsh/ ]; then mkdir -p ~/.cache/zsh/; fi
+autoload -Uz compinit && compinit -d ~/.cache/zsh/zcompdump
 zstyle ':completion:*' menu select
 # Additional completions
 fpath=("$HOME/.config/zsh/completions/" $fpath)
