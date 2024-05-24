@@ -126,6 +126,18 @@ preexec_functions+=(reset_cursor)
 # start shell with beam cursor
 set-cursor-shape beam
 
+# search history with fzf on C-r
+fzf-history-search() {
+  # do nothing if less than 2 lines in history
+  if [ "$#history" -lt 2 ]; then return; fi
+
+  item="$(fc -rl 0 -1 | ftb-tmux-popup --with-nth 2.. --nth 2..)"
+  zle vi-fetch-history -n "$item"
+}
+zle -N fzf-history-search
+bindkey -M viins '\C-r' fzf-history-search
+bindkey -M vicmd '\C-r' fzf-history-search
+
 # move cursor in insert mode with Ctrl+hjkl
 bindkey -M viins '\C-h' vi-backward-char
 bindkey -M viins '\C-l' vi-forward-char
