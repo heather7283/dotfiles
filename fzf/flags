@@ -11,3 +11,5 @@
 --no-scrollbar
 --bind=ctrl-l:forward-char
 --bind=ctrl-h:backward-char
+--bind=ctrl-u:preview-half-page-up
+--bind=ctrl-d:preview-half-page-down
