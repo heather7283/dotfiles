@@ -160,6 +160,9 @@ alias venv='source venv/bin/activate'
 alias unvenv='deactivate'
 
 alias apt='apt --no-install-recommends'
+alias fzfdiff='git status -s | \
+  fzf -m --preview "git diff --color=always -- {2..}" | \
+  sed "s/^.\{3\}//"'
 # ========== Aliases ==========
 
 
@@ -176,12 +179,12 @@ path=(. $path)
 # Wrapper for lf that allows to cd into last selected directory
 lf() {
   export lf_cd_file="/tmp/lfcd.$$"
-  
+
   command lf $@
- 
+
   __dir="$(cat "$lf_cd_file" 2>/dev/null)"
   if [ -n "$__dir" ]; then cd "$__dir"; fi
-  
+
   unset __dir
   rm "$lf_cd_file" 2>/dev/null
   unset lf_cd_file
