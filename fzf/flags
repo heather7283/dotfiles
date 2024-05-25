@@ -1,3 +1,5 @@
+--cycle
+--scroll-off=8
 --tabstop=4
 --preview-window=border-sharp
 --color=fg:#D3C6AA:regular
@@ -8,7 +10,9 @@
 --color=gutter:-1
 --color=prompt:#3D484D
 --color=pointer:#A7C080
---no-scrollbar
+--color=scrollbar:#7A8478
+--scrollbar=█
+--highlight-line
 --bind=ctrl-l:forward-char
 --bind=ctrl-h:backward-char
 --bind=ctrl-u:preview-half-page-up

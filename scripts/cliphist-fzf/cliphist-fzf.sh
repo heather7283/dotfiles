@@ -4,11 +4,6 @@
 selected_entry="$(cliphist list | fzf \
   -i \
   --no-multi \
-  --bind 'tab:up' \
-  --cycle \
-  --preview-window border-sharp \
-  --info hidden \
-  --no-scrollbar \
   --no-clear \
   --with-nth 2 \
   --delimiter $'\t' \
