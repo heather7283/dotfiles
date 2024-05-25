@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+#echo "$(date '+%Y-%m-%d %H:%M:%S') xdg-open was called with arguments: $@" >> ~/xdg-open-log.txt
+
+query="${1#file://}"
+
+if [[ "$query" =~ ^(https?:\/\/)(.*)$ ]]; then
+  hyprctl dispatch exec -- firefox \'"$query"\'
+  exit
+fi
+
+mime_type="$(file --brief --mime -- "$query")"
+query="$(printf "%q" "$query")" # (hopefully) fixes spaces in paths
+case "$mime_type" in
+  inode/directory*)
+    hyprctl dispatch exec -- foot -- tmux new-session -- lf $query
+    exit
+    ;;
+  image/*)
+    hyprctl dispatch exec -- imv $query
+    exit
+    ;;
+  video/*|audio/*)
+    hyprctl dispatch exec -- mpv $query
+    exit
+    ;;
+  application/pdf*)
+    hyprctl dispatch exec -- zathura $query
+    exit
+    ;;
+esac
+
+if echo "$mime_type" | grep -qPe '(.*)charset=(?!binary)'; then
+  hyprctl dispatch exec -- foot -- nvim $query
+  exit
+fi
+
+notify-send "xdg-open error" "No app configured to open file type $mime_type"
+#exec /usr/bin/xdg-open "$query"
+
