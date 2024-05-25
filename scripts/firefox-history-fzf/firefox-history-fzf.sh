@@ -3,10 +3,28 @@
 temp_file="$(mktemp --dry-run /tmp/places.sqlite.XXXXXX)"
 cp ~/.mozilla/firefox/default/places.sqlite "$temp_file"
 
+# shits itself on wide characters like cjk :woe:
+query="
+SELECT
+    CASE
+        WHEN LENGTH(title) IS NULL THEN 'No title                                '
+        WHEN LENGTH(title) > 42 THEN CONCAT(SUBSTR(title, 1, 40), '..')
+        ELSE SUBSTR(title || '                                        ', 1, 42)
+    END AS title,
+    moz_places.url
+FROM
+    moz_places,
+    moz_historyvisits
+WHERE
+    moz_places.id = moz_historyvisits.place_id
+ORDER BY
+    visit_date;
+"
+
 url="$(sqlite3 \
   -separator $'\t' \
   "$temp_file" \
-  'SELECT title,moz_places.url FROM moz_places, moz_historyvisits WHERE moz_places.id = moz_historyvisits.place_id ORDER BY visit_date' |\
+  "$query" |\
 fzf \
   --tac \
   --delimiter $'\t' \
