@@ -30,6 +30,7 @@ fzf \
   --delimiter $'\t' \
   --scheme history \
   --tiebreak begin,index \
+  --bind 'ctrl-y:execute-silent(echo {2..} | wl-copy)' \
   --no-hscroll | cut -f2 -d$'\t')"
 
 rm "$temp_file" 
