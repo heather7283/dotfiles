@@ -1,6 +1,8 @@
 # ========== General options ==========
 # vi keybinds
 bindkey -v
+# match files beginning with a . without explicitly specifying the dot
+setopt globdots
 # Load completions
 if [ ! -d ~/.cache/zsh/ ]; then mkdir -p ~/.cache/zsh/; fi
 autoload -Uz compinit && compinit -d ~/.cache/zsh/zcompdump
@@ -143,6 +145,9 @@ bindkey -M viins '\C-h' vi-backward-char
 bindkey -M viins '\C-l' vi-forward-char
 bindkey -M viins '\C-j' vi-down-line-or-history
 bindkey -M viins '\C-k' vi-up-line-or-history
+
+# fixes weird backspace behaviour
+bindkey -M viins '^?' backward-delete-char
 # ========== ZLE ==========
 
 
