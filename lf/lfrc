@@ -157,6 +157,8 @@ map f fzf-jump
 
 map a &~/.config/lf/scripts/mount-archive.sh
 
+map . :set hidden!
+
 # https://github.com/gokcehan/lf/issues/442
 cmap <backspace> cmd-left
 cmap <c-l> cmd-right
