@@ -140,6 +140,15 @@ zle -N fzf-history-search
 bindkey -M viins '\C-r' fzf-history-search
 bindkey -M vicmd '\C-r' fzf-history-search
 
+# paste selected file path into command line
+fzf-file-search() {
+  LBUFFER="${LBUFFER}$(find . -maxdepth 10 2>/dev/null | fzf --height=~50% --layout=reverse)"
+  zle reset-prompt
+}
+zle -N fzf-file-search
+bindkey -M viins '\C-f' fzf-file-search
+bindkey -M vicmd '\C-f' fzf-file-search
+
 # move cursor in insert mode with Ctrl+hjkl
 bindkey -M viins '\C-h' vi-backward-char
 bindkey -M viins '\C-l' vi-forward-char
