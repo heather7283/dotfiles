@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -o pipefail
+
 filename="$(realpath "$1")"
 size_x=$2
 size_y=$3
@@ -35,6 +37,16 @@ case "$mime_description" in
     then success="yes"; no_cache=1; fi
     rm -f "$tmpfile" 
     ;;
+  application/pdf*)
+    if magick convert -background '#FFFFFF' -alpha deactivate "${filename}[0]" png:- | \
+    chafa \
+      --format=sixel \
+      --polite=on \
+      --colors=full \
+      --optimize=9 \
+      --animate=off \
+      --size="$((size_x))x$((size_y - 1))"; then success="yes"; no_cache=1; fi
+    ;;
   audio/*)
     mediainfo "$filename" && success="yes"
     ;;
@@ -44,9 +56,6 @@ case "$mime_description" in
   application/json*)
     jq . "$filename" --color-output && success="yes"
     ;;
-  #inode/blockdevice*|inode/chardevice*)
-  #  file "$filename"
-  #  ;;
 esac
 
 if [ -z "$success" ] && echo "$mime_description" | grep -qP '(.*)charset=(?!binary)'; then
