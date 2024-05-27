@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-full_item="$1"
+item_id="$1"
+full_item="$(cliphist list | grep -e "$item_id")"
 item="$(echo "$full_item" | cut -d$'\t' -f2)"
 
 # open links in firefox

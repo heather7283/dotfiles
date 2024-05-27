@@ -21,7 +21,7 @@ elif [[ "$item" =~ \<img ]]; then
   string="$(echo "$full_item" | cliphist decode | grep -P '^<.*src="[^"]*".*>$')"
   if [ -n "$string" ]; then
     url="$(echo "$string" | grep -oP 'src="\K[^"]*')"
-    if curl -L --no-progress-meter "$url" | cliphist store; then
+    if curl -L --no-progress-meter --fail "$url" | cliphist store; then
       echo "$full_item" | cliphist delete
     fi
   fi
