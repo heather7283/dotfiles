@@ -8,6 +8,7 @@ if [[ "$item" =~ binary\ data ]]; then
   echo -n "$item_raw" | cliphist decode | chafa \
     --format sixels \
     --align center \
+    --scale max \
     --optimize 9 \
     --view-size ${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES};
 # hex colors
@@ -26,6 +27,7 @@ elif [[ "$item" =~ ^https:\/\/www.youtube.com\/watch\?v= ]]; then
   curl --no-progress-meter "https://img.youtube.com/vi/$url/3.jpg" | chafa \
     -f sixels \
     --align center \
+    --scale max \
     --optimize 9 \
     --view-size ${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES} \
     --scale max
@@ -35,6 +37,7 @@ elif [[ "$item" =~ ^https:\/\/youtu.be\/ ]]; then
   curl --no-progress-meter "https://img.youtube.com/vi/$url/3.jpg" | chafa \
     -f sixels \
     --align center \
+    --scale max \
     --optimize 9 \
     --view-size ${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES} \
     --scale max
