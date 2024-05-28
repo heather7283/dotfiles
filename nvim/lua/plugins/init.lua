@@ -54,8 +54,16 @@ local plugins = {
     dependencies = {
       {
         "L3MON4D3/LuaSnip",
-        dependencies = { "rafamadriz/friendly-snippets" },
-        opts = { history = true, updateevents = "TextChanged,TextChangedI" },
+        opts = {
+          history = true,
+          updateevents = "TextChanged,TextChangedI"
+        },
+        config = function(_, opts)
+          require("luasnip").setup(opts)
+
+          -- Load snippets from ~/.config/nvim/lua/luasnip_snippets/
+          require("luasnip.loaders.from_lua").load({paths = "~/.config/nvim/lua/luasnip_snippets/"})
+        end
       },
       {
         "windwp/nvim-autopairs",
