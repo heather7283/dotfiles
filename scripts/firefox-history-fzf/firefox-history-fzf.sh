@@ -30,10 +30,12 @@ fzf \
   --delimiter $'\t' \
   --scheme history \
   --tiebreak begin,index \
+  --preview 'echo {2..}' \
+  --preview-window 'up,1,wrap' \
   --bind 'ctrl-y:execute-silent(echo {2..} | wl-copy)' \
   --no-hscroll | cut -f2 -d$'\t')"
 
-rm "$temp_file" 
+rm "${temp_file}"
 
 if [ -n "$url" ]; then
   hyprctl dispatch exec -- firefox "$url"

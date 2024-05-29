@@ -19,6 +19,7 @@ if [ ! -d ~/.config/bin ]; then
   exit 1
 fi
 rm -rfv ~/bin
+mkdir ~/bin
 ln -sv .config/bin/ ~/bin
 
 if [ ! -d ~/.config/applications/ ]; then
@@ -26,6 +27,7 @@ if [ ! -d ~/.config/applications/ ]; then
   exit 1
 fi
 rm -rfv ~/.local/share/applications
+mkdir -p ~/.local/share/applications
 ln -sv .config/applications/ ~/.local/share/applications/
 
 echo "Done"

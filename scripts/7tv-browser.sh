@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 
-# CONFIG
 # how much emotes to fetch from 7tv
 limit=100
-# chafa image format, one of [iterm, kitty, sixels, symbols]
-chafa_format="sixels"
 
 die() {
   printf '\033[31m%s\033[0m\n' "$@"
@@ -67,7 +64,7 @@ fzf \
       rm /tmp/7tv-browser-curl-stdout; \
     fi; \
 
-    chafa -f $chafa_format -O 9 --scale max --view-size \${FZF_PREVIEW_COLUMNS}x\${FZF_PREVIEW_LINES} $cache_dir/\"\${id}.png\";
+    chafa -f sixels -O 9 --scale max --view-size \${FZF_PREVIEW_COLUMNS}x\${FZF_PREVIEW_LINES} $cache_dir/\"\${id}.png\";
   " \
   --nth '1' \
   --with-nth '1' \

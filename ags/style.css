@@ -6,7 +6,7 @@
   background: #343F44;
   min-height: 26px;
   padding-top: 0px;
-  padding-bottom: 0px
+  padding-bottom: 0px;
 }
 
 .widget {
@@ -26,11 +26,12 @@
   background: #475258;
 }
 
-.workspace-button {
+.workspace-button, .workspace-button * {
   min-width: 12px;
 }
 
 separator {
-  background: #475258;
+  /*background: #475258;*/
+  background: #343F44;
   min-width: 3px;
 }

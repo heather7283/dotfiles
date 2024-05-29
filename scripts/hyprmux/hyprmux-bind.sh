@@ -41,7 +41,7 @@ echo "target_tmux_window_id: $target_tmux_window_id"
 echo "source_hyprland_window_address: $source_hyprland_window_address"
 
 # array of all tmux hooks we will be listening to, they are set up in a loop later
-hooks=("window-layout-changed" "after-new-window" "after-select-window" "window-unlinked")
+hooks=("window-layout-changed" "after-new-window" "after-select-window" "window-unlinked" "after-select-pane")
 
 # check if there are hooks for this source window already
 if tmux show-hooks | grep -qe "$source_hyprland_window_address" || \
@@ -56,6 +56,7 @@ setup-hooks() {
   # argv for hyprmux-hook:
   #   hook_name
   #   target_tmux_pane_id
+  #   target_tmux_window_id
   #   source_hyprland_window_address
   #   target_hyprland_window_address
   echo_important "setting up hooks"
@@ -91,7 +92,7 @@ setup-hooks() {
       -p -t "$target_tmux_pane_id" \
       -w -t "$target_tmux_window_id" \
       "$hook" \
-      "run-shell -b 'exec ~/.config/scripts/hyprmux/hyprmux-hook.sh #{hook} $target_tmux_pane_id $source_hyprland_window_address $target_hyprland_window_address >/dev/null'" && echo_success "ok"
+      "run-shell -b 'exec ~/.config/scripts/hyprmux/hyprmux-hook.sh #{hook} $target_tmux_pane_id $target_tmux_window_id $source_hyprland_window_address $target_hyprland_window_address >/dev/null'" && echo_success "ok"
   done
 }
 
@@ -149,7 +150,7 @@ setup-window() {
 reset-window() {
   echo_important "resetting window properties"
   hyprctl_wrapper setprop address:"$source_hyprland_window_address" nofocus 0
-  hyprctl_wrapper setprop address:"$source_hyprland_window_address" forcenoborder 0 lock
+  hyprctl_wrapper setprop address:"$source_hyprland_window_address" forcenoborder 0
 }
 
 cleanup() {
@@ -164,7 +165,7 @@ setup-window
 setup-hooks
 
 echo_important "calling inital hook"
-~/.config/scripts/hyprmux/hyprmux-hook.sh "initial" "$target_tmux_pane_id" "$source_hyprland_window_address" "$target_hyprland_window_address" >/dev/null
+~/.config/scripts/hyprmux/hyprmux-hook.sh "initial" "$target_tmux_pane_id" "$target_tmux_window_id" "$source_hyprland_window_address" "$target_hyprland_window_address" >/dev/null
 
 # hyprland socket listener that will stop the script if either source or target windows are closed
 listener() {
@@ -177,10 +178,15 @@ listener() {
         addr="0x${args}"
         if [ "$addr" = "$target_hyprland_window_address" ]; then
           echo_important "target window closed, exiting"
-          cleanup
         elif  [ "$addr" = "$source_hyprland_window_address" ]; then
           echo_important "source window closed, exiting"
-          cleanup
+        fi
+        break
+        ;;
+      activewindowv2)
+        addr="0x${args}"
+        if [ ! "$addr" = "$source_hyprland_window_address" ] && [ -n "$args" ]; then
+          hyprctl setprop address:"$source_hyprland_window_address" nofocus 1 lock
         fi
         ;;
     esac
