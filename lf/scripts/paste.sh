@@ -10,7 +10,9 @@ export IFS=$'\t\n'
 
 # don't use --backup option with busybox coreutils
 if mv 2>&1 | grep -qe 'BusyBox'; then
-  printf '\033[31mWarn: --backup not supported, possible overwrite\033[0m'
+  printf '\033[31mWarn: --backup not supported, possible overwrite; continue? [Y/n] \033[0m'
+  read -r -N 1 ans
+  if [ ! "$ans" = "y" ] && [ ! "$ans" = "Y" ]; then die "abort"; fi
   backup_arg=''
 else
   backup_arg='--backup=numbered'

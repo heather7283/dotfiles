@@ -13,7 +13,7 @@ case "$mime_description" in
     ;;
 esac
 
-if echo "$mime_description" | grep -qP '(.*)charset=(?!binary)'; then
+if [[ "$mime_description" =~ charset= ]] && [[ ! "$mime_description" =~ charset=binary ]]; then
   exec "$EDITOR" "$filename"
 fi
 

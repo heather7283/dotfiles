@@ -7,6 +7,11 @@ die() {
 
 # required to split filenames properly
 export IFS=$'\t\n'
+  
+# busybox ln doesn't support -t and -r flags
+if ln 2>&1 | grep -qe 'BusyBox'; then
+  die "busybox ln won't work, do it manually"
+fi
 
 link_type="$1"
 if [ ! "$link_type" = "hard" ] && [ ! "$link_type" = "symbolic" ]; then
@@ -55,11 +60,6 @@ elif [ "$link_type" = "symbolic" ] && [ "$relative" = "absolute" ]; then
     return "$?"
   }
 elif [ "$link_type" = "symbolic" ] && [ "$relative" = "relative" ]; then
-  # busybox ln doesn't support -r flag
-  if ln 2>&1 | grep -qe 'BusyBox'; then
-    die "busybox ln doesn't support relative links"
-  fi
-
   link_command() {
     ln -v -s -r -t "$target_dir" -- "${files[@]}" 2>"$stderr_file"
     return "$?"

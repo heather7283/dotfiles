@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 die() {
-  echo -n "mount-archive" >&2
-  if [ -n "$1" ]; then echo -n ": $1"; fi
+  printf '\033[31mmount-archive: %s\033[0m' "$@" >&2
   exit 1
 }
 
