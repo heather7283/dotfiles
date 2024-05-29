@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 die() {
-  echo -n "make_dir error" >&2
-  if [ -n "$1" ]; then echo -n ": $1" >&2; fi
+  printf '\033[31mmake-dir: %s\033[0m' "$@" >&2
   exit 1
 }
 

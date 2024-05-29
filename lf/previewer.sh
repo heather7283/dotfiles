@@ -58,7 +58,7 @@ case "$mime_description" in
     ;;
 esac
 
-if [ -z "$success" ] && echo "$mime_description" | grep -qP '(.*)charset=(?!binary)'; then
+if [ -z "$success" ] && [[ "$mime_description" =~ charset= ]] && [[ ! "$mime_description" =~ charset=binary ]]; then
   bat "$filename" || cat "$filename" && success="yes"
 fi
 

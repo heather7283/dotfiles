@@ -1,13 +1,20 @@
 #!/usr/bin/env bash
 
 die() {
-  echo -n "delete" >&2
-  if [ -n "$1" ]; then echo -n ": $1"; fi
+  printf '\033[31mdelete: %s\033[0m' "$@" >&2
   exit 1
 }
 
 # IFS: required to split filenames properly
 export IFS=$'\t\n'
+
+# don't use --backup option with busybox coreutils
+if mv 2>&1 | grep -qe 'BusyBox'; then
+  printf '\033[31mWarn: --backup not supported, possible overwrite\033[0m'
+  backup_arg=''
+else
+  backup_arg='--backup=numbered'
+fi
 
 # Die if there are no selected files; yes, it can happen
 if [ -z "$fx" ]; then die "no files selected"; fi
@@ -20,7 +27,7 @@ trash_dir=~/.trash/"$dir"
 # Determine if trash will be used
 # If file is not under HOME, don't use trash
 # (maybe check if files are on the same fs instead?)
-if echo "$fx" | grep -qvEe '^/home/heather/.*$'; then
+if echo "$fx" | grep -qvEe "^${HOME}.*$"; then
   printf "\033[31mWARN: not using trash!\033[0m "
   use_trash=0
 else
@@ -35,7 +42,7 @@ stderr_file="/tmp/lf-delete-stderr.$$"
 if [ "$use_trash" = 1 ]; then
   delete_command() {
     mkdir -p "$trash_dir" || die "failed to create $dir"
-    mv -v --backup=numbered -t "$trash_dir" -- $fx 2>"$stderr_file"
+    mv -v $backup_arg -t "$trash_dir" -- $fx 2>"$stderr_file"
   }
 else
   delete_command() {
@@ -53,7 +60,7 @@ delete_wrapper() {
   else
     if [ -n "$TMUX" ]; then
       printf "\033[31m[%d]: check %s for details\033[0m" "$exit_status" "$stderr_file"
-      ~/.config/lf/scripts/tmux-popup.sh -E -- nvim "$stderr_file"
+      ~/.config/lf/scripts/tmux-popup.sh -E -- "$EDITOR" "$stderr_file"
       rm "$stderr_file"
     else
       printf "\033[31m[%d]: check %s for details\033[0m" "$exit_status" "$stderr_file"

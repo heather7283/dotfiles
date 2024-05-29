@@ -183,9 +183,10 @@ alias fzfdiff='git status -s | \
 # ========== Envvars ==========
 which nvim >/dev/null && export MANPAGER='nvim -c ":set signcolumn=no" -c "Man!"'
 export LESS='--use-color --RAW-CONTROL-CHARS'
+export BASH_ENV=~/.config/bash/non-interactive.sh
 
 typeset -U path
-path=(. $path)
+path=(. ~/bin/ $path)
 # ========== Envvars ==========
 
 

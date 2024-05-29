@@ -72,8 +72,16 @@ if [ -z "$e_flag" ]; then
   fi
 fi
 
-if [[ "$width" =~ %$ ]]; then w_percent=1; else w_percent=0; fi
-if [[ "$height" =~ %$ ]]; then h_percent=1; else h_percent=0; fi
+popup_border_lines="$(tmux show-options -Apv popup-border-lines)"
+
+if [[ "$width" =~ %$ ]]; then w_percent=1; else
+  if [ ! "$popup_border_lines" = "none" ]; then width=$(( width + 2 )); fi
+  w_percent=0;
+fi
+if [[ "$height" =~ %$ ]]; then h_percent=1; else
+  if [ ! "$popup_border_lines" = "none" ]; then height=$(( height + 2 )); fi
+  h_percent=0;
+fi
 
 IFS=' ' read x y w h < <(tmux display-message -p \
   "scale = 2; 

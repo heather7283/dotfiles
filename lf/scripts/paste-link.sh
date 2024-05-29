@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 die() {
-  echo -n "paste link" >&2
-  if [ -n "$1" ]; then echo -n ": $1"; fi
+  printf '\033[31mpaste-link: %s\033[0m' "$@" >&2
   exit 1
 }
 
@@ -43,7 +42,7 @@ target_dir="$PWD"
 if [ ! -d "$target_dir" ]; then die "$target_dir is not a directory"; fi
 
 # stderr from mv and cp commands will be redirected here
-stderr_file="/tmp/lf-delete-stderr.$$"
+stderr_file="/tmp/lf-paste-link-stderr.$$"
 
 if [ "$link_type" = "hard" ]; then
   link_command() {
@@ -56,6 +55,11 @@ elif [ "$link_type" = "symbolic" ] && [ "$relative" = "absolute" ]; then
     return "$?"
   }
 elif [ "$link_type" = "symbolic" ] && [ "$relative" = "relative" ]; then
+  # busybox ln doesn't support -r flag
+  if ln 2>&1 | grep -qe 'BusyBox'; then
+    die "busybox ln doesn't support relative links"
+  fi
+
   link_command() {
     ln -v -s -r -t "$target_dir" -- "${files[@]}" 2>"$stderr_file"
     return "$?"
@@ -74,7 +78,7 @@ link_wrapper() {
   else
     if [ -n "$TMUX" ]; then
       printf "\033[31m[%d]: check %s for details\033[0m" "$exit_status" "$stderr_file"
-      ~/.config/lf/scripts/tmux-popup.sh -E -- nvim "$stderr_file"
+      ~/.config/lf/scripts/tmux-popup.sh -E -- "$EDITOR" "$stderr_file"
       rm "$stderr_file"
     else
       printf "\033[31m[%d]: check %s for details\033[0m" "$exit_status" "$stderr_file"

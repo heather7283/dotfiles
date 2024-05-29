@@ -14,7 +14,7 @@ case "$mime_description" in
 esac
 
 if echo "$mime_description" | grep -qP '(.*)charset=(?!binary)'; then
-  exec nvim "$filename"
+  exec "$EDITOR" "$filename"
 fi
 
 exec xdg-open "$filename"
