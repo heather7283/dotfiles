@@ -18,11 +18,11 @@ case "$HOST" in
   "FA506IH")
     export PS1="%B %1~ %0(?.:З.>:З)%b ";;
   "QboxBlue")
-    export PS1="%F{blue}%B%n@%m%b%f %1~%B%(#.#.$)%b ";;
+    export PS1="%F{blue}%B%n@%m%b%f %1~ %B%(#.#.$)%b ";;
 esac
 
 if [ -n "$TERMUX_VERSION" ]; then
-  export PS1="%F{green}%B%n@%m%b%f %1~%B%(#.#.$)%b "
+  export PS1="%F{green}%B%n@%m%b%f %1~ %B%(#.#.$)%b "
 fi
 # ========== Prompt ==========
 
