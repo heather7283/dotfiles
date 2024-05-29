@@ -7,7 +7,7 @@
         "percent": {
             "type": 0
         }, // disable percent
-        "color": "1;38;2;167;192;128",
+        "color": "blue",
         "disableLinewrap": true,
     },
     "modules": [
