@@ -8,16 +8,6 @@ die() {
 # IFS: required to split filenames properly
 export IFS=$'\t\n'
 
-# don't use --backup option with busybox coreutils
-if mv 2>&1 | grep -qe 'BusyBox'; then
-  printf '\033[31mWarn: --backup not supported, possible overwrite; continue? [Y/n] \033[0m'
-  read -r -N 1 ans
-  if [ ! "$ans" = "y" ] && [ ! "$ans" = "Y" ]; then die "abort"; fi
-  backup_arg=''
-else
-  backup_arg='--backup=numbered'
-fi
-
 # Die if there are no selected files; yes, it can happen
 if [ -z "$fx" ]; then die "no files selected"; fi
 
@@ -34,6 +24,15 @@ if echo "$fx" | grep -qvEe "^${HOME}.*$"; then
   use_trash=0
 else
   use_trash=1
+  # don't use --backup option with busybox coreutils
+  if mv 2>&1 | grep -qe 'BusyBox'; then
+    printf '\033[31mWarn: --backup not supported, possible overwrite; continue? [Y/n] \033[0m'
+    read -r -N 1 ans
+    if [ ! "$ans" = "y" ] && [ ! "$ans" = "Y" ]; then die "abort"; fi
+    backup_arg=''
+  else
+    backup_arg='--backup=numbered'
+  fi
 fi
 
 # stderr from rm and mv commands will be redirected to this file

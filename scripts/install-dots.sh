@@ -19,14 +19,14 @@ if [ ! -d ~/.config/bin ]; then
   exit 1
 fi
 rm -rfv ~/bin
-ln -sv .config/bin/ ~/bin
+ln -sv .config/bin ~/bin
 
 if [ ! -d ~/.config/applications/ ]; then
   echo "~/.config/applications/ not found, fix your repo bruh"
   exit 1
 fi
 rm -rfv ~/.local/share/applications
-ln -sv .config/applications/ ~/.local/share/applications
+ln -sv .config/applications ~/.local/share/applications
 
 echo "Done"
 echo "Make sure to put this in /etc/zsh/zshenv or whatever:"
