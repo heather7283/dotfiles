@@ -65,26 +65,11 @@ cmd copy-file &{{
   fi
 }}
 
-cmd make-dir %{{
-  echo -n "Directory name: "
-  read dirname
-  if [ -z "$dirname" ]; then
-    exit
-  fi
-  if [ -d "$dirname" ]; then
-    echo "Error:"
-    echo "$dirname already exists"
-  fi
-  
-  echo "Creating directory $dirname"
-  mkdir --parents "$dirname"
-}}
-
 cmd make-file %exec ~/.config/lf/scripts/make-file.sh
 cmd make-dir %exec ~/.config/lf/scripts/make-dir.sh
 cmd make-symlink %exec ~/.config/lf/scripts/make-symlink.sh
 
-cmd delete %exec ~/.config/lf/scripts/delete.sh
+cmd del %exec ~/.config/lf/scripts/delete.sh
 cmd rename %exec ~/.config/lf/scripts/rename.sh
 cmd paste %exec ~/.config/lf/scripts/paste.sh
 
@@ -93,6 +78,7 @@ cmd paste-symlink-absolute %exec ~/.config/lf/scripts/paste-link.sh symbolic abs
 cmd paste-symlink-relative %exec ~/.config/lf/scripts/paste-link.sh symbolic relative
 
 cmd chmod %chmod +x "$f"
+cmd du %du -hs . 2>/dev/null
 
 cmd quit-cd &{{
   echo -n "$PWD" >"$lf_cd_file"
@@ -115,7 +101,7 @@ cmd goto-symlink-target &{{
 
 cmd fzf-jump ${{
   # dont make -maxdepth too big uwu
-  res="$(find . -maxdepth 5 2>/dev/null | fzf --reverse --no-clear)"
+  res="$(find . -maxdepth 6 2>/dev/null | fzf --reverse --no-clear)"
   if [ -z "$res" ]; then exit; fi
 
   if [ -d "$res" ]; then

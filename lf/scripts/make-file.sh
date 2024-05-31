@@ -1,43 +1,21 @@
 #!/usr/bin/env bash
 
-die() {
-  printf '\033[31mmake-file: %s\033[0m' "$@" >&2
-  exit 1
-}
+export _script_name="make-file"
 
-export IFS=$'\t\n'
+# shellcheck source=/home/heather/.config/lf/scripts/common-defs.sh
+source ~/.config/lf/scripts/common-defs.sh
 
-if [ -z "$TMUX" ]; then
-  echo -n "filename: "
-  read -r filename
+name="$(read_line "file name: ")"
 
-  if [ -z "$filename" ]; then
-    die "empty filename"
-  fi
+if [ ! $? = 0 ]; then
+  exit
+fi
 
-  if [ -e "$filename" ]; then
-    die "$filename already exists"
-  fi
-
-  touch "$filename"
+if [ -z "$name" ]; then
+  echo_info "empty file name"
+elif [ -e "$name" ]; then
+  die "$name already exists"
 else
-  ~/.config/lf/scripts/tmux-popup.sh -w 70% -h 2 -EE -- bash -c '
-    IFS='"$(printf '%q' "$IFS")"'
-    
-    cd '"$(printf '%q' "$PWD")"'
-    
-    echo "filename:"
-    filename="$(zsh-readline)"
-    if [ -z "$filename" ]; then
-      exit 0
-    fi
-
-    if [ -e "$filename" ]; then
-      echo "$filename already exists"
-      exit 1
-    fi
-
-    touch "$filename"
-  '
+  touch "$name"
 fi
 

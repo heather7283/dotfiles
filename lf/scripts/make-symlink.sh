@@ -1,48 +1,22 @@
 #!/usr/bin/env bash
 
-die() {
-  printf '\033[31mmake-symlink: %s\033[0m' "$@" >&2
-  exit 1
-}
+export _script_name="make-symlink"
 
-export IFS=$'\t\n'
+# shellcheck source=/home/heather/.config/lf/scripts/common-defs.sh
+source ~/.config/lf/scripts/common-defs.sh
 
-if [ -z "$TMUX" ]; then
-  echo -n "link name: "
-  read -r linkname
+# TODO: make both prompts appear in the same tmux popup
+name="$(read_line "link name: ")"
+if [ ! $? = 0 ]; then exit; fi
 
-  if [ -z "$linkname" ]; then
-    die "empty link name"
-  fi
-
-  echo -n "link target: "
-  read -r linktgt
-
-  if [ -z "$linktgt" ]; then
-    die "empty link target"
-  fi
-
-  ln -s "$linktgt" "$linkname"
+if [ -z "$name" ]; then
+  echo_info "empty link name"
 else
-  ~/.config/lf/scripts/tmux-popup.sh -w 70% -h 4 -EE -- bash -c '
-    IFS='"$(printf '%q' "$IFS")"'
-    
-    cd '"$(printf '%q' "$PWD")"'
-    
-    echo "link name:"
-    linkname="$(zsh-readline)"
-    if [ -z "$linkname" ]; then
-      exit 0
-    fi
-
-    echo "link target:"
-    linktgt="$(zsh-readline)"
-    if [ -z "$linktgt" ]; then
-      echo "Empty link target"
-      exit 1
-    fi
-
-    ln -s "$linktgt" "$linkname"
-  '
+  target="$(read_line "link target: ")"
+  if [ -z "$target" ]; then
+    echo_info "empty link target"
+  else
+    ln -sv "$target" "$name"
+  fi
 fi
 

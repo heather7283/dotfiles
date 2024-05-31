@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-die() {
-  printf '\033[31mmount-archive: %s\033[0m' "$@" >&2
-  exit 1
-}
+export _script_name="make-symlink"
+
+# shellcheck source=/home/heather/.config/lf/scripts/common-defs.sh
+source ~/.config/lf/scripts/common-defs.sh
 
 archive="$(realpath "$f")"
 if [ -z "$archive" ]; then die "no filename provided"; fi
@@ -49,7 +49,7 @@ lf -remote "send $id cmd on-cd &\
 #  ratarmount -u $mountpoint; \
 #  rmdir $mountpoint"
 
-# TODO: make on-cd and on-quit cmds more flexible somehow,
+# TODO: make on-cd and on-quit cmds more flexible
 # to allow multiple mounts at the same time
 # Maybe implement hook system or something like this?
 

@@ -1,34 +1,19 @@
 #!/usr/bin/env bash
 
-die() {
-  printf '\033[31mmake-dir: %s\033[0m' "$@" >&2
-  exit 1
-}
+export _script_name="make-dir"
 
-export IFS=$'\t\n'
+# shellcheck source=/home/heather/.config/lf/scripts/common-defs.sh
+source ~/.config/lf/scripts/common-defs.sh
 
-if [ -z "$TMUX" ]; then
-  echo -n "dirname: "
-  read -r dirname
+name="$(read_line "dir name: ")"
 
-  if [ -z "$dirname" ]; then
-    die "empty dir name"
-  fi
-  
-  mkdir -p "$dirname"
+if [ ! $? = 0 ]; then
+  exit
+fi
+
+if [ -z "$name" ]; then
+  echo_info "empty directory name"
 else
-  ~/.config/lf/scripts/tmux-popup.sh -w 70% -h 2 -EE -- bash -c '
-    IFS='"$(printf '%q' "$IFS")"'
-    
-    cd '"$(printf '%q' "$PWD")"'
-
-    echo "dirname:"
-    dirname="$(zsh-readline)"
-    if [ -z "$dirname" ]; then
-      exit 0
-    fi
-
-    mkdir -p "$dirname"
-  '
+  mkdir -pv "$name"
 fi
 
