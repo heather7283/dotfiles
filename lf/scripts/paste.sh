@@ -1,19 +1,17 @@
 #!/usr/bin/env bash
 
-die() {
-  printf '\033[31mpaste: %s\033[0m' "$@" >&2
-  exit 1
-}
+export _script_name="make-symlink"
 
-# required to split filenames properly
-export IFS=$'\t\n'
+# shellcheck source=/home/heather/.config/lf/scripts/common-defs.sh
+source ~/.config/lf/scripts/common-defs.sh
 
 # don't use --backup option with busybox coreutils
-if mv 2>&1 | grep -qe 'BusyBox'; then
-  printf '\033[31mWarn: --backup not supported, possible overwrite; continue? [Y/n] \033[0m'
-  read -r -N 1 ans
-  if [ ! "$ans" = "y" ] && [ ! "$ans" = "Y" ]; then die "abort"; fi
-  backup_arg=''
+if detect_busybox; then
+  if ask_warn "--backup not supported, possible overwrite; continue?" "Y"; then
+    backup_arg=''
+  else
+    die "abort"
+  fi
 else
   backup_arg='--backup=numbered'
 fi
@@ -75,18 +73,19 @@ paste_wrapper() {
   # display error message if cp/mv exited with non-zero exit code
   wait "$cmd_pid"
   exit_status="$?"
-  if [ "$exit_status" = 0 ]; then
-    rm "$stderr_file"
-  else
+
+  if [ ! $exit_status = 0 ]; then
+    echo_err "[%d]: check %s for details" "$exit_status" "$stderr_file"
     if [ -n "$TMUX" ]; then
-      printf "\033[31m[%d]: check %s for details\033[0m" "$exit_status" "$stderr_file"
       ~/.config/lf/scripts/tmux-popup.sh -E -- "$EDITOR" "$stderr_file"
       rm "$stderr_file"
-    else
-      printf "\033[31m[%d]: check %s for details\033[0m" "$exit_status" "$stderr_file"
     fi
+  else
+    rm "$stderr_file"
   fi
+
+  return $exit_status
 }
 
-paste_wrapper
+if paste_wrapper; then :reload; fi
 

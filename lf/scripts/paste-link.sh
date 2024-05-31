@@ -1,15 +1,12 @@
 #!/usr/bin/env bash
 
-die() {
-  printf '\033[31mpaste-link: %s\033[0m' "$@" >&2
-  exit 1
-}
+export _script_name="make-symlink"
 
-# required to split filenames properly
-export IFS=$'\t\n'
+# shellcheck source=/home/heather/.config/lf/scripts/common-defs.sh
+source ~/.config/lf/scripts/common-defs.sh
   
 # busybox ln doesn't support -t and -r flags
-if ln 2>&1 | grep -qe 'BusyBox'; then
+if detect_busybox; then
   die "busybox ln won't work, do it manually"
 fi
 
@@ -46,7 +43,7 @@ if [ ${#files[@]} -eq 0 ]; then die "no files in buffer"; fi
 target_dir="$PWD"
 if [ ! -d "$target_dir" ]; then die "$target_dir is not a directory"; fi
 
-# stderr from mv and cp commands will be redirected here
+# stderr from ln command will be redirected here
 stderr_file="/tmp/lf-paste-link-stderr.$$"
 
 if [ "$link_type" = "hard" ]; then
@@ -68,21 +65,19 @@ else
   die "wrong options: $link_type $relative"
 fi
 
+# display error message if ln exited with non-zero exit code
 link_wrapper() {
   link_command
-
-  # display error message if ln exited with non-zero exit code
   exit_status="$?"
-  if [ "$exit_status" = 0 ]; then
-    rm "$stderr_file"
-  else
+
+  if [ ! "$exit_status" = 0 ]; then
+    echo_err "[%d]: check %s for details" "$exit_status" "$stderr_file"
     if [ -n "$TMUX" ]; then
-      printf "\033[31m[%d]: check %s for details\033[0m" "$exit_status" "$stderr_file"
       ~/.config/lf/scripts/tmux-popup.sh -E -- "$EDITOR" "$stderr_file"
       rm "$stderr_file"
-    else
-      printf "\033[31m[%d]: check %s for details\033[0m" "$exit_status" "$stderr_file"
     fi
+  else
+    rm "$stderr_file"
   fi
 }
 
