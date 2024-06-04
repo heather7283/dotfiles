@@ -1,0 +1,8 @@
+[Unit]
+Description=Foot server for foot popups
+
+[Service]
+Type=simple
+ExecStart=foot --server=/tmp/foot-popup-server.sock
+Restart=always
+
