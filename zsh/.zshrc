@@ -133,7 +133,7 @@ fzf-history-search() {
   # do nothing if less than 2 lines in history
   if [ "$#history" -lt 2 ]; then return; fi
 
-  item="$(fc -rl 0 -1 | ftb-tmux-popup --with-nth 2.. --nth 2..)"
+  item="$(fc -rl 0 -1 | ftb-tmux-popup --with-nth 2.. --scheme=history)"
   zle vi-fetch-history -n "$item"
 }
 zle -N fzf-history-search
@@ -142,7 +142,7 @@ bindkey -M vicmd '\C-r' fzf-history-search
 
 # paste selected file path into command line
 fzf-file-search() {
-  LBUFFER="${LBUFFER}$(find . -maxdepth 10 2>/dev/null | fzf --height=~50% --layout=reverse)"
+  LBUFFER="${LBUFFER}$(find . -maxdepth 6 2>/dev/null | fzf --height=~50% --layout=reverse)"
   zle reset-prompt
 }
 zle -N fzf-file-search
@@ -169,6 +169,10 @@ alias hyprrun='hyprctl dispatch exec -- '
 alias cal='cal --year --monday'
 alias e='exec'
 
+alias ULTRAKILL='kill -KILL'
+alias ULTRAPKILL='pkill -KILL'
+alias ULTRAKILLALL='killall -KILL'
+
 alias mkvenv='python3 -m venv venv'
 alias venv='source venv/bin/activate'
 alias unvenv='deactivate'
@@ -191,6 +195,10 @@ path=(. ~/bin/ $path)
 
 
 # ========== Functions ==========
+# run ls after every cd
+ls_after_cd() { ll }
+chpwd_functions+=(ls_after_cd)
+
 # Wrapper for lf that allows to cd into last selected directory
 lf() {
   export lf_cd_file="/tmp/lfcd.$$"
