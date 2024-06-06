@@ -34,6 +34,7 @@ elif [[ "$item" =~ ^https:\/\/www.youtube.com\/watch\?v= ]]; then
 # youtube
 elif [[ "$item" =~ ^https:\/\/youtu.be\/ ]]; then
   url="${item#https://youtu.be/}"
+  url="${url%\?*}"
   curl --no-progress-meter "https://img.youtube.com/vi/$url/3.jpg" | chafa \
     -f sixels \
     --align center \

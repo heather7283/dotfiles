@@ -601,6 +601,9 @@
         },
         "WebScreenShareFixes": {
             "enabled": true
+        },
+        "MessageUpdaterAPI": {
+            "enabled": true
         }
     },
     "notifications": {
@@ -613,6 +616,6 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1717072629243
+        "settingsSyncVersion": 1717231271263
     }
 }

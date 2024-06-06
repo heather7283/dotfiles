@@ -14,6 +14,6 @@ fi
 if [ -z "$name" ]; then
   echo_info "empty directory name"
 else
-  mkdir -pv "$name"
+  mkdir -pv "$name" && :reload
 fi
 
