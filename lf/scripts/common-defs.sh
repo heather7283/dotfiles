@@ -1,16 +1,56 @@
+if [ -z "$_script_name" ]; then _script_name="common-defs"; fi
+
 echo_warn() {
   # bold, yellow
-  printf '\033[1;33m[%s]: %s\033[0m\n' "$_script_name" "$1" >&2
+  printf '\033[1;33m[%s] %s\033[0m\n' "$_script_name" "$1" >&2
 }
 
 echo_err() {
   # bold, red 
-  printf '\033[1;31m[%s]: %s\033[0m\n' "$_script_name" "$1" >&2
+  printf '\033[1;31m[%s] %s\033[0m\n' "$_script_name" "$1" >&2
 }
 
 echo_info() {
   # no special effects
   printf '[%s] %s\n' "$_script_name" "$1" >&2
+}
+
+die() {
+  echo_err "$1"
+  exit 1
+}
+
+# check if lf data dir exists
+if [ -n "$LF_DATA_HOME" ]; then
+  _lf_data_dir="${LF_DATA_HOME//\/\//\/}/lf"
+else
+  _lf_data_dir=~/.local/share/lf
+fi
+
+
+if [ ! -d "$_lf_data_dir" ]; then
+  mkdir -p "$_lf_data_dir" || die "unable to create data dir $_lf_data_dir"
+fi
+# check if lf client id available in environment
+if [ -z "$id" ]; then
+  die "unable to determine lf client id"
+else
+  _lf_client_id="$id"
+fi
+# create lf data dir for this specific client
+_lf_client_data_dir="${_lf_data_dir}/${id}"
+if [ ! -d "$_lf_client_data_dir" ]; then
+  mkdir -p "$_lf_client_data_dir" || die "unable to create data dir $_lf_client_data_dir"
+fi
+
+mktmpfile() {
+  _name="${1:-tmpfile}"
+  mktemp -p "$_lf_client_data_dir" "${_script_name}-${_name}.XXXXXX"
+}
+
+mktmpdir() {
+  _name="${1:-tmpdir}"
+  mktemp -d -p "$_lf_client_data_dir" "${_script_name}-${_name}.XXXXXX"
 }
 
 if [ -z "$TMUX" ]; then
@@ -102,37 +142,90 @@ else
   }
 
   read_line() {
+    _tmpfile="$(mktmpfile "read_line")"
+    if [ -z "$_tmpfile" ]; then die "unable to create temp file"; fi
     ~/.config/lf/scripts/tmux-popup.sh -w 70% -h 2 -E -- bash -c '
       _script_name='"$(printf '%q' "$_script_name")"'
       _prompt='"$(printf '%q' "[${_script_name}] ${1}")"'
       _initial_string='"$(printf '%q' "$2")"'
+      _tmp_read_line_file='"$(printf '%q' "$_tmpfile")"'
       
       _ans="$(zsh-readline -p "$_prompt" -s "$_initial_string")"
       _exitcode=$?
-      printf "%s" "$_ans" >/tmp/lf-read-line
+      printf "%s" "$_ans" >"$_tmp_read_line_file"
       exit $_exitcode
     '
     _exitcode=$?
-    _ans="$(cat /tmp/lf-read-line 2>/dev/null)"
-    rm -f /tmp/lf-read-line
+    _ans="$(cat "$_tmpfile" 2>/dev/null)"
+    rm -f "$_tmpfile"
     printf '%s' "$_ans"
     return $_exitcode
   }
 fi
 
-die() {
-  echo_err "$1"
-  exit 1
-}
-
 detect_busybox() {
   mv 2>&1 | grep -qe 'BusyBox'
   return $?
 }
+  
+stderr_wrapper() {
+  if [ -z "$1" ]; then die "no command provided for stderr wrapper"; fi
+  cmd="$1"
+  if ! command -v "$cmd" >/dev/null; then
+    die "$cmd not found"
+  fi
+
+  _stderr_file="$(mktmpfile "stderr_wrapper-${cmd}")"
+  if [ -z "$_stderr_file" ]; then die "unable to create temp file"; fi
+  
+  # Call wrapped command
+  shift 1
+  "$cmd" "$@" 2>"$_stderr_file"
+  _exit_status="$?"
+
+  if [ ! "$_exit_status" = 0 ]; then
+    echo_err "${_exit_status}: check ${_stderr_file} for details"
+    if [ -n "$TMUX" ]; then
+      ~/.config/lf/scripts/tmux-popup.sh -E -- "$EDITOR" "$_stderr_file"
+      rm "$_stderr_file"
+    fi
+  else
+    rm "$_stderr_file"
+  fi
+
+  return $_exit_status
+}
+
+#progress_wrapper() {
+#  if [ -z "$1" ]; then die "no command provided for progress wrapper"; fi
+#  cmd="$1"
+#  if command -v "$cmd" >/dev/null; then :; else
+#    die "$cmd not found"
+#  fi
+#
+#  # monitor file moving/copying using `progress` utility
+#  if command -v progress >/dev/null; then
+#    { 
+#      while ps -p "$cmd_pid" >/dev/null; do
+#        progress --pid "$cmd_pid" --wait --wait-delay 0.25 | sed -n '2p'
+#      done
+#    } &
+#  fi
+#}
 
 :reload() {
   # reloads lf UI
-  lf -remote "send $id :reload"
+  lf -remote "send $_lf_client_id :reload"
+}
+
+:clean() {
+  # clean copy/paste buffer
+  lf -remote "send $_lf_client_id :clean"
+}
+
+:unselect() {
+  # clear selection
+  lf -remote "send $_lf_client_id :unselect"
 }
 
 # IFS: required to split filenames properly

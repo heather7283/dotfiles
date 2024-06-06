@@ -9,14 +9,10 @@
 # It is IMPORTANT to separate command from args with -- 
 # that's just how my stupid aah parser works
 
-die() {
-  if [ -n "$1" ]; then
-    echo "$1" >&2
-  else
-    echo "error" >&2
-  fi
-  exit 1
-}
+export _script_name="tmux-popup"
+
+# shellcheck source=/home/heather/.config/lf/scripts/common-defs.sh
+source ~/.config/lf/scripts/common-defs.sh
 
 if [ -z "$TMUX" ]; then
   die "TMUX envvar is not set, not running in tmux?"
@@ -108,5 +104,13 @@ IFS=' ' read x y w h < <(tmux display-message -p \
   print popup_height" | bc)
 x="${x%.*}"; y="${y%.*}"; w="${w%.*}"; h="${h%.*}"
 
-tmux display-popup -x "$x" -y "$y" -w "$w" -h "$h" $e_flag -- "$@"
+tmux display-popup \
+  -e id="$id" \
+  -e LF_DATA_HOME="$LF_DATA_HOME" \
+  -x "$x" \
+  -y "$y" \
+  -w "$w" \
+  -h "$h" \
+  $e_flag -- \
+  "$@"
 

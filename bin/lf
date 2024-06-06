@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
-export LF_DATA_HOME=/tmp/
+if [ -n "$TMPDIR" ]; then
+  export LF_DATA_HOME="${TMPDIR}"
+else
+  export LF_DATA_HOME=/tmp
+fi
 
 # set TERM to xterm bc without it colors are weird
 TERM=xterm-256color exec /usr/bin/lf "$@"

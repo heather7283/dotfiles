@@ -43,43 +43,24 @@ if [ ${#files[@]} -eq 0 ]; then die "no files in buffer"; fi
 target_dir="$PWD"
 if [ ! -d "$target_dir" ]; then die "$target_dir is not a directory"; fi
 
-# stderr from ln command will be redirected here
-stderr_file="/tmp/lf-paste-link-stderr.$$"
-
 if [ "$link_type" = "hard" ]; then
   link_command() {
-    ln -v -t "$target_dir" -- "${files[@]}" 2>"$stderr_file"
+    ln -v -t "$target_dir" -- "${files[@]}"
     return "$?"
   }
 elif [ "$link_type" = "symbolic" ] && [ "$relative" = "absolute" ]; then
   link_command() {
-    ln -v -s -t "$target_dir" -- "${files[@]}" 2>"$stderr_file"
+    ln -v -s -t "$target_dir" -- "${files[@]}"
     return "$?"
   }
 elif [ "$link_type" = "symbolic" ] && [ "$relative" = "relative" ]; then
   link_command() {
-    ln -v -s -r -t "$target_dir" -- "${files[@]}" 2>"$stderr_file"
+    ln -v -s -r -t "$target_dir" -- "${files[@]}"
     return "$?"
   }
 else
   die "wrong options: $link_type $relative"
 fi
 
-# display error message if ln exited with non-zero exit code
-link_wrapper() {
-  link_command
-  exit_status="$?"
-
-  if [ ! "$exit_status" = 0 ]; then
-    echo_err "[%d]: check %s for details" "$exit_status" "$stderr_file"
-    if [ -n "$TMUX" ]; then
-      ~/.config/lf/scripts/tmux-popup.sh -E -- "$EDITOR" "$stderr_file"
-      rm "$stderr_file"
-    fi
-  else
-    rm "$stderr_file"
-  fi
-}
-
-link_wrapper
+if stderr_wrapper link_command; then :reload; :clean; fi
 

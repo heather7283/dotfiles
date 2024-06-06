@@ -16,7 +16,7 @@ else
   if [ -z "$target" ]; then
     echo_info "empty link target"
   else
-    ln -sv "$target" "$name"
+    ln -sv "$target" "$name" && :reload
   fi
 fi
 
