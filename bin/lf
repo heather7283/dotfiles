@@ -7,5 +7,5 @@ else
 fi
 
 # set TERM to xterm bc without it colors are weird
-TERM=xterm-256color exec /usr/bin/lf "$@"
+TERM=foot exec /usr/bin/lf "$@"
 
