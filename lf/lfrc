@@ -121,6 +121,18 @@ cmd fzf-jump ${{
   lf -remote "send $id $cmd \"$res\""
 }}
 
+cmd fzf-bookmarks ${{
+  if [ ! -f ~/.config/gtk-3.0/bookmarks ]; then exit; fi
+  
+  res="$(sed -e 's/file:\/\///' ~/.config/gtk-3.0/bookmarks | fzf --reverse --no-clear)"
+  if [ -z "$res" ]; then exit; fi
+
+  # no idea what this sed does lol I copied it from lf wiki xdd
+  res="$(printf '%s' "$res" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+  # assuming that there are only directories in bookmarks
+  lf -remote "send $id cd \"$res\""
+}}
+
 map y
 map yy copy
 map yp copy-path
@@ -145,6 +157,7 @@ map Q quit-cd
 map gt goto-symlink-target
 
 map f fzf-jump
+map b fzf-bookmarks
 
 map a %~/.config/lf/scripts/mount-archive.sh
 
