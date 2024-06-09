@@ -54,3 +54,22 @@ g["loaded_ruby_provider"] = 0
 o.scrolloff = 8
 o.smoothscroll = true
 
+vim.diagnostic.config({
+  signs = {
+    text = {
+      --[vim.diagnostic.severity.ERROR] = '󰅚',
+      --[vim.diagnostic.severity.WARN] = '󰀪',
+      --[vim.diagnostic.severity.INFO] = '󰋽',
+      [vim.diagnostic.severity.ERROR] = '×',
+      [vim.diagnostic.severity.WARN] = '!',
+      [vim.diagnostic.severity.INFO] = 'i',
+      [vim.diagnostic.severity.HINT] = '󰌶',
+    }
+  },
+  virtual_text = {
+    virt_text_pos = "eol",
+    prefix = '●',
+  }
+})
+
+opt.termguicolors = true

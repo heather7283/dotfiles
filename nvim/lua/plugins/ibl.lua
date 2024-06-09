@@ -4,7 +4,8 @@ local options = {
     smart_indent_cap = true
   },
   scope = {
-    char = "│",
+    char = "┃",
+    show_start = false,
     show_end = false
   }
 }

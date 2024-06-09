@@ -19,21 +19,12 @@ local plugins = {
     "mason-lspconfig.nvim",
     dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" },
     config = function(_, opts)
-      require("mason-lspconfig").setup_handlers({
-        function(server_name)
-          require("lspconfig")[server_name].setup({})
-        end
-      })
+      require("plugins.lspconfig")
     end
   },
   {
     "neovim/nvim-lspconfig",
     event = "User FilePost",
-    config = function(_, opts)
-      require("mason-lspconfig").setup({
-        ensure_installed = { "pyright", "lua_ls", "bashls", "clangd", "tsserver", "texlab" }
-      })
-    end
   },
   {
     "williamboman/mason.nvim",
@@ -157,10 +148,7 @@ local plugins = {
     lazy = false,
     priority = 9999,
     config = function()
-      require("everforest").setup {
-        background = "medium",
-        transparent_background_level = 1,
-      }
+      require("everforest").setup(require("plugins.everforest"))
       require("everforest").load()
     end,
   }
