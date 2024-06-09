@@ -37,7 +37,6 @@ if [ ! -d "$hooks_dir" ]; then
   mkdir "$hooks_dir" || die "can't create directory $hooks_dir"
 fi
 
-last_hook_name="$(ls "$hooks_dir" | tail -n1)"
 hook_file_path="${hooks_dir}/hook_${RANDOM}.sh"
 echo "_self_path=$(printf '%q' "$hook_file_path");" >"$hook_file_path"
 echo "$hook_sript" >>"$hook_file_path"

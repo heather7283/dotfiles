@@ -218,9 +218,9 @@ stderr_wrapper() {
   lf -remote "send $_lf_client_id :reload"
 }
 
-:clean() {
+:clear() {
   # clean copy/paste buffer
-  lf -remote "send $_lf_client_id :clean"
+  lf -remote "send $_lf_client_id :clear"
 }
 
 :unselect() {

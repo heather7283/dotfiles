@@ -72,5 +72,5 @@ progress_wrapper() {
   return $exit_status
 }
   
-if stderr_wrapper progress_wrapper; then :reload; :clean; fi
+if stderr_wrapper progress_wrapper; then :reload; :clear; fi
 

@@ -62,5 +62,5 @@ else
   die "wrong options: $link_type $relative"
 fi
 
-if stderr_wrapper link_command; then :reload; :clean; fi
+if stderr_wrapper link_command; then :reload; :clear; fi
 

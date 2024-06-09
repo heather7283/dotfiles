@@ -21,7 +21,7 @@ if [ "${#item}" -le 1 ]; then
   delete_original
 # convert bmp to png and delete original bmp
 elif [[ "$item" =~ ^\[\[\ binary\ data\ [1-9][0-9]*\ .iB\ bmp ]]; then
-  if decode | convert BMP:- PNG:- | wl-copy; then
+  if decode | convert BMP:- PNG:- | cliphist store; then
     delete_original
   fi
 # download images that copy as funny html tag thingies, delete original

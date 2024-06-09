@@ -2,7 +2,7 @@
 
 # shell escape nightmare
 selected_entry="$(cliphist list | fzf \
-  -i \
+  --ignore-case \
   --no-multi \
   --no-clear \
   --with-nth 2 \
