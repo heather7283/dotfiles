@@ -229,5 +229,5 @@ stderr_wrapper() {
 }
 
 # IFS: required to split filenames properly
-export IFS=$'\t\n'
+export IFS=$'\n'
 

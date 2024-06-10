@@ -5,10 +5,10 @@ set dircounts
 # Sixel support
 set sixel
 # Field separator
-# This will most likely shit itself if we encounter a file with \t\n in its name
+# This will shit itself if we encounter a file with \n in its name
 # but this is so unlikely to happen that I will ignore such possibility (clueless)
-set ifs "\t\n"
-set filesep "\t\n"
+set ifs "\n"
+set filesep "\n"
 # Enable icons
 set icons
 # Enable mouse input
