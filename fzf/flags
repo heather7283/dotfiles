@@ -11,9 +11,11 @@
 --color=prompt:#3D484D
 --color=pointer:#A7C080
 --color=scrollbar:#7A8478
+--no-ansi
 --scrollbar=█
 --highlight-line
 --bind=ctrl-l:forward-char
 --bind=ctrl-h:backward-char
 --bind=ctrl-u:preview-half-page-up
 --bind=ctrl-d:preview-half-page-down
+--bind=resize:refresh-preview

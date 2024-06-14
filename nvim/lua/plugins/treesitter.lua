@@ -21,5 +21,11 @@ local options = {
   additional_vim_regex_highlighting = false,
 }
 
+vim.filetype.add({
+  pattern = {
+    [os.getenv("HOME").."/%.config/hypr/.*%.conf"] = "hyprlang"
+  }
+})
+
 return options
 

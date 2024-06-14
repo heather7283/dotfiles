@@ -155,6 +155,7 @@ map q quit-wrapped
 map Q quit-cd
 
 map gt goto-symlink-target
+map g/ :cd /
 
 map f fzf-jump
 map b fzf-bookmarks

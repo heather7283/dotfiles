@@ -7,6 +7,7 @@ selected_entry="$(cliphist list | fzf \
   --no-clear \
   --with-nth 2 \
   --delimiter $'\t' \
+  --scheme history \
   --bind "ctrl-o:become(hyprctl dispatch exec -- ~/.config/scripts/cliphist-fzf/opener.sh {1})" \
   --preview 'exec ~/.config/scripts/cliphist-fzf/preview.sh {}')"
 

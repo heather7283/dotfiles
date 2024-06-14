@@ -3,6 +3,7 @@
 #echo "$(date '+%Y-%m-%d %H:%M:%S') xdg-open was called with arguments: $@" >> ~/xdg-open-log.txt
 
 query="${1#file://}"
+query="${query//%20/ }" # I hate you telegram desktop
 
 if [[ "$query" =~ ^(https?:\/\/)(.*)$ ]]; then
   hyprctl dispatch exec -- firefox \'"$query"\'

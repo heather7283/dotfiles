@@ -3,6 +3,6 @@ Description=Clipboard History Manager
 
 [Service]
 Type=simple
-Environment=_BASH_CMD="cliphist store; ~/.config/scripts/cliphist-watch.sh"
+Environment=_BASH_CMD="cliphist store; exec <&-; exec ~/.config/scripts/cliphist-watch.sh"
 ExecStart=wl-paste --watch bash -c ${_BASH_CMD}
 

@@ -6,10 +6,10 @@
     "themeLinks": [],
     "enabledThemes": [
         "sharp_corners.css",
-        "no_animations.css",
         "color_scheme.css",
         "small_server_list.css",
-        "small_member_list.css"
+        "small_member_list.css",
+        "no_animations.css"
     ],
     "enableReactDevtools": false,
     "frameless": true,
@@ -367,9 +367,6 @@
         "ServerListIndicators": {
             "enabled": false
         },
-        "ServerProfile": {
-            "enabled": false
-        },
         "ShikiCodeblocks": {
             "enabled": false
         },
@@ -604,6 +601,18 @@
         },
         "MessageUpdaterAPI": {
             "enabled": true
+        },
+        "ServerInfo": {
+            "enabled": false
+        },
+        "AppleMusicRichPresence": {
+            "enabled": false
+        },
+        "CopyEmojiMarkdown": {
+            "enabled": false
+        },
+        "NoOnboardingDelay": {
+            "enabled": false
         }
     },
     "notifications": {
@@ -616,6 +625,6 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1717231271263
+        "settingsSyncVersion": 1717690588981
     }
 }

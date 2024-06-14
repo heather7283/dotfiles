@@ -24,6 +24,11 @@ elif [[ "$item" =~ ^\[\[\ binary\ data\ [1-9][0-9]*\ .iB\ bmp ]]; then
   if decode | convert BMP:- PNG:- | cliphist store; then
     delete_original
   fi
+# convert jpeg to png and delete original jpeg
+elif [[ "$item" =~ ^\[\[\ binary\ data\ [1-9][0-9]*\ .iB\ jpeg ]]; then
+  if decode | convert JPEG:- PNG:- | cliphist store; then
+    delete_original
+  fi
 # download images that copy as funny html tag thingies, delete original
 elif [[ "$item" =~ \<img ]]; then
   string="$(decode | grep -P '^<.*src="[^"]*".*>$')"

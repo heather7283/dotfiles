@@ -25,6 +25,8 @@ local plugins = {
   {
     "neovim/nvim-lspconfig",
     event = "User FilePost",
+    config = function(_, opts)
+    end
   },
   {
     "williamboman/mason.nvim",
@@ -58,15 +60,8 @@ local plugins = {
       },
       {
         "windwp/nvim-autopairs",
-        opts = {
-          fast_wrap = {},
-          disable_filetype = { "TelescopePrompt", "vim" },
-        },
         config = function(_, opts)
-          require("nvim-autopairs").setup(opts)
-
-          local cmp_autopairs = require "nvim-autopairs.completion.cmp"
-          require("cmp").event:on("confirm_done", cmp_autopairs.on_confirm_done())
+          require("plugins.autopairs")
         end
       },
       -- cmp sources
@@ -81,9 +76,18 @@ local plugins = {
     }
   },
 
+  {
+    "kylechui/nvim-surround",
+    event = "InsertEnter",
+    config = function(_, opts)
+      require("nvim-surround").setup(opts)
+    end
+  },
+
   -- treesitter
   {
     "nvim-treesitter/nvim-treesitter",
+    dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
     build = ":TSUpdate",
     event = { "BufReadPost", "BufNewFile" },
     cmd = { "TSInstall", "TSBufEnable", "TSBufDisable", "TSModuleInfo" },
@@ -91,6 +95,11 @@ local plugins = {
       require("nvim-treesitter.configs").setup(require("plugins.treesitter"))
     end
   },
+  {
+    "nvim-treesitter/nvim-treesitter-textobjects",
+    event = { "BufReadPost", "BufNewFile" }
+  },
+  
 
   -- DAP
   -- {
@@ -119,6 +128,15 @@ local plugins = {
       hooks.register(hooks.type.WHITESPACE, hooks.builtin.hide_first_space_indent_level)
       hooks.register(hooks.type.WHITESPACE, hooks.builtin.hide_first_tab_indent_level)
     end,
+  },
+
+  -- git integration
+  {
+    "lewis6991/gitsigns.nvim",
+    event = "User FilePost",
+    config = function(_, opts)
+      require("gitsigns").setup(require("plugins.gitsigns"))
+    end
   },
 
   -- File tree

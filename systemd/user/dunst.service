@@ -2,7 +2,6 @@
 Description=Dunst notification daemon
 
 [Service]
-Type=dbus
-BusName=org.freedesktop.Notifications
+Type=simple
 ExecStart=dunst
 

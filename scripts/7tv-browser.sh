@@ -8,16 +8,16 @@ die() {
   exit 1
 }
 
-depend() {
-  if command -v "$1" >/dev/null 2>&1; then :; else
-    die "$1 not installed"
-  fi
-}
-
-depend "fzf"
-depend "curl"
-depend "chafa"
-depend "magick"
+#depend() {
+#  if command -v "$1" >/dev/null 2>&1; then :; else
+#    die "$1 not installed"
+#  fi
+#}
+#
+#depend "fzf"
+#depend "curl"
+#depend "chafa"
+#depend "magick"
 
 cache_dir=~/.cache/7tv-browser
 if [ ! -d "$cache_dir" ]; then
@@ -69,5 +69,5 @@ fzf \
   --nth '1' \
   --with-nth '1' \
   --delimiter $'\t' \
-  --header 'Type query and press CTRL+R to fetch results'
+  --header 'CTRL+R to fetch results'
 
