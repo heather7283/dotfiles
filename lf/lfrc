@@ -165,7 +165,7 @@ map a %~/.config/lf/scripts/mount-archive.sh
 map . :set hidden!
 
 # cleanup on-quit hook
-&~/.config/lf/scripts/hooks/add-hook.sh 'on-quit' 'source ~/.config/lf/scripts/common-defs.sh; if [ -n "$_lf_client_data_dir" ]; then rm -r "$_lf_client_data_dir"; fi'
+&~/.config/lf/scripts/add-hook.sh 'on-quit' 'source ~/.config/lf/scripts/common-defs.sh; if [ -n "$_lf_client_data_dir" ]; then rm -r "$_lf_client_data_dir"; fi'
 
 # https://github.com/gokcehan/lf/issues/442
 cmap <backspace> cmd-left
