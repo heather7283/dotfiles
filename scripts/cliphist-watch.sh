@@ -16,25 +16,32 @@ decode() {
   echo "$full_item" | cliphist decode
 }
 
+length="${#item}"
+
 # don't save 1 character long items
-if [ "${#item}" -le 1 ]; then
+if [ "$length" -le 1 ]; then
   delete_original
-# convert bmp to png and delete original bmp
-elif [[ "$item" =~ ^\[\[\ binary\ data\ [1-9][0-9]*\ .iB\ bmp ]]; then
-  if decode | convert BMP:- PNG:- | cliphist store; then
+# don't conduct further checks for small items to not waste resources grepping
+elif [ "$length" -le 30 ]; then
+  exit
+fi
+
+# convert images to png (seems to be supported by most apps)
+# unnecessarily complicated regex because why the hell not
+if ftype=$(echo "$item" | grep -oPe '^\[\[\ binary\ data\ [1-9][0-9]{0,2}\ (Mi|Ki)?B\ \K(bmp|jpeg)(?=\ [1-9][0-9]*x[1-9][0-9]*\ \]\]$)'); then
+  if decode | convert "${ftype}:"- png:- | cliphist store; then
     delete_original
   fi
-# convert jpeg to png and delete original jpeg
-elif [[ "$item" =~ ^\[\[\ binary\ data\ [1-9][0-9]*\ .iB\ jpeg ]]; then
-  if decode | convert JPEG:- PNG:- | cliphist store; then
-    delete_original
-  fi
-# download images that copy as funny html tag thingies, delete original
-elif [[ "$item" =~ \<img ]]; then
-  string="$(decode | grep -P '^<.*src="[^"]*".*>$')"
-  if [ -n "$string" ]; then
-    url="$(echo "$string" | grep -oP 'src="\K[^"]*')"
-    if curl -L --no-progress-meter --fail "$url" | cliphist store; then
+# download images that copy as funny html thingies and store an actual image instead
+elif [[ "$item" = \<img* ]]; then
+  # this one is not that complicated but probably inefficient af
+  url="$(decode | grep -oPe '<img .*src="\K(.*)(?=")')"
+  if [ -n "$url" ]; then
+    # GOD I LOVE REGEX
+    ftype=$(echo "$url" | grep -oPe '\?format=\K(jpeg|jpg|bmp|webp|png)(?=[\?&])') # this is needed because discord is retarted
+    [ -z "$ftype" ] && ftype=$(echo "$url" | grep -oPe '\.\K(jpeg|jpg|bmp|webp|png)(?=\?)') # try to guess based on extension
+    
+    if curl -L --no-progress-meter --fail "$url" | convert "${ftype}:"- png:- | cliphist store; then
       delete_original
     fi
   fi
