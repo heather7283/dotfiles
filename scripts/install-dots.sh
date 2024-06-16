@@ -29,7 +29,7 @@ rm -rfv ~/.local/share/applications
 if [ ! -d ~/.local/share ]; then
   mkdir -pv ~/.local/share/
 fi
-ln -sv .config/applications ~/.local/share/applications
+ln -sv ~/.config/applications ~/.local/share/applications
 
 echo "Done"
 echo "Make sure to put this in /etc/zsh/zshenv or whatever:"
