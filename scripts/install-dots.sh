@@ -26,6 +26,9 @@ if [ ! -d ~/.config/applications/ ]; then
   exit 1
 fi
 rm -rfv ~/.local/share/applications
+if [ ! -d ~/.local/share ]; then
+  mkdir -pv ~/.local/share/
+fi
 ln -sv .config/applications ~/.local/share/applications
 
 echo "Done"
