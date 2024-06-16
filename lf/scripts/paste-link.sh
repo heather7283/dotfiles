@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-export _script_name="make-symlink"
+export _script_name="paste-link"
 
 # shellcheck source=/home/heather/.config/lf/scripts/common-defs.sh
 source ~/.config/lf/scripts/common-defs.sh
@@ -21,13 +21,7 @@ if [ "$link_type" = "symbolic" ]; then
   fi
 fi
 
-# file where current file selection and mode is kept
-if [ -n "$LF_DATA_HOME" ]; then
-  buffer_file="$LF_DATA_HOME/lf/files"
-else
-  buffer_file=~/.local/share/lf/files
-fi
-
+buffer_file="${_lf_data_dir}/files"
 if [ ! -f "$buffer_file" ]; then
   die "$buffer_file does not exist"
 fi
