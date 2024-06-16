@@ -19,6 +19,9 @@ case "$HOST" in
     export PS1="%B %1~ %0(?.:З.>:З)%b ";;
   "QboxBlue")
     export PS1="%F{blue}%B%n@%m%b%f %1~ %B%(#.#.$)%b ";;
+  "archlinux") # default hostname for archlinux VMs
+    export PS1="%B[VM] %n@%m%b %1~ %B%(#.#.$)%b ";;
+
 esac
 
 if [ -n "$TERMUX_VERSION" ]; then
@@ -80,7 +83,7 @@ zsh-plugins-install() {
 
 zsh-plugins-clean() {
   echo -n "Remove $_zsh_plugins_dir? [y/N] "
-  read confirm
+  read -q confirm
   if [ "$confirm" = "y" ]; then
     rm -rfv "$_zsh_plugins_dir"
   else
@@ -120,6 +123,7 @@ zle -N zle-keymap-select
 zle-line-init() {
   zle -K viins
   set-cursor-shape beam
+  _ln_help_displayed=0
 }
 zle -N zle-line-init
 # set beam cursor for each new prompt
@@ -149,6 +153,21 @@ zle -N fzf-file-search
 bindkey -M viins '\C-f' fzf-file-search
 bindkey -M vicmd '\C-f' fzf-file-search
 
+# remind about ln syntax :xdd:
+_ln_help_displayed=0
+zle-line-pre-redraw() {
+  if [ "$BUFFER" = "ln" ] && [ "$_ln_help_displayed" = 0 ]; then
+    echo
+    echo "ln [OPTION]... [-T] TARGET LINK_NAME"
+    echo "ln [OPTION]... TARGET"
+    echo "ln [OPTION]... TARGET... DIRECTORY"
+    echo "ln [OPTION]... -t DIRECTORY TARGET..."
+    zle reset-prompt
+    _ln_help_displayed=1
+  fi
+}
+zle -N zle-line-pre-redraw
+
 # move cursor in insert mode with Ctrl+hjkl
 bindkey -M viins '\C-h' vi-backward-char
 bindkey -M viins '\C-l' vi-forward-char
@@ -161,7 +180,9 @@ bindkey -M viins '^?' backward-delete-char
 
 
 # ========== Aliases ==========
-which eza >/dev/null && alias ll='eza --color=auto --icons=auto --long --no-quotes' || alias ll='ls -lhF --color=auto'
+which eza >/dev/null &&
+  alias ll='eza --color=auto --icons=auto --long --no-quotes --group-directories-first' ||
+  alias ll='ls -lhF --color=auto'
 which doas >/dev/null && alias sudo='doas'
 alias grep='grep --color=auto'
 alias neofetch='fastfetch'
@@ -172,10 +193,6 @@ alias e='exec'
 alias ULTRAKILL='kill -KILL'
 alias ULTRAPKILL='pkill -KILL'
 alias ULTRAKILLALL='killall -KILL'
-
-alias mkvenv='python3 -m venv venv'
-alias venv='source venv/bin/activate'
-alias unvenv='deactivate'
 
 alias apt='apt --no-install-recommends'
 alias fzfdiff='git status -s | \
@@ -190,11 +207,37 @@ export LESS='--use-color --RAW-CONTROL-CHARS'
 export BASH_ENV=~/.config/bash/non-interactive.sh
 
 typeset -U path
-path=(. ~/bin/ $path)
+path=(. ~/bin $path)
 # ========== Envvars ==========
 
 
 # ========== Functions ==========
+# least touch-starved linux user
+touch() {
+  if [ "$1" = "woman" ]; then
+    echo "Stop it, you pervert!"
+    return 1
+  else
+    command touch "$@"
+  fi
+}
+
+# python venv management
+mkvenv() {
+  if [ ! -d ./venv ]; then
+    python -m venv venv || return 
+    source venv/bin/activate || return
+    if [ -f requirements.txt ]; then
+      pip install -r requirements.txt
+    fi
+  else
+    echo -n "./venv exists, recreate? [y/N] "
+    if read -q; then rm -rf ./venv && mkvenv; fi
+  fi
+}
+alias venv='source venv/bin/activate'
+alias unvenv='deactivate'
+
 # run ls after every cd
 ls_after_cd() { ll }
 chpwd_functions+=(ls_after_cd)
@@ -203,7 +246,7 @@ chpwd_functions+=(ls_after_cd)
 lf() {
   export lf_cd_file="/tmp/lfcd.$$"
 
-  command lf $@
+  command lf "$@"
 
   __dir="$(cat "$lf_cd_file" 2>/dev/null)"
   if [ -n "$__dir" ]; then cd "$__dir"; fi
