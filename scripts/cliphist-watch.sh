@@ -30,7 +30,7 @@ fi
 # convert images to png (seems to be supported by most apps)
 # unnecessarily complicated regex because why the hell not
 if ftype=$(echo "$item" | grep -oPe '^\[\[\ binary\ data\ [1-9][0-9]{0,2}\ (Mi|Ki)?B\ \K(bmp|jpeg)(?=\ [1-9][0-9]*x[1-9][0-9]*\ \]\]$)'); then
-  if decode | convert "${ftype}:"- png:- | cliphist store; then
+  if decode | magick "${ftype}:"- png:- | cliphist store; then
     delete_original
   fi
 # download images that copy as funny html thingies and store an actual image instead
@@ -43,7 +43,7 @@ elif [[ "$item" = \<* ]]; then
     [ -z "$ftype" ] && ftype=$(echo "$url" | grep -oPe '\.\K(jpeg|jpg|bmp|webp|png)(?=\?)') # try to guess based on extension
     [ -n "$ftype" ] && ftype="${ftype}:"
     
-    if curl -L --no-progress-meter --fail "$url" | convert "${ftype}"- png:- | cliphist store; then
+    if curl -L --no-progress-meter --fail "$url" | magick "${ftype}"- png:- | cliphist store; then
       delete_original
     fi
   fi
