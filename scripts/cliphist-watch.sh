@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 
-set -x; exec 1>~/aboba 2>&1
 set -o pipefail
 
 # silence all output
-#exec 1>/dev/null
+exec 1>/dev/null
 
 full_item="$(cliphist list | head -n1)"
 item="$(echo "$full_item" | cut -d$'\t' -f2)"
@@ -40,7 +39,7 @@ elif [[ "$item" = \<* ]]; then
   if [ -n "$url" ]; then
     # GOD I LOVE REGEX
     ftype=$(echo "$url" | grep -oPe '\?format=\K(jpeg|jpg|bmp|webp|png)(?=[\?&])') # this is needed because discord is retarted
-    [ -z "$ftype" ] && ftype=$(echo "$url" | grep -oPe '\.\K(jpeg|jpg|bmp|webp|png)(?=\?)') # try to guess based on extension
+    #[ -z "$ftype" ] && ftype=$(echo "$url" | grep -oPe '\.\K(jpeg|jpg|bmp|webp|png)(?=\?)') # try to guess based on extension
     [ -n "$ftype" ] && ftype="${ftype}:"
     
     if curl -L --no-progress-meter --fail "$url" | magick "${ftype}"- png:- | cliphist store; then
