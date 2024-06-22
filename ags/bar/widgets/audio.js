@@ -37,7 +37,7 @@ const Audio = () => Widget.Button({
       VolumeIndicator()
     ]
   }),
-  on_clicked: () => Utils.execAsync('pavucontrol'),
+  on_clicked: () => Utils.execAsync('foot-popup pulsemixer'),
   class_name: 'widget',
 })
 
