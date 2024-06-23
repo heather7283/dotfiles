@@ -228,6 +228,11 @@ stderr_wrapper() {
   lf -remote "send $_lf_client_id :unselect"
 }
 
+:select() {
+  # put cursor on $1
+  lf -remote "send $_lf_client_id :select $1"
+}
+
 # IFS: required to split filenames properly
 export IFS=$'\n'
 

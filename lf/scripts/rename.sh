@@ -11,6 +11,6 @@ file="$f"
 new_name="$(read_line "new name: " "$(basename "$file")")"
 if [ -n "$new_name" ]; then
   dir_name="$(dirname "$file")"
-  mv -v "$file" "${dir_name}/${new_name}" && :reload
+  mv -v "$file" "${dir_name}/${new_name}" && :reload && :select "${dir_name}/${new_name}"
 fi
 
