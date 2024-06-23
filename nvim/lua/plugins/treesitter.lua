@@ -27,5 +27,8 @@ vim.filetype.add({
   }
 })
 
+-- looks acceptable
+vim.treesitter.language.register("bash", "execline")
+
 return options
 
