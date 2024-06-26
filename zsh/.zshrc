@@ -93,14 +93,16 @@ zsh-plugins-clean() {
 }
 
 zsh-plugins-update() {
-  _old_pwd="$PWD"
+  if [ -z "$(ls -A "$_zsh_plugins_dir")" ]; then
+    echo "no plugins in $_zsh_plugins_dir"
+    return
+  fi
+
   for _plugin_dir in "$_zsh_plugins_dir/"*; do
     echo "Updating $_plugin_dir"
-    cd "$_plugin_dir"
-    git pull
+    git -C "$_plugin_dir" pull
   done
-  cd "$_old_pwd"
-  unset _old_pwd _plugin_dir
+  unset _plugin_dir
 }
 # ========== Plugins ==========
 
@@ -181,8 +183,8 @@ bindkey -M viins '^?' backward-delete-char
 
 # ========== Aliases ==========
 which eza >/dev/null &&
-  alias ll='eza --color=auto --icons=auto --long --no-quotes --group-directories-first' ||
-  alias ll='ls -lhF --color=auto'
+  alias ll='eza --color=always --icons=always --long --no-quotes --group-directories-first' ||
+  alias ll='ls -lhF --color=always'
 which doas >/dev/null && alias sudo='doas'
 alias grep='grep --color=auto'
 alias neofetch='fastfetch'
@@ -239,7 +241,7 @@ alias venv='source venv/bin/activate'
 alias unvenv='deactivate'
 
 # run ls after every cd
-ls_after_cd() { ll }
+ls_after_cd() { ll | awk "BEGIN { extra = 0 } NR < int($LINES / 2) - 1 { print } NR >= int($LINES / 2) - 1 { extra += 1 } END { if (extra > 0) { print extra \" more items...\" } }" }
 chpwd_functions+=(ls_after_cd)
 
 # Wrapper for lf that allows to cd into last selected directory
