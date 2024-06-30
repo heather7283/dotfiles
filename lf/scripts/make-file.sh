@@ -16,6 +16,6 @@ if [ -z "$name" ]; then
 elif [ -e "$name" ]; then
   die "$name already exists"
 else
-  touch "$name" && :reload
+  touch "$name" && :reload && :select "$(realpath "$name")"
 fi
 

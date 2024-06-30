@@ -230,6 +230,9 @@ stderr_wrapper() {
 
 :select() {
   # put cursor on $1
+  if [[ "$1" = */.* ]]; then
+    lf -remote "send $_lf_client_id :set hidden"
+  fi
   lf -remote "send $_lf_client_id :select $1"
 }
 

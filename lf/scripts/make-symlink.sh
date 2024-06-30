@@ -16,7 +16,7 @@ else
   if [ -z "$target" ]; then
     echo_info "empty link target"
   else
-    ln -sv "$target" "$name" && :reload
+    ln -sv "$target" "$name" && :reload && :select "$(realpath "$name")"
   fi
 fi
 
