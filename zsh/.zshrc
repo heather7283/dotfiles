@@ -3,12 +3,12 @@
 bindkey -v
 # match files beginning with a . without explicitly specifying the dot
 setopt globdots
+# Additional completions
+fpath=("$HOME/.config/zsh/completions/" $fpath)
 # Load completions
 if [ ! -d ~/.cache/zsh/ ]; then mkdir -p ~/.cache/zsh/; fi
 autoload -Uz compinit && compinit -d ~/.cache/zsh/zcompdump
 zstyle ':completion:*' menu select
-# Additional completions
-fpath=("$HOME/.config/zsh/completions/" $fpath)
 # ========== General options ==========
 
 
