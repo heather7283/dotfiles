@@ -11,7 +11,7 @@ if [ -z "$fx" ]; then die "no files selected"; fi
 # Generate name for trash subdir (current datetime)
 dir="$(date '+%Y-%m-%dT%H:%M:%S')"
 if [ -z "$dir" ]; then die "failed to get current time"; fi
-trash_dir=~/.trash/"$dir"
+trash_dir=~/.local/share/Trash/"$dir"
 
 # Determine if trash will be used
 # If file is not under HOME, don't use trash
