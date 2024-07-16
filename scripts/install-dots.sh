@@ -1,11 +1,11 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 echo "This will overwrite following files and directories:"
 echo "~/.local/share/applications/"
 echo "~/bin"
 echo
-echo -n "All data in them will be lost! Continue? [y/N] "
-read answer
+printf "All data in them will be lost! Continue? [y/N] "
+read -r answer
 
 if [ ! "$answer" = "y" ]; then
   echo "Abort"
