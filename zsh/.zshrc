@@ -4,11 +4,15 @@ bindkey -v
 # match files beginning with a . without explicitly specifying the dot
 setopt globdots
 # Additional completions
-fpath=("$HOME/.config/zsh/completions/" $fpath)
+fpath=(~/.config/zsh/completions/ $fpath)
 # Load completions
 if [ ! -d ~/.cache/zsh/ ]; then mkdir -p ~/.cache/zsh/; fi
 autoload -Uz compinit && compinit -d ~/.cache/zsh/zcompdump
 zstyle ':completion:*' menu select
+# history size
+HISTSIZE=100
+# don't load unnecessary eye candy
+_is_light=1
 # ========== General options ==========
 
 
@@ -16,12 +20,14 @@ zstyle ':completion:*' menu select
 # Prompt
 case "$HOST" in
   "FA506IH")
+    _is_light=0
     export PS1="%B %1~ %0(?.:З.>:З)%b ";;
   "QboxBlue")
     export PS1="%F{blue}%B%n@%m%b%f %1~ %B%(#.#.$)%b ";;
   "archlinux") # default hostname for archlinux VMs
     export PS1="%B[VM] %n@%m%b %1~ %B%(#.#.$)%b ";;
-
+  *)  # generic prompt
+    export PS1="%B%n@%m%b %1~ %B%(#.#.$)%b ";;
 esac
 
 if [ -n "$TERMUX_VERSION" ]; then
@@ -31,6 +37,9 @@ fi
 
 
 # ========== Plugins ==========
+light() { [ ! "$_is_light" -eq 0 ]; }
+heavy() { [ "$_is_light" -eq 0 ]; }
+
 # Directory where plugins will be cloned
 if [ -n "$XDG_DATA_HOME" ]; then
   _zsh_plugins_dir="$XDG_DATA_HOME/zsh/plugins/"
@@ -38,29 +47,35 @@ else
   _zsh_plugins_dir="$HOME/.local/share/zsh/plugins/"
 fi
 
-which fzf > /dev/null && if [ -f "$_zsh_plugins_dir/fzf-tab/fzf-tab.plugin.zsh" ]; then
+if command -v fzf >/dev/null 2>&1 && \
+[ -f "$_zsh_plugins_dir/fzf-tab/fzf-tab.plugin.zsh" ]; then
   source "$_zsh_plugins_dir/fzf-tab/fzf-tab.plugin.zsh"
-  zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+  heavy && zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
   zstyle ':fzf-tab:*' default-color ''
-  if [ -f ~/.config/fzf/flags ]; then
+  if heavy && [ -f ~/.config/fzf/flags ]; then
     zstyle ":fzf-tab:*" fzf-flags $(tr '\n' ' ' <~/.config/fzf/flags)
   fi
 fi
-if [ -f "$_zsh_plugins_dir/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]; then
-  source  "$_zsh_plugins_dir/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+
+if heavy && \
+[ -f "$_zsh_plugins_dir/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]; then
+  source "$_zsh_plugins_dir/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
   fast-theme ~/.config/zsh/fsh-theme-overlay.ini >/dev/null
   # Prevents visual artifacts when pasting
   zle_highlight+=('paste:none')
 fi
-if [ -f "$_zsh_plugins_dir/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
+
+if heavy && \
+[ -f "$_zsh_plugins_dir/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
   source "$_zsh_plugins_dir/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
+
 if [ -d "$_zsh_plugins_dir/zsh-completions/src" ]; then
   fpath=("$_zsh_plugins_dir/zsh-completions/src" $fpath) 
 fi
 
 zsh-plugins-install() {
-  which git > /dev/null || { echo "Install git first" && return 1 }
+  which git >/dev/null || { echo "Install git first" && return 1 }
   
   # create plugins dir if doesn't exist
   if [ ! -d "$_zsh_plugins_dir" ]; then
@@ -68,16 +83,24 @@ zsh-plugins-install() {
   fi
 
   if [ ! -d "$_zsh_plugins_dir/fzf-tab/" ]; then
-    git clone 'https://github.com/Aloxaf/fzf-tab' "$_zsh_plugins_dir/fzf-tab"
+    git clone --depth 1 \
+      'https://github.com/Aloxaf/fzf-tab' \
+      "$_zsh_plugins_dir/fzf-tab"
   fi
   if [ ! -d "$_zsh_plugins_dir/zsh-autosuggestions/" ]; then
-    git clone 'https://github.com/zsh-users/zsh-autosuggestions' "$_zsh_plugins_dir/zsh-autosuggestions"
+    git clone --depth 1 \
+      'https://github.com/zsh-users/zsh-autosuggestions' \
+      "$_zsh_plugins_dir/zsh-autosuggestions"
   fi
   if [ ! -d "$_zsh_plugins_dir/fast-syntax-highlighting/" ]; then
-    git clone 'https://github.com/zdharma-continuum/fast-syntax-highlighting' "$_zsh_plugins_dir/fast-syntax-highlighting"
+    git clone --depth 1 \
+      'https://github.com/zdharma-continuum/fast-syntax-highlighting' \
+      "$_zsh_plugins_dir/fast-syntax-highlighting"
   fi
   if [ ! -d "$_zsh_plugins_dir/zsh-completions/" ]; then
-    git clone 'https://github.com/zsh-users/zsh-completions.git' "$_zsh_plugins_dir/zsh-completions"
+    git clone --depth 1 \
+      'https://github.com/zsh-users/zsh-completions.git' \
+      "$_zsh_plugins_dir/zsh-completions"
   fi
 }
 
@@ -117,8 +140,8 @@ set-cursor-shape() {
 }
 zle-keymap-select() {
   case $KEYMAP in
-  vicmd) set-cursor-shape block;;
-  viins|main) set-cursor-shape beam;;
+    vicmd) set-cursor-shape block;;
+    viins|main) set-cursor-shape beam;;
   esac
 }
 zle -N zle-keymap-select
@@ -136,10 +159,7 @@ set-cursor-shape beam
 
 # search history with fzf on C-r
 fzf-history-search() {
-  # do nothing if less than 2 lines in history
-  if [ "$#history" -lt 2 ]; then return; fi
-
-  item="$(fc -rl 0 -1 | ftb-tmux-popup --with-nth 2.. --scheme=history)"
+  item="$(fc -rl 0 -1 | fzf --with-nth 2.. --scheme=history)"
   zle vi-fetch-history -n "$item"
 }
 zle -N fzf-history-search
@@ -190,6 +210,7 @@ alias grep='grep --color=auto'
 alias neofetch='fastfetch'
 alias hyprrun='hyprctl dispatch exec -- '
 alias cal='cal --year --monday'
+alias nyx='nyx --config ~/.config/nyxrc'
 alias e='exec'
 
 alias ULTRAKILL='kill -KILL'
@@ -200,12 +221,18 @@ alias apt='apt --no-install-recommends'
 alias fzfdiff='git status -s | \
   fzf -m --preview "git diff --color=always -- {2..}" | \
   sed "s/^.\{3\}//"'
+alias fzfgrep='FZF_DEFAULT_COMMAND=true fzf \
+  --bind '\''change:reload(rg --files-with-matches --smart-case -e {q})'\'' \
+  --preview '\''rg --pretty --context "$((FZF_PREVIEW_LINES / 4))" \
+  --smart-case \
+  -e {q} {}'\'' \
+  --disabled'
 # ========== Aliases ==========
 
 
 # ========== Envvars ==========
 which nvim >/dev/null && export MANPAGER='nvim -c ":set signcolumn=no" -c "Man!"'
-export LESS='--use-color --RAW-CONTROL-CHARS'
+export LESS='--use-color --RAW-CONTROL-CHARS --chop-long-lines'
 export BASH_ENV=~/.config/bash/non-interactive.sh
 
 typeset -U path

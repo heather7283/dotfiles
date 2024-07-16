@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Vesktop
 Type=Application
-# makes vesktop unable to use nvidia GPU
-Exec=bwrap --dev-bind / / --ro-bind-try /dev/dri/by-name/nvidia-render /run/systemd/inaccessible/chr --ro-bind-try /dev/dri/by-name/nvidia-card /run/systemd/inaccessible/chr /usr/bin/vesktop --enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,VaapiVideoDecoder,WebRTCPipeWireCapturer --ozone-platform=wayland
+# makes vesktop unable to use nvidia GPU (makes it more stable)
+Exec=bwrap --dev-bind / / --ro-bind-try /dev/dri/by-name/nvidia-render /dev/dri/by-name/nvidia-render --ro-bind-try /dev/dri/by-name/nvidia-card /dev/dri/by-name/nvidia-card vesktop --enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,VaapiVideoDecoder,WebRTCPipeWireCapturer --ozone-platform=wayland
 Terminal=false

@@ -78,9 +78,21 @@ local plugins = {
 
   {
     "kylechui/nvim-surround",
-    event = "InsertEnter",
+    -- event = "InsertEnter",
     config = function(_, opts)
       require("nvim-surround").setup(opts)
+    end
+  },
+
+  {
+    "kevinhwang91/nvim-ufo",
+    lazy = false,
+    dependencies = {
+      "kevinhwang91/promise-async"
+    },
+    config = function(_, opts)
+      require("ufo").setup(require("plugins.nvim-ufo"))
+      -- vim.api.nvim_set_hl(0, "Folded", { bg = "#2D353B", force = true })
     end
   },
 
@@ -99,7 +111,6 @@ local plugins = {
     "nvim-treesitter/nvim-treesitter-textobjects",
     event = { "BufReadPost", "BufNewFile" }
   },
-  
 
   -- DAP
   -- {
@@ -140,13 +151,24 @@ local plugins = {
   },
 
   -- File tree
+  --{
+  --  "nvim-tree/nvim-tree.lua",
+  --  cmd = "NvimTreeOpen",
+  --  config = function(_, opts)
+  --    require("nvim-tree").setup(require("plugins.nvimtree"))
+  --  end,
+  --  dependencies = { "nvim-tree/nvim-web-devicons" }
+  --},
+
   {
-    "nvim-tree/nvim-tree.lua",
-    cmd = "NvimTreeOpen",
-    config = function(_, opts)
-      require("nvim-tree").setup(require("plugins.nvimtree"))
-    end,
-    dependencies = { "nvim-tree/nvim-web-devicons" }
+      'glacambre/firenvim',
+
+      -- Lazy load firenvim
+      -- Explanation: https://github.com/folke/lazy.nvim/discussions/463#discussioncomment-4819297
+      lazy = not vim.g.started_by_firenvim,
+      build = function()
+          vim.fn["firenvim#install"](0)
+      end
   },
 
   -- statusline

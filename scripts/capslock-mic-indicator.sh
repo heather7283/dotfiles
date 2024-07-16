@@ -20,7 +20,7 @@ cleanup() {
 	led_off
 	exit
 }
-trap cleanup HUP INT QUIT TERM EXIT
+trap cleanup HUP INT QUIT TERM EXIT ERR
 
 # Initial check
 default_source=$(pactl get-default-source)

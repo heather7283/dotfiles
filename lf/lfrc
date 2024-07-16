@@ -17,6 +17,7 @@ set mouse
 set tabstop 4
 
 set scrolloff 4
+set shell bash
 
 # Top
 set promptfmt " \033[1m%w//\033[38;2;167;192;128m%f"
@@ -78,6 +79,7 @@ cmd paste-symlink-relative %exec ~/.config/lf/scripts/paste-link.sh symbolic rel
 
 cmd chmod %chmod +x "$f"
 cmd du %du -hs . 2>/dev/null
+cmd clone %cp -a "${f}" "${f}.copy"
 
 cmd quit-wrapped :{{
   cd ~
@@ -133,6 +135,18 @@ cmd fzf-bookmarks ${{
   lf -remote "send $id cd \"$res\""
 }}
 
+cmd fzf-history ${{
+  source ~/.config/lf/scripts/common-defs.sh
+
+  hist_file="${_lf_data_dir}"/history
+  if [ -r "$hist_file" ]; then
+    selected="$(cat "$hist_file" | fzf)"
+    if [ -n "$selected" ]; then
+      lf -remote "send $id $selected"
+    fi
+  fi
+}}
+
 map y
 map yy copy
 map yp copy-path
@@ -159,6 +173,7 @@ map g/ :cd /
 
 map f fzf-jump
 map b fzf-bookmarks
+map <c-r> fzf-history
 
 map a %~/.config/lf/scripts/mount-archive.sh
 

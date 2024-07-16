@@ -48,7 +48,8 @@ case "$mime_description" in
       --size="$((size_x))x$((size_y - 1))"; then success="yes"; no_cache=1; fi
     ;;
   audio/*)
-    mediainfo "$filename" && success="yes"
+    mediainfo "$filename" | \
+      awk -F '( +):' '{ gsub(/( +)$/, "", $1); print $1 ($2 ? ":" : "") $2 }' && success="yes"
     ;;
   application/x-tar*|application/zstd*|application/gzip*|application/x-xz*|application/zip*|application/java-archive*|application/x-7z*)
     bsdtar -tf "$filename" && success="yes"
