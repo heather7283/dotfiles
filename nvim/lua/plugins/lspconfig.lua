@@ -9,10 +9,15 @@ require("mason-lspconfig").setup({
   }
 })
 
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+
 local handlers = {
   -- default handler
   function(server_name)
-    require("lspconfig")[server_name].setup({})
+    require("lspconfig")[server_name].setup({
+      capabilities = capabilities
+    })
   end,
 
   ["basedpyright"] = function()
@@ -22,7 +27,8 @@ local handlers = {
         basedpyright = {
           analysis = { typeCheckingMode = "basic" }
         }
-      }
+      },
+      capabilities = capabilities
     })
   end,
 
@@ -47,7 +53,20 @@ local handlers = {
             }
           }
         }
-      }
+      },
+      capabilities = capabilities
+    })
+  end,
+
+  ["clangd"] = function()
+    require("lspconfig").clangd.setup({
+      cmd = {
+        "clangd",
+        "--background-index",
+        "--all-scopes-completion",
+        "--completion-style=detailed"
+      },
+      capabilities = capabilities
     })
   end,
 }
