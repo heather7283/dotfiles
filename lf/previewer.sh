@@ -24,8 +24,13 @@ case "$mime_description" in
     then success="yes"; no_cache=1; fi
     ;;
   video/*)
-    tmpfile="/tmp/$$_lfvideopreview.png"
-    if ffmpeg -i "$filename" -vframes 1 "$tmpfile" && \
+    len="$(mediainfo --Inform='Video;%Duration%' "$filename")"
+    len="${len%.*}" # remove everything after dot
+    len="${len:-0}" # fallback
+    pos=2 # 2 means 1/2
+
+    tmpfile="$(mktemp -t "$$_lfvideopreview_XXXXXX.png")"
+    if ffmpeg -y -ss "$((len / pos))ms" -i "$filename" -vframes 1 "$tmpfile" && \
     chafa \
       --format=sixel \
       --polite=on \
@@ -51,7 +56,7 @@ case "$mime_description" in
     mediainfo "$filename" | \
       awk -F '( +):' '{ gsub(/( +)$/, "", $1); print $1 ($2 ? ":" : "") $2 }' && success="yes"
     ;;
-  application/x-tar*|application/zstd*|application/gzip*|application/x-xz*|application/zip*|application/java-archive*|application/x-7z*)
+  application/x-tar*|application/zstd*|application/gzip*|application/x-xz*|application/zip*|application/java-archive*|application/x-7z*|application/x-rar)
     bsdtar -tf "$filename" && success="yes"
     ;;
   application/json*)

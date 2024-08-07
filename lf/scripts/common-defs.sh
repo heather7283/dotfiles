@@ -144,15 +144,18 @@ else
   read_line() {
     _tmpfile="$(mktmpfile "read_line")"
     if [ -z "$_tmpfile" ]; then die "unable to create temp file"; fi
-    ~/.config/lf/scripts/tmux-popup.sh -w 70% -h 2 -E -- bash -c '
+    ~/.config/lf/scripts/tmux-popup.sh -w 70% -h 70% -E -- bash -c '
       _script_name='"$(printf '%q' "$_script_name")"'
       _prompt='"$(printf '%q' "[${_script_name}] ${1}")"'
       _initial_string='"$(printf '%q' "$2")"'
       _tmp_read_line_file='"$(printf '%q' "$_tmpfile")"'
       
-      _ans="$(zsh-readline -p "$_prompt" -s "$_initial_string")"
-      _exitcode=$?
-      printf "%s" "$_ans" >"$_tmp_read_line_file"
+      #_ans="$(zsh-readline -p "$_prompt" -s "$_initial_string")"
+      #_exitcode=$?
+      #printf "%s" "$_ans" >"$_tmp_read_line_file"
+
+      echo "$_initial_string" >"$_tmp_read_line_file"
+      "${EDITOR:-vi}" "$_tmp_read_line_file"
       exit $_exitcode
     '
     _exitcode=$?
@@ -233,7 +236,7 @@ stderr_wrapper() {
   if [[ "$1" = */.* ]]; then
     lf -remote "send $_lf_client_id :set hidden"
   fi
-  lf -remote "send $_lf_client_id :select $1"
+  lf -remote "send $_lf_client_id :select '$1'"
 }
 
 # IFS: required to split filenames properly
