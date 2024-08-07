@@ -36,6 +36,7 @@
     "scroll-step": 1
   },
   "bluetooth": {
+    "format": "",
     "format-disabled": "",
     "format-off": "",
     "format-on": "󰂯",
