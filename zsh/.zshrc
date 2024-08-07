@@ -75,7 +75,7 @@ if [ -d "$_zsh_plugins_dir/zsh-completions/src" ]; then
 fi
 
 zsh-plugins-install() {
-  which git >/dev/null || { echo "Install git first" && return 1 }
+  command -v git 1>/dev/null 2>&1 || { echo "Install git first" && return 1 }
   
   # create plugins dir if doesn't exist
   if [ ! -d "$_zsh_plugins_dir" ]; then
@@ -202,10 +202,11 @@ bindkey -M viins '^?' backward-delete-char
 
 
 # ========== Aliases ==========
-which eza >/dev/null &&
+command -v eza 1>/dev/null 2>&1 &&
   alias ll='eza --color=always --icons=always --long --no-quotes --group-directories-first' ||
   alias ll='ls -lhF --color=always'
-which doas >/dev/null && alias sudo='doas'
+command -v doas 1>/dev/null 2>&1 && alias sudo='doas'
+command -v bsdtar 1>/dev/null 2>&1 && alias tar='bsdtar'
 alias grep='grep --color=auto'
 alias neofetch='fastfetch'
 alias hyprrun='hyprctl dispatch exec -- '
@@ -232,7 +233,7 @@ alias fzfgrep='FZF_DEFAULT_COMMAND=true fzf \
 
 
 # ========== Envvars ==========
-which nvim >/dev/null && export MANPAGER='nvim -c ":set signcolumn=no" -c "Man!"'
+command -v nvim 1>/dev/null 2>&1 && export MANPAGER='nvim -c ":set signcolumn=no" -c "Man!"'
 export LESS='--use-color --RAW-CONTROL-CHARS --chop-long-lines'
 export BASH_ENV=~/.config/bash/non-interactive.sh
 
