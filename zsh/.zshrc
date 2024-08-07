@@ -212,6 +212,7 @@ alias hyprrun='hyprctl dispatch exec -- '
 alias cal='cal --year --monday'
 alias nyx='nyx --config ~/.config/nyxrc'
 alias e='exec'
+alias gdb='gdb -q'
 
 alias ULTRAKILL='kill -KILL'
 alias ULTRAPKILL='pkill -KILL'
