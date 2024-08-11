@@ -107,7 +107,7 @@ cmd goto-symlink-target &{{
 
 cmd fzf-jump ${{
   # dont make -maxdepth too big uwu
-  res="$(find . -maxdepth 6 2>/dev/null | fzf --reverse --no-clear --scheme=path)"
+  res="$(find . -depth -maxdepth 6 2>/dev/null | fzf --reverse --no-clear --scheme=path)"
   if [ -z "$res" ]; then exit; fi
 
   if [ -d "$res" ]; then

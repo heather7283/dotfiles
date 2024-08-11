@@ -19,9 +19,13 @@ case "$mime_description" in
       --colors full \
       --optimize 9 \
       --animate off \
-      --size "$((size_x))x$((size_y - 1))" \
+      --size "$((size_x))x$((size_y - 2))" \
       "$filename";
     then success="yes"; no_cache=1; fi
+
+    # display additional info at the bottom
+    tput cuf "$pos_x"
+    magick identify -format '%m %wx%h, %[bit-depth]bit, %[colorspace], %r' "$filename" | head -c "$size_x"
     ;;
   video/*)
     len="$(mediainfo --Inform='Video;%Duration%' "$filename")"
@@ -37,10 +41,16 @@ case "$mime_description" in
       --colors=full \
       --optimize=9 \
       --animate=off \
-      --size="$((size_x))x$((size_y - 1))" \
+      --size="$((size_x))x$((size_y - 2))" \
       "$tmpfile";
     then success="yes"; no_cache=1; fi
-    rm -f "$tmpfile" 
+    rm -f "$tmpfile"
+
+    # display additional info at the bottom
+    IFS=',' read -r w h fps len codec < <(mediainfo --Inform="Video;%Width%,%Height%,%FrameRate%,%Duration%,%CodecID%" "$filename")
+    tput cuf "$pos_x"
+    len="${len%.*}"
+    printf '%s, %dx%d, %s fps, %s' "$((len / 1000))s" "$w" "$h" "$fps" "$codec" | head -c "$size_x"
     ;;
   application/pdf*)
     if magick convert -background '#FFFFFF' -alpha deactivate "${filename}[0]" png:- | \
