@@ -50,7 +50,14 @@ case "$mime_description" in
     IFS=',' read -r w h fps len codec < <(mediainfo --Inform="Video;%Width%,%Height%,%FrameRate%,%Duration%,%CodecID%" "$filename")
     tput cuf "$pos_x"
     len="${len%.*}"
-    printf '%s, %dx%d, %s fps, %s' "$((len / 1000))s" "$w" "$h" "$fps" "$codec" | head -c "$size_x"
+    # covert seconds to hh:mm:ss
+    total_sec="$((len / 1000))"
+    sec="$((total_sec % 60))"
+    min="$(((total_sec / 60) % 60))"
+    hr="$((total_sec / 3600))"
+    #time_string="$([ "$hr" -gt 0 ] && printf "%dh" "$hr")$([ "$min" -gt 0 ] && printf "%dm" "$min")${sec}s"
+    time_string="${hr}h${min}m${sec}s"
+    printf '%s, %dx%d, %s fps, %s' "$time_string" "$w" "$h" "$fps" "$codec" | head -c "$size_x"
     ;;
   application/pdf*)
     if magick convert -background '#FFFFFF' -alpha deactivate "${filename}[0]" png:- | \
