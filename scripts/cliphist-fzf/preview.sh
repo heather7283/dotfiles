@@ -10,7 +10,7 @@ if [[ "$item" =~ binary\ data ]]; then
     --align center \
     --scale max \
     --optimize 9 \
-    --view-size ${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES};
+    --view-size "${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}";
 # hex colors
 elif [[ "$item" =~ ^(#|0x)?[0-9a-fA-F]{6,8}$ ]]; then
   item="${item/#\#/}"
@@ -29,7 +29,7 @@ elif [[ "$item" =~ ^https:\/\/www.youtube.com\/watch\?v= ]]; then
     --align center \
     --scale max \
     --optimize 9 \
-    --view-size ${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES} \
+    --view-size "${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}" \
     --scale max
 # youtube
 elif [[ "$item" =~ ^https:\/\/youtu.be\/ ]]; then
@@ -40,7 +40,7 @@ elif [[ "$item" =~ ^https:\/\/youtu.be\/ ]]; then
     --align center \
     --scale max \
     --optimize 9 \
-    --view-size ${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES} \
+    --view-size "${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}" \
     --scale max
 # fallback
 else
