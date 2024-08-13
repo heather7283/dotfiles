@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-hyprctl dispatch exec -- footclient --server-socket /tmp/foot-popup-server.sock --override colors.background=3D484D --app-id foot-popup -- "$@"
+footclient --server-socket /tmp/foot-popup-server.sock --override colors.background=3D484D --app-id foot-popup -- "$@"
 
