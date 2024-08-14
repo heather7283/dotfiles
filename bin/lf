@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 if [ -n "$TMPDIR" ]; then
   export LF_DATA_HOME="${TMPDIR}"
@@ -6,6 +6,6 @@ else
   export LF_DATA_HOME=/tmp
 fi
 
-# set TERM to xterm bc without it colors are weird
+# set TERM to foot-extra bc without it colors are weird
 TERM=foot-extra exec /usr/bin/lf "$@"
 
