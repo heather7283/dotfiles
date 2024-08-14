@@ -1,3 +1,8 @@
 # Expressions don't expand in single quotes, use double quotes for that.
 disable=SC2016
-
+# Don't use variables in the printf format string. Use printf '..%s..' "$foo".
+disable=SC2059
+# Quote this to prevent word splitting.
+disable=SC2046
+# Double quote to prevent globbing and word splitting.
+disable=SC2086
