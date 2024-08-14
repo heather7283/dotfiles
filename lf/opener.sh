@@ -6,7 +6,7 @@ mime_description=$(file --brief --mime -- "$filename")
 
 case "$mime_description" in
   image/*)
-    exec imv "$filename"
+    exec mvi "$filename"
     ;;
   video/*|audio/*)
     exec mpv "$filename"

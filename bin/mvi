@@ -1,0 +1,4 @@
+#!/bin/sh
+
+exec mpv --config-dir="${HOME}/.config/mvi" --force-window=immediate "$@"
+

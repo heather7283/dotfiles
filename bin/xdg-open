@@ -18,11 +18,11 @@ case "$mime_type" in
     exit
     ;;
   image/*)
-    hyprctl dispatch exec -- imv $query
+    hyprctl dispatch exec -- mvi $query
     exit
     ;;
   video/*|audio/*)
-    hyprctl dispatch exec -- mpv $query
+    hyprctl dispatch exec -- mpv --audio-display=embedded-first --force-window=immediate $query
     exit
     ;;
   application/pdf*)
