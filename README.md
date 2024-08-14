@@ -1,6 +1,6 @@
 Clone
 ```
-git clone https://github.com/heather7283/dotfiles ~/.config/
+git clone --recursive https://github.com/heather7283/dotfiles ~/.config/
 ```
 Install
 ```
