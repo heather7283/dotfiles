@@ -8,9 +8,11 @@ case "$mime_description" in
   image/*)
     exec mvi "$filename"
     ;;
-  video/*|audio/*)
-    exec mpv "$filename"
+  video/*)
+    exec mpv --force-window=immediate "$filename"
     ;;
+  audio/*)
+    exec mpv --no-audio-display "$filename"
 esac
 
 if [[ "$mime_description" =~ charset= ]] && [[ ! "$mime_description" =~ charset=binary ]]; then

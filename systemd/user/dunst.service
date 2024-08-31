@@ -1,7 +1,0 @@
-[Unit]
-Description=Dunst notification daemon
-
-[Service]
-Type=simple
-ExecStart=dunst
-

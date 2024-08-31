@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 if [ -z "$1" ]; then
   echo "you need to specify full path to desktop file or its name"

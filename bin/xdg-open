@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 
-#echo "$(date '+%Y-%m-%d %H:%M:%S') xdg-open was called with arguments: $@" >> ~/xdg-open-log.txt
+echo "$(date '+%Y-%m-%d %H:%M:%S') xdg-open was called with arguments: $@" >> ~/xdg-open-log.txt
+
+# bashism - will not work in other shells
+# https://stackoverflow.com/a/37840948
+urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
 
 query="${1#file://}"
-query="${query//%20/ }" # I hate you telegram desktop
+query="$(urldecode "$query")" # I hate you telegram desktop
 
 if [[ "$query" =~ ^(https?:\/\/)(.*)$ ]]; then
   hyprctl dispatch exec -- firefox \'"$query"\'
@@ -36,6 +40,8 @@ if echo "$mime_type" | grep -qPe '(.*)charset=(?!binary)'; then
   exit
 fi
 
-notify-send "xdg-open error" "No app configured to open file type $mime_type"
+hyprctl dispatch exec -- foot -- tmux new-session -- lf $query
+
+#notify-send "xdg-open error" "No app configured to open file type $mime_type"
 #exec /usr/bin/xdg-open "$query"
 

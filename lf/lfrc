@@ -26,7 +26,7 @@ set promptfmt " \033[1m%w//\033[38;2;167;192;128m%f"
 # File count: bold, bg light green, fg #2D353B
 set rulerfmt "\033[48;2;71;82;88;38;2;167;192;128m C:%c |\033[48;2;71;82;88;38;2;127;187;179m S:%s |\033[48;2;71;82;88;38;2;230;126;128m M:%m |\033[1;38;2;45;53;59;102m %i:%t/%h \033[0m"
 # Bottom left
-# File size: bold, bg light green, fg #2D353B 
+# File size: bold, bg light green, fg #2D353B
 # Permissions&owner: bg #475258, fg #9DA9A0
 # Time: bg #343F44, fg #859289
 set statfmt "\033[1;38;2;45;53;59;102m %S \033[0m|\033[48;2;71;82;88;38;2;157;169;160m %p| %u|:%g \033[0m|\033[48;2;71;82;88;38;2;157;169;160m %t \033[0m| \033[38;2;131;192;146m-> %l"
@@ -55,14 +55,19 @@ cmd copy-path &{{
   echo "$f" | wl-copy
 }}
 
-cmd copy-file &{{
+cmd copy-file %{{
   file_size=$(stat -c %s "$f")
-  size_limit=$((32 * 1024 * 1024)) # 32 megs
+  size_limit=$((5 * 1024 * 1024)) # 5 megs
   if [ $file_size -gt $size_limit ]; then
-    echo "Won't copy ${f}: file size too big"
-  else
-    wl-copy <"$f"
+    printf "\033[1;31m[copy-file] won't copy: file size too big\033[0m\n" >&2
+    exit 1
   fi
+
+  ftype="$(file --brief --mime -- "$f")"
+  case "$ftype" in
+    image/jxl*) magick jxl:- png:- <"$f" | wl-copy 2>/dev/null ;;
+    *) wl-copy <"$f" 2>/dev/null ;;
+  esac
 }}
 
 cmd make-file %exec ~/.config/lf/scripts/make-file.sh
@@ -125,7 +130,7 @@ cmd fzf-jump ${{
 
 cmd fzf-bookmarks ${{
   if [ ! -f ~/.config/gtk-3.0/bookmarks ]; then exit; fi
-  
+
   res="$(sed -e 's/file:\/\///' ~/.config/gtk-3.0/bookmarks | fzf --reverse --no-clear)"
   if [ -z "$res" ]; then exit; fi
 
@@ -149,8 +154,37 @@ cmd fzf-history ${{
 
 cmd drag ${{
   source ~/.config/lf/scripts/common-defs.sh
-  
+
   ripdrag --no-click --and-exit $fx
+}}
+
+cmd sudoedit ${{
+    tool="$(command -v sudo 2>/dev/null)"
+    tool="$(command -v doas 2>/dev/null)"
+    if [ -z "$tool" ]; then
+        printf "\033[1;31m[sudoedit] neither doas nor sudo were found\033[0m\n" >&2
+        read
+        exit 1
+    fi
+
+    tmpfile="$(mktemp)"
+    if [ ! -f "$tmpfile" ]; then
+        printf "\033[1;31m[sudoedit] %s does not exist\033[0m\n" "$tmpfile" >&2
+        read
+        exit 1
+    fi
+    if [ -r "$f" ]; then
+        cp "$f" "$tmpfile"
+    else
+        "$tool" cp "$f" "$tmpfile"
+        chown "$(whoami):" "$tmpfile"
+    fi
+    chmod 600 "$tmpfile"
+
+    "${EDITOR:-vi}" "$tmpfile"
+    [ -f "$tmpfile" ] && cmp -s "$f" "$tmpfile" || "$tool" tee "$f" >/dev/null <"$tmpfile"
+
+    rm "$tmpfile"
 }}
 
 map y
@@ -172,6 +206,7 @@ map ml make-symlink
 map C unselect
 
 map q quit-wrapped
+cmd q :quit-wrapped
 map Q quit-cd
 
 map gt goto-symlink-target
@@ -182,6 +217,8 @@ map b fzf-bookmarks
 map <c-r> fzf-history
 
 map a %~/.config/lf/scripts/mount-archive.sh
+
+map E sudoedit
 
 map . :set hidden!
 

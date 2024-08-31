@@ -1,7 +1,0 @@
-[Unit]
-Description=Aylur's GTK Shell
-
-[Service]
-Type=simple
-ExecStart=ags
-

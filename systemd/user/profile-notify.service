@@ -1,7 +1,0 @@
-[Unit]
-Description=Send desktop notifications when power profile is changed
-
-[Service]
-Type=simple
-ExecStart=/home/heather/.config/scripts/profile-notify.sh
-

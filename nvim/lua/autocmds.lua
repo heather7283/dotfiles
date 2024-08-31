@@ -26,3 +26,36 @@ autocmd({ "UIEnter", "BufReadPost", "BufNewFile" }, {
   end,
 })
 
+-- source: https://vi.stackexchange.com/q/8563
+vim.api.nvim_set_hl(0, "TrailingWhitespace", { bg = "#E67E80" })
+vim.cmd([[
+let g:toggleHighlightTrailingWhitespace = 1
+function! ToggleHighlightTrailingWhitespace()
+  let g:toggleHighlightTrailingWhitespace = 1 - g:toggleHighlightTrailingWhitespace
+  call RefreshHighlightTrailingWhitespace()
+endfunction
+
+function! RefreshHighlightTrailingWhitespace()
+  if g:toggleHighlightTrailingWhitespace == 1 " normal action, do the hi
+    " highlight TrailingWhitespace ctermbg=red guibg=red
+    match TrailingWhitespace /\s\+$/
+    augroup HighLightTrailingWhitespace
+      autocmd BufWinEnter * match TrailingWhitespace /\s\+$/
+      autocmd InsertEnter * match TrailingWhitespace /\s\+\%#\@<!$/
+      autocmd InsertLeave * match TrailingWhitespace /\s\+$/
+      autocmd BufWinLeave * call clearmatches()
+    augroup END
+  else " clear whitespace highlighting
+    call clearmatches()
+    autocmd! HighLightTrailingWhitespace BufWinEnter
+    autocmd! HighLightTrailingWhitespace InsertEnter
+    autocmd! HighLightTrailingWhitespace InsertLeave
+    autocmd! HighLightTrailingWhitespace BufWinLeave
+  endif
+endfunction
+
+autocmd BufWinEnter * call RefreshHighlightTrailingWhitespace()
+autocmd BufWinLeave * call RefreshHighlightTrailingWhitespace()
+nnoremap <leader>w :call ToggleHighlightTrailingWhitespace()<cr>
+]])
+

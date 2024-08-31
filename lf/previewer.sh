@@ -13,41 +13,57 @@ no_cache=0
 mime_description=$(file --brief --mime -- "$filename")
 case "$mime_description" in
   image/*)
-    if chafa \
-      --format sixel \
-      --polite on \
-      --colors full \
-      --optimize 9 \
-      --animate off \
-      --size "$((size_x))x$((size_y - 2))" \
-      "$filename";
-    then success="yes"; no_cache=1; fi
+    bytes="$(stat -c '%s' "$filename")"
+    if [ "$bytes" -gt "$((1024 * 1024 * 10))" ]; then # 10 megs
+      echo "file too big: disabling image preview" | fold -w "$size_x"
+      echo
+      if magick identify -ping \
+          -format '%m %wx%h, %[colorspace], %r' \
+          "$filename" 2>&1 | fold -w "$size_x"; then
+        success="yes"
+      fi
+    else
+      if chafa \
+        --format sixel \
+        --polite on \
+        --colors full \
+        --optimize 9 \
+        --animate off \
+        --size "$((size_x))x$((size_y - 2))" \
+        "$filename";
+      then success="yes"; no_cache=1; fi
 
-    # display additional info at the bottom
-    tput cuf "$pos_x"
-    magick identify -format '%m %wx%h, %[bit-depth]bit, %[colorspace], %r' "$filename" | head -c "$size_x"
+      # display additional info at the bottom
+      tput cuf "$pos_x"
+      magick identify -ping \
+          -format '%m %wx%h, %[colorspace], %r' \
+          "$filename" | head -c "$size_x"
+    fi
     ;;
   video/*)
-    len="$(mediainfo --Inform='Video;%Duration%' "$filename")"
+    IFS=',' read -r w h fps len codec < <(mediainfo --Inform="Video;%Width%,%Height%,%FrameRate%,%Duration%,%CodecID%" "$filename")
     len="${len%.*}" # remove everything after dot
     len="${len:-0}" # fallback
     pos=2 # 2 means 1/2
 
     tmpfile="$(mktemp -t "$$_lfvideopreview_XXXXXX.png")"
-    if ffmpeg -y -ss "$((len / pos))ms" -i "$filename" -vframes 1 "$tmpfile" && \
-    chafa \
-      --format=sixel \
-      --polite=on \
-      --colors=full \
-      --optimize=9 \
-      --animate=off \
-      --size="$((size_x))x$((size_y - 2))" \
-      "$tmpfile";
+    if ffmpeg -y \
+        -ss "$((len / pos))ms" \
+        -i "$filename" \
+        -vf "scale='min(640,iw)':min'(480,ih)':force_original_aspect_ratio=decrease" \
+        -vframes 1 \
+        -f apng pipe:1 | \
+      chafa \
+        --format=sixel \
+        --polite=on \
+        --colors=full \
+        --optimize=9 \
+        --animate=off \
+        --size="$((size_x))x$((size_y - 2))";
     then success="yes"; no_cache=1; fi
     rm -f "$tmpfile"
 
     # display additional info at the bottom
-    IFS=',' read -r w h fps len codec < <(mediainfo --Inform="Video;%Width%,%Height%,%FrameRate%,%Duration%,%CodecID%" "$filename")
     tput cuf "$pos_x"
     len="${len%.*}"
     # covert seconds to hh:mm:ss
@@ -73,7 +89,7 @@ case "$mime_description" in
     mediainfo "$filename" | \
       awk -F '( +):' '{ gsub(/( +)$/, "", $1); print $1 ($2 ? ":" : "") $2 }' && success="yes"
     ;;
-  application/x-tar*|application/zstd*|application/gzip*|application/x-xz*|application/zip*|application/java-archive*|application/x-7z*|application/x-rar)
+  application/x-tar*|application/zstd*|application/gzip*|application/x-xz*|application/zip*|application/java-archive*|application/x-7z*|application/x-rar*)
     bsdtar -tf "$filename" && success="yes"
     ;;
   application/json*)

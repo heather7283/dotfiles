@@ -1,7 +1,0 @@
-[Unit]
-Description=Hyprland's wallpaper daemon
-
-[Service]
-Type=simple
-ExecStart=hyprpaper
-

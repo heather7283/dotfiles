@@ -1,18 +1,13 @@
 # ========== General options ==========
 # vi keybinds
 bindkey -v
+KEYTIMEOUT=10
 # match files beginning with a . without explicitly specifying the dot
 setopt globdots
-# Additional completions
-fpath=(~/.config/zsh/completions/ $fpath)
-# Load completions
-if [ ! -d ~/.cache/zsh/ ]; then mkdir -p ~/.cache/zsh/; fi
-autoload -Uz compinit && compinit -d ~/.cache/zsh/zcompdump
-zstyle ':completion:*' menu select
 # history size
 HISTSIZE=100
 # don't load unnecessary eye candy
-_is_light=1
+_load_bloat=0
 # ========== General options ==========
 
 
@@ -20,7 +15,7 @@ _is_light=1
 # Prompt
 case "$HOST" in
   "FA506IH")
-    _is_light=0
+    _load_bloat=1
     export PS1="%B %1~ %0(?.:З.>:З)%b ";;
   "QboxBlue")
     export PS1="%F{blue}%B%n@%m%b%f %1~ %B%(#.#.$)%b ";;
@@ -37,8 +32,7 @@ fi
 
 
 # ========== Plugins ==========
-light() { [ ! "$_is_light" -eq 0 ]; }
-heavy() { [ "$_is_light" -eq 0 ]; }
+_is_bloated() { [ ! "$_load_bloat" -eq 0 ]; }
 
 # Directory where plugins will be cloned
 if [ -n "$XDG_DATA_HOME" ]; then
@@ -47,17 +41,32 @@ else
   _zsh_plugins_dir="$HOME/.local/share/zsh/plugins/"
 fi
 
+if [ -d "$_zsh_plugins_dir/zsh-completions/src" ]; then
+  fpath=("$_zsh_plugins_dir/zsh-completions/src" $fpath)
+fi
+
+if [ -d "$_zsh_plugins_dir/gentoo-zsh-completions/src" ]; then
+  fpath=("$_zsh_plugins_dir/gentoo-zsh-completions/src" $fpath)
+fi
+
+# Additional completions
+fpath=(~/.config/zsh/completions/ $fpath)
+# Load completions
+if [ ! -d ~/.cache/zsh/ ]; then mkdir -p ~/.cache/zsh/; fi
+autoload -Uz compinit && compinit -d ~/.cache/zsh/zcompdump
+zstyle ':completion:*' menu select
+
 if command -v fzf >/dev/null 2>&1 && \
 [ -f "$_zsh_plugins_dir/fzf-tab/fzf-tab.plugin.zsh" ]; then
   source "$_zsh_plugins_dir/fzf-tab/fzf-tab.plugin.zsh"
-  heavy && zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
   zstyle ':fzf-tab:*' default-color ''
-  if heavy && [ -f ~/.config/fzf/flags ]; then
-    zstyle ":fzf-tab:*" fzf-flags $(tr '\n' ' ' <~/.config/fzf/flags)
+  if _is_bloated; then
+    zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+    [ -f ~/.config/fzf/flags ] && zstyle ":fzf-tab:*" fzf-flags $(tr '\n' ' ' <~/.config/fzf/flags)
   fi
 fi
 
-if heavy && \
+if _is_bloated && \
 [ -f "$_zsh_plugins_dir/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]; then
   source "$_zsh_plugins_dir/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
   fast-theme ~/.config/zsh/fsh-theme-overlay.ini >/dev/null
@@ -65,18 +74,14 @@ if heavy && \
   zle_highlight+=('paste:none')
 fi
 
-if heavy && \
+if _is_bloated && \
 [ -f "$_zsh_plugins_dir/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
   source "$_zsh_plugins_dir/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
-if [ -d "$_zsh_plugins_dir/zsh-completions/src" ]; then
-  fpath=("$_zsh_plugins_dir/zsh-completions/src" $fpath) 
-fi
-
 zsh-plugins-install() {
   command -v git 1>/dev/null 2>&1 || { echo "Install git first" && return 1 }
-  
+
   # create plugins dir if doesn't exist
   if [ ! -d "$_zsh_plugins_dir" ]; then
     mkdir -pv "$_zsh_plugins_dir"
@@ -102,6 +107,11 @@ zsh-plugins-install() {
       'https://github.com/zsh-users/zsh-completions.git' \
       "$_zsh_plugins_dir/zsh-completions"
   fi
+if [ ! -d "$_zsh_plugins_dir/gentoo-zsh-completions/" ]; then
+    git clone --depth 1 \
+      'https://github.com/gentoo/gentoo-zsh-completions.git' \
+      "$_zsh_plugins_dir/gentoo-zsh-completions"
+fi
 }
 
 zsh-plugins-clean() {
@@ -168,7 +178,7 @@ bindkey -M vicmd '\C-r' fzf-history-search
 
 # paste selected file path into command line
 fzf-file-search() {
-  LBUFFER="${LBUFFER}$(find . -maxdepth 6 2>/dev/null | fzf --height=~50% --layout=reverse)"
+  LBUFFER="${LBUFFER}$(find . -depth -maxdepth 6 2>/dev/null | fzf --height=~50% --layout=reverse)"
   zle reset-prompt
 }
 zle -N fzf-file-search
@@ -202,9 +212,19 @@ bindkey -M viins '^?' backward-delete-char
 
 
 # ========== Aliases ==========
-command -v eza 1>/dev/null 2>&1 &&
-  alias ll='eza --color=always --icons=always --long --no-quotes --group-directories-first' ||
+if command -v eza 1>/dev/null 2>&1; then
+  alias ll='eza \
+      --color=always \
+      --icons=always \
+      --long \
+      --no-quotes \
+      --group-directories-first \
+      --hyperlink'
+  alias tree='ll --tree'
+else
   alias ll='ls -lhF --color=always'
+  alias tree='ll -R'
+fi
 command -v doas 1>/dev/null 2>&1 && alias sudo='doas'
 command -v bsdtar 1>/dev/null 2>&1 && alias tar='bsdtar'
 alias grep='grep --color=auto'
@@ -214,6 +234,9 @@ alias cal='cal --year --monday'
 alias nyx='nyx --config ~/.config/nyxrc'
 alias e='exec'
 alias gdb='gdb -q'
+alias ffmpeg='ffmpeg -hide_banner'
+alias ffprobe='ffprobe -hide_banner'
+alias torrent='transmission-cli'
 
 alias ULTRAKILL='kill -KILL'
 alias ULTRAPKILL='pkill -KILL'
@@ -224,10 +247,12 @@ alias fzfdiff='git status -s | \
   fzf -m --preview "git diff --color=always -- {2..}" | \
   sed "s/^.\{3\}//"'
 alias fzfgrep='FZF_DEFAULT_COMMAND=true fzf \
-  --bind '\''change:reload(rg --files-with-matches --smart-case -e {q})'\'' \
-  --preview '\''rg --pretty --context "$((FZF_PREVIEW_LINES / 4))" \
-  --smart-case \
-  -e {q} {}'\'' \
+  --bind '\''change:reload(rg --files-with-matches --smart-case -e {q} || true)'\'' \
+  --preview '\''rg \
+    --pretty \
+    --context "$((FZF_PREVIEW_LINES / 4))" \
+    --smart-case \
+    -e {q} {} 2>/dev/null'\'' \
   --disabled'
 # ========== Aliases ==========
 
@@ -243,20 +268,10 @@ path=(. ~/bin $path)
 
 
 # ========== Functions ==========
-# least touch-starved linux user
-touch() {
-  if [ "$1" = "woman" ]; then
-    echo "Stop it, you pervert!"
-    return 1
-  else
-    command touch "$@"
-  fi
-}
-
 # python venv management
 mkvenv() {
   if [ ! -d ./venv ]; then
-    python -m venv venv || return 
+    python -m venv venv || return
     source venv/bin/activate || return
     if [ -f requirements.txt ]; then
       pip install -r requirements.txt
@@ -277,7 +292,8 @@ chpwd_functions+=(ls_after_cd)
 lf() {
   export lf_cd_file="/tmp/lfcd.$$"
 
-  command lf "$@"
+  lf_path="$(which -p lf)"
+  "$lf_path" "$@"
 
   __dir="$(cat "$lf_cd_file" 2>/dev/null)"
   if [ -n "$__dir" ]; then cd "$__dir"; fi
@@ -306,7 +322,7 @@ mkdirs() {
 
 tor_activate() {
   export all_proxy="socks5://127.0.0.1:9050"
-  export RPROMPT="[proxy]"
+  export RPROMPT="[tor proxy]"
 }
 
 tor_deactivate() {
@@ -314,8 +330,30 @@ tor_deactivate() {
   unset RPROMPT
 }
 
+zapret_activate() {
+  export all_proxy="socks5://127.0.0.1:8081"
+  export RPROMPT="[zapret proxy]"
+}
+
+zapret_deactivate() {
+  unset all_proxy
+  unset RPROMPT
+}
+
 cppath() {
   realpath "$1" | wl-copy
 }
+
+spek() {
+    ffmpeg -i "$1" -lavfi showspectrumpic=s=960x540 -f image2pipe -vcodec png - 2>/dev/null | chafa -f sixel
+}
 # ========== Functions ==========
 
+
+# FUCK YOU VAXRY
+if [ -z "$DISPLAY" ]; then
+    printf '\033[1m!!!!!!!!!! WARNING !!!!!!!!!!\033[0m\n'
+    printf '\033[1mDONT SWITCH BACK TO HYPRLAND, THIS WILL FREEZE WHOLE SYSTEM\033[0m\n'
+    printf '\033[1mEXECUTE \033[0mpkill Hyprland\033[1m AFTER YOU ARE DONE HERE\033[0m\n'
+    printf '\033[1m!!!!!!!!!! WARNING !!!!!!!!!!\033[0m\n'
+fi

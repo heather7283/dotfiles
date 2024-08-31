@@ -150,27 +150,6 @@ local plugins = {
     end
   },
 
-  -- File tree
-  --{
-  --  "nvim-tree/nvim-tree.lua",
-  --  cmd = "NvimTreeOpen",
-  --  config = function(_, opts)
-  --    require("nvim-tree").setup(require("plugins.nvimtree"))
-  --  end,
-  --  dependencies = { "nvim-tree/nvim-web-devicons" }
-  --},
-
-  {
-      'glacambre/firenvim',
-
-      -- Lazy load firenvim
-      -- Explanation: https://github.com/folke/lazy.nvim/discussions/463#discussioncomment-4819297
-      lazy = not vim.g.started_by_firenvim,
-      build = function()
-          vim.fn["firenvim#install"](0)
-      end
-  },
-
   -- statusline
   {
     "nvim-lualine/lualine.nvim",

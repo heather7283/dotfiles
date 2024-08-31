@@ -1,22 +1,20 @@
 #!/usr/bin/env bash
 
 item_id="$1"
-full_item="$(cliphist list | grep -e "$item_id")"
+full_item="$(cliphist list | awk "/${item_id}/ { print \$0; exit }")"
 item="$(echo "$full_item" | cut -d$'\t' -f2)"
 
 # open links in firefox
 if [[ "$item" =~ ^http(s)?:// ]]; then
-  if pgrep firefox; then
-    firefox "$(echo "$full_item" | cliphist decode)"
-  else
+  if ! pgrep firefox; then
     hyprctl dispatch exec -- firefox
-    firefox "$(echo "$full_item" | cliphist decode)"
   fi
+  firefox "$(echo "$full_item" | cliphist decode)"
 # open images in imv
 elif [[ "$item" =~ ^\[\[\ binary\ data\ [1-9][0-9]*\ .iB ]]; then
   tmp_file="/tmp/imv_stdin_$$"
   echo "$full_item" | cliphist decode >"$tmp_file"
-  imv -w 'imv-float' "$tmp_file"
+  imv -w FLOATME "$tmp_file"
   rm "$tmp_file"
 # open text in nvim
 else

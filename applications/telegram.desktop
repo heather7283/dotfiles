@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Telegram Desktop
 # setting this envvar makes telegram use GTK file picker
-Exec=env XDG_CURRENT_DESKTOP=gnome telegram-desktop
+Exec=env XDG_CURRENT_DESKTOP=gnome QT_QPA_PLATFORMTHEME=flatpak telegram-desktop
 Terminal=false
 MimeType=x-scheme-handler/tg;
