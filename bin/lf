@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 if [ -n "$TMPDIR" ]; then
   export LF_DATA_HOME="${TMPDIR}"
@@ -6,6 +6,14 @@ else
   export LF_DATA_HOME=/tmp
 fi
 
-# set TERM to foot-extra bc without it colors are weird
-TERM=foot-extra exec /usr/bin/lf "$@"
+if [ "$TERM" = "tmux-256color" ]; then
+  export OLDTERM="$TERM"
+  export TERM="tmux"
+fi
+
+if [ -f ~/.config/lf/hosts/"${HOST}" ]; then
+    exec /usr/local/bin/lf -config ~/.config/lf/hosts/"${HOST}" "$@"
+else
+    exec /usr/local/bin/lf -config ~/.config/lf/lfrc "$@"
+fi
 
