@@ -12,7 +12,7 @@ case "$mime_description" in
     exec mpv --force-window=immediate "$filename"
     ;;
   audio/*)
-    exec mpv --no-audio-display "$filename"
+    exec mpv --no-video "$filename"
 esac
 
 if [[ "$mime_description" =~ charset= ]] && [[ ! "$mime_description" =~ charset=binary ]]; then

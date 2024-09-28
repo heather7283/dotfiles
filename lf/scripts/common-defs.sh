@@ -242,3 +242,5 @@ stderr_wrapper() {
 # IFS: required to split filenames properly
 export IFS=$'\n'
 
+[ -n "$OLDTERM" ] && export TERM="$OLDTERM"
+

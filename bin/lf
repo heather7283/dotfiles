@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 
 if [ -n "$TMPDIR" ]; then
   export LF_DATA_HOME="${TMPDIR}"
@@ -11,9 +11,15 @@ if [ "$TERM" = "tmux-256color" ]; then
   export TERM="tmux"
 fi
 
+real_lf="$(which -a lf | grep -v "$0" | head -n1)"
+if [ -z "$real_lf" ]; then
+    echo "real lf executable not found, check your PATH"
+    exit 1
+fi
+
 if [ -f ~/.config/lf/hosts/"${HOST}" ]; then
-    exec /usr/local/bin/lf -config ~/.config/lf/hosts/"${HOST}" "$@"
+    exec "$real_lf" -config ~/.config/lf/hosts/"${HOST}" "$@"
 else
-    exec /usr/local/bin/lf -config ~/.config/lf/lfrc "$@"
+    exec "$real_lf" -config ~/.config/lf/lfrc "$@"
 fi
 
