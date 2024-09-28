@@ -1,0 +1,14 @@
+#!/bin/sh
+
+real_fastfetch="$(which -a fastfetch | grep -v "$0" | head -n1)"
+if [ -z "$real_fastfetch" ]; then
+    echo "real fastfetch executable not found, check your PATH"
+    exit 1
+fi
+
+if [ -f ~/.config/fastfetch/hosts/"${HOST}"/config.jsonc ]; then
+    exec "$real_fastfetch" -c ~/.config/fastfetch/hosts/"${HOST}"/config.jsonc "$@"
+else
+    exec "$real_fastfetch" "$@"
+fi
+
