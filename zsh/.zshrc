@@ -8,6 +8,10 @@ setopt globdots
 HISTSIZE=100
 # don't load unnecessary eye candy
 _load_bloat=0
+# I fucking hate lf bro
+[ -n "$OLDTERM" ] && export TERM="$OLDTERM"
+# autoload functions path
+fpath+=(~/.config/zsh/functions/)
 # ========== General options ==========
 
 
@@ -61,7 +65,7 @@ if command -v fzf >/dev/null 2>&1 && \
   source "$_zsh_plugins_dir/fzf-tab/fzf-tab.plugin.zsh"
   zstyle ':fzf-tab:*' default-color ''
   if _is_bloated; then
-    zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+    #zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
     [ -f ~/.config/fzf/flags ] && zstyle ":fzf-tab:*" fzf-flags $(tr '\n' ' ' <~/.config/fzf/flags)
   fi
 fi
@@ -161,16 +165,13 @@ zle-line-init() {
   _ln_help_displayed=0
 }
 zle -N zle-line-init
-# set beam cursor for each new prompt
-reset_cursor() {set-cursor-shape beam}
-preexec_functions+=(reset_cursor)
 # start shell with beam cursor
 set-cursor-shape beam
 
 # search history with fzf on C-r
 fzf-history-search() {
   item="$(fc -rl 0 -1 | fzf --with-nth 2.. --scheme=history)"
-  zle vi-fetch-history -n "$item"
+  [ -n "$item" ] && zle vi-fetch-history -n "$item"
 }
 zle -N fzf-history-search
 bindkey -M viins '\C-r' fzf-history-search
@@ -261,6 +262,9 @@ alias fzfgrep='FZF_DEFAULT_COMMAND=true fzf \
 command -v nvim 1>/dev/null 2>&1 && export MANPAGER='nvim -c ":set signcolumn=no" -c "Man!"'
 export LESS='--use-color --RAW-CONTROL-CHARS --chop-long-lines'
 export BASH_ENV=~/.config/bash/non-interactive.sh
+export HOST="$HOST"
+export USER="$USER"
+export HOME="$HOME"
 
 typeset -U path
 path=(. ~/bin $path)
@@ -347,13 +351,60 @@ cppath() {
 spek() {
     ffmpeg -i "$1" -lavfi showspectrumpic=s=960x540 -f image2pipe -vcodec png - 2>/dev/null | chafa -f sixel
 }
+
+running_in_tmux() {
+    [ -n "$TMUX_PANE" ] && return 0 || return 1
+}
+
+tmux_pane_visible() {
+    tmux list-windows -f '#{window_active}' -F '#{window_visible_layout}' | \
+        grep -qPe "(\d+x\d+),(\d+),(\d+),${TMUX_PANE#%}"
+}
+
+running_in_hyprland() {
+    [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ] && return 0 || return 1
+}
+
+foot_active_window() {
+    hyprctl activewindow | grep -qe 'initialClass: foot$'
+}
 # ========== Functions ==========
 
 
+# ========== Hooks ==========
+declare -aU precmd_functions
+declare -aU preexec_functions
+
+emit_prompt_control_sequence() {
+    print -Pn "\e]133;A\e\\"
+}
+precmd_functions+=(emit_prompt_control_sequence)
+
+# set beam cursor for each new prompt
+reset_cursor() {
+    set-cursor-shape beam
+}
+preexec_functions+=(reset_cursor)
+
+save_job_start_time() {
+    JOB_START_SECONDS="$SECONDS"
+}
+preexec_functions+=(save_job_start_time)
+
+save_job_exit_status() {
+    LAST_JOB_EXIT_STATUS="$?"
+}
+precmd_functions=(save_job_exit_status $precmd_functions)
+
+autoload -U notify_job_finish
+precmd_functions+=(notify_job_finish)
+# ========== Hooks ==========
+
 # FUCK YOU VAXRY
-if [ -z "$DISPLAY" ]; then
+if [ -z "$WAYLAND_DISPLAY" ] && [[ "$TTY" = /dev/tty* ]] && pgrep Hyprland 2>&1 1>/dev/null; then
     printf '\033[1m!!!!!!!!!! WARNING !!!!!!!!!!\033[0m\n'
     printf '\033[1mDONT SWITCH BACK TO HYPRLAND, THIS WILL FREEZE WHOLE SYSTEM\033[0m\n'
     printf '\033[1mEXECUTE \033[0mpkill Hyprland\033[1m AFTER YOU ARE DONE HERE\033[0m\n'
     printf '\033[1m!!!!!!!!!! WARNING !!!!!!!!!!\033[0m\n'
 fi
+
