@@ -64,10 +64,6 @@ if command -v fzf >/dev/null 2>&1 && \
 [ -f "$_zsh_plugins_dir/fzf-tab/fzf-tab.plugin.zsh" ]; then
   source "$_zsh_plugins_dir/fzf-tab/fzf-tab.plugin.zsh"
   zstyle ':fzf-tab:*' default-color ''
-  if _is_bloated; then
-    #zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
-    [ -f ~/.config/fzf/flags ] && zstyle ":fzf-tab:*" fzf-flags $(tr '\n' ' ' <~/.config/fzf/flags)
-  fi
 fi
 
 if _is_bloated && \
@@ -95,6 +91,8 @@ zsh-plugins-install() {
     git clone --depth 1 \
       'https://github.com/Aloxaf/fzf-tab' \
       "$_zsh_plugins_dir/fzf-tab"
+    git apply -C "$_zsh_plugins_dir/fzf-tab" \
+      <~/.config/zsh/patches/fzf-tab-remove-custom-colors.patch
   fi
   if [ ! -d "$_zsh_plugins_dir/zsh-autosuggestions/" ]; then
     git clone --depth 1 \
@@ -111,11 +109,11 @@ zsh-plugins-install() {
       'https://github.com/zsh-users/zsh-completions.git' \
       "$_zsh_plugins_dir/zsh-completions"
   fi
-if [ ! -d "$_zsh_plugins_dir/gentoo-zsh-completions/" ]; then
+  if [ ! -d "$_zsh_plugins_dir/gentoo-zsh-completions/" ]; then
     git clone --depth 1 \
       'https://github.com/gentoo/gentoo-zsh-completions.git' \
       "$_zsh_plugins_dir/gentoo-zsh-completions"
-fi
+  fi
 }
 
 zsh-plugins-clean() {
@@ -137,7 +135,9 @@ zsh-plugins-update() {
 
   for _plugin_dir in "$_zsh_plugins_dir/"*; do
     echo "Updating $_plugin_dir"
+    git -C "$_plugin_dir" stash
     git -C "$_plugin_dir" pull
+    git -C "$_plugin_dir" stash pop
   done
   unset _plugin_dir
 }
@@ -267,7 +267,7 @@ export USER="$USER"
 export HOME="$HOME"
 
 typeset -U path
-path=(. ~/bin $path)
+path=(~/bin $path)
 # ========== Envvars ==========
 
 
