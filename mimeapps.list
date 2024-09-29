@@ -1,0 +1,12 @@
+[Default Applications]
+x-scheme-handler/tg=userapp-Telegram Desktop-WX7VL2.desktop;
+inode/directory=lf.desktop;
+
+[Added Associations]
+x-scheme-handler/tg=userapp-Telegram Desktop-WX7VL2.desktop;
+inode/directory=lf.desktop;
+image/jxl=mvi.desktop;
+image/heic=mvi.desktop;
+image/jpeg=mvi.desktop;
+image/png=mvi.desktop;
+image/webp=mvi.desktop;
