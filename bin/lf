@@ -1,25 +1,33 @@
 #!/bin/sh
 
+# find real executable
+real_exe_name="lf"
+OLDPATH="$PATH"
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/opt/bin"
+real_exe="$(which "$real_exe_name")"
+if [ -z "$real_exe" ]; then
+    echo "real ${real_exe_name} executable not found in ${PATH}"
+    exit 1
+fi
+PATH="$OLDPATH"
+
+# on termux /tmp is not accessible
 if [ -n "$TMPDIR" ]; then
   export LF_DATA_HOME="${TMPDIR}"
 else
   export LF_DATA_HOME=/tmp
 fi
 
+# lf does not work nicely with tmux-256color
 if [ "$TERM" = "tmux-256color" ]; then
   export OLDTERM="$TERM"
   export TERM="tmux"
 fi
 
-real_lf="$(which -a lf | grep -v "$0" | head -n1)"
-if [ -z "$real_lf" ]; then
-    echo "real lf executable not found, check your PATH"
-    exit 1
-fi
 
 if [ -f ~/.config/lf/hosts/"${HOST}" ]; then
-    exec "$real_lf" -config ~/.config/lf/hosts/"${HOST}" "$@"
+    exec "$real_exe" -config ~/.config/lf/hosts/"${HOST}" "$@"
 else
-    exec "$real_lf" -config ~/.config/lf/lfrc "$@"
+    exec "$real_exe" -config ~/.config/lf/lfrc "$@"
 fi
 

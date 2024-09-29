@@ -1,14 +1,19 @@
 #!/bin/sh
 
-real_fastfetch="$(which -a fastfetch | grep -v "$0" | head -n1)"
-if [ -z "$real_fastfetch" ]; then
-    echo "real fastfetch executable not found, check your PATH"
+# find real executable
+real_exe_name="fastfetch"
+OLDPATH="$PATH"
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/opt/bin"
+real_exe="$(which "$real_exe_name")"
+if [ -z "$real_exe" ]; then
+    echo "real ${real_exe_name} executable not found in ${PATH}"
     exit 1
 fi
+PATH="$OLDPATH"
 
 if [ -f ~/.config/fastfetch/hosts/"${HOST}"/config.jsonc ]; then
-    exec "$real_fastfetch" -c ~/.config/fastfetch/hosts/"${HOST}"/config.jsonc "$@"
+    exec "$real_exe" -c ~/.config/fastfetch/hosts/"${HOST}"/config.jsonc "$@"
 else
-    exec "$real_fastfetch" "$@"
+    exec "$real_exe" "$@"
 fi
 
