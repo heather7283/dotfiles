@@ -2,8 +2,22 @@
 
 filename="$(realpath "$1")"
 
-mime_description=$(file --brief --mime -- "$filename")
+# first match based on extension
+case "${filename,,}" in
+  *.png|*.jpeg|*.jpg|*.jxl|*.webp|*.gif)
+      exec mvi "$filename";;
+  *.mp3|*.flac|*.opus|*.wav|*.ape)
+      exec mpv --no-video "$filename";;
+  *.mkv|*.mp4)
+      exec mpv --force-window=immediate "$filename";;
+  *.webm) # can be either video or music, so dont force window
+      exec mpv "$filename";;
+  *.djvu|*.pdf)
+      exec zathura "$filename";;
+esac
 
+# match based on mime type
+mime_description=$(file --brief --mime -- "$filename")
 case "$mime_description" in
   image/*)
     exec mvi "$filename"
@@ -16,7 +30,7 @@ case "$mime_description" in
 esac
 
 if [[ "$mime_description" =~ charset= ]] && [[ ! "$mime_description" =~ charset=binary ]]; then
-  exec "$EDITOR" "$filename"
+  exec "${EDITOR:-vi}" "$filename"
 fi
 
 exec xdg-open "$filename"
