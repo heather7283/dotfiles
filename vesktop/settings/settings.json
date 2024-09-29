@@ -356,9 +356,6 @@
         "RoleColorEverywhere": {
             "enabled": false
         },
-        "SearchReply": {
-            "enabled": false
-        },
         "SecretRingToneEnabler": {
             "enabled": false
         },
@@ -623,10 +620,13 @@
         "ConsoleJanitor": {
             "enabled": false
         },
-        "ShowAllRoles": {
+        "YoutubeAdblock": {
             "enabled": false
         },
-        "YoutubeAdblock": {
+        "AlwaysExpandRoles": {
+            "enabled": false
+        },
+        "FullSearchContext": {
             "enabled": false
         }
     },
@@ -640,6 +640,6 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1722677628253
+        "settingsSyncVersion": 1726900537830
     }
 }
