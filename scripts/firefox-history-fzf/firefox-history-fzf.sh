@@ -32,7 +32,7 @@ fzf \
   --tiebreak begin,index \
   --preview 'echo {2..}' \
   --preview-window 'up,1,wrap' \
-  --bind 'ctrl-y:execute-silent(echo {2..} | wl-copy)' \
+  --bind 'ctrl-y:execute-silent(echo {2..} | wl-copy -t "text/plain;charset=utf-8")' \
   --no-hscroll | cut -f2 -d$'\t')"
 
 rm "${temp_file}"
