@@ -27,6 +27,12 @@ vim.filetype.add({
   }
 })
 
+vim.filetype.add({
+  pattern = {
+    [".*%.scd"] = "markdown"
+  }
+})
+
 -- looks acceptable
 vim.treesitter.language.register("bash", "execline")
 

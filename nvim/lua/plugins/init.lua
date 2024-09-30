@@ -52,10 +52,7 @@ local plugins = {
           updateevents = "TextChanged,TextChangedI"
         },
         config = function(_, opts)
-          require("luasnip").setup(opts)
-
-          -- Load snippets from ~/.config/nvim/lua/luasnip_snippets/
-          require("luasnip.loaders.from_lua").load({paths = "~/.config/nvim/lua/luasnip_snippets/"})
+          require("plugins.luasnip")
         end
       },
       {

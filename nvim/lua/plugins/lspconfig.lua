@@ -28,7 +28,8 @@ local handlers = {
           analysis = { typeCheckingMode = "basic" }
         }
       },
-      capabilities = capabilities
+      capabilities = capabilities,
+      root_dir = function(filename, bufnr) return vim.fn.matchstr(filename, ".*/") end
     })
   end,
 
