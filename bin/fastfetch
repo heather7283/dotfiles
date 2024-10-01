@@ -1,15 +1,17 @@
-#!/bin/sh
+#!/bin/sh -x
 
 # find real executable
 real_exe_name="fastfetch"
 OLDPATH="$PATH"
-PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/opt/bin"
-real_exe="$(which "$real_exe_name")"
+home=~
+PATH="$(echo "$PATH" | sed -e 's|/home/heather[^:]*:||g')"
+real_exe="$(command -v "$real_exe_name")"
 if [ -z "$real_exe" ]; then
     echo "real ${real_exe_name} executable not found in ${PATH}"
     exit 1
 fi
 PATH="$OLDPATH"
+unset OLDPATH
 
 if [ -f ~/.config/fastfetch/hosts/"${HOST}"/config.jsonc ]; then
     exec "$real_exe" -c ~/.config/fastfetch/hosts/"${HOST}"/config.jsonc "$@"

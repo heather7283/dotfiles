@@ -3,13 +3,15 @@
 # find real executable
 real_exe_name="fzf"
 OLDPATH="$PATH"
-PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/opt/bin"
-real_exe="$(which "$real_exe_name")"
+home=~
+PATH="$(echo "$PATH" | sed -e 's|/home/heather[^:]*:||g')"
+real_exe="$(command -v "$real_exe_name")"
 if [ -z "$real_exe" ]; then
     echo "real ${real_exe_name} executable not found in ${PATH}"
     exit 1
 fi
 PATH="$OLDPATH"
+unset OLDPATH
 
 if [ -z "$FZF_DEFAULT_COMMAND" ]; then
     export FZF_DEFAULT_COMMAND="find -maxdepth 6"
