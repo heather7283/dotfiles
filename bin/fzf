@@ -14,7 +14,7 @@ PATH="$OLDPATH"
 unset OLDPATH
 
 if [ -z "$FZF_DEFAULT_COMMAND" ]; then
-    export FZF_DEFAULT_COMMAND="find -maxdepth 6"
+    export FZF_DEFAULT_COMMAND="find -xdev -maxdepth 6"
 fi
 
 if [ -f ~/.config/fzf/hosts/"${HOST}" ]; then
