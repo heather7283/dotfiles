@@ -4,7 +4,7 @@
 real_exe_name="fastfetch"
 OLDPATH="$PATH"
 home=~
-PATH="$(echo "$PATH" | sed -e 's|/home/heather[^:]*:||g')"
+PATH="$(echo "$PATH" | sed -e "s|${home}[^:]*:||g")"
 real_exe="$(command -v "$real_exe_name")"
 if [ -z "$real_exe" ]; then
     echo "real ${real_exe_name} executable not found in ${PATH}"
