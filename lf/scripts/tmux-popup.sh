@@ -1,18 +1,14 @@
-#!/usr/bin/env bash
-# Usage: lmux-popup.sh [-w WIDTH] [-h HEIGHT] [-E] [ARGS] -- COMMAND
+#!/bin/sh
+
+# Usage: tmux-popup.sh [-w WIDTH] [-h HEIGHT] [-E] [ARGS] -- COMMAND
 #
 # Display tmux popup running COMMAND centered in currently active pane
 #
 # WIDTH and HEIGHT can end with %, in this case they are treated
 # as percentage of pane size
 #
-# It is IMPORTANT to separate command from args with -- 
+# It is IMPORTANT to separate command from args with --
 # that's just how my stupid aah parser works
-
-export _script_name="tmux-popup"
-
-# shellcheck source=/home/heather/.config/lf/scripts/common-defs.sh
-source ~/.config/lf/scripts/common-defs.sh
 
 if [ -z "$TMUX" ]; then
   die "TMUX envvar is not set, not running in tmux?"
@@ -20,7 +16,7 @@ fi
 
 height="70%"
 width="70%"
-e_count="0"
+e_count=0
 extra_args=""
 
 # Parse command line options
@@ -28,22 +24,14 @@ while true; do
   case "$1" in
     '-w')
       shift 1
-      if [[ $1 =~ ^[1-9][0-9]*%?$ ]]; then
-        width="$1"
-      else
-        die "wrong argument: $1"
-      fi
+      width="$1"
       ;;
     '-h')
       shift 1
-      if [[ "$1" =~ ^[1-9][0-9]*%?$ ]]; then
-        height="$1"
-      else
-        die "wrong argument: $1"
-      fi
+      height="$1"
       ;;
     '-E')
-      e_count="$(( e_count + 1 ))"
+      e_count=$((e_count + 1))
       ;;
     '-EE')
       e_flag="-EE"
@@ -56,53 +44,65 @@ while true; do
       die "wrong option: $1"
       ;;
   esac
-
   shift 1
 done
 
 if [ -z "$e_flag" ]; then
-  if [ "$e_count" -ge "2" ]; then
+  if [ "$e_count" -ge 2 ]; then
     e_flag="-EE"
-  elif [ "$e_count" -eq "1" ]; then
+  elif [ "$e_count" -eq 1 ]; then
     e_flag="-E"
   fi
 fi
 
-popup_border_lines="$(tmux show-options -Apv popup-border-lines)"
+popup_border_lines=$(tmux show-options -Apv popup-border-lines)
+case "$width" in
+  *%) w_percent=1 ;;
+  *)
+    if [ ! "$popup_border_lines" = "none" ]; then
+      width=$((width + 2))
+    fi
+    w_percent=0
+    ;;
+esac
 
-if [[ "$width" =~ %$ ]]; then w_percent=1; else
-  if [ ! "$popup_border_lines" = "none" ]; then width=$(( width + 2 )); fi
-  w_percent=0;
+case "$height" in
+  *%) h_percent=1 ;;
+  *)
+    if [ ! "$popup_border_lines" = "none" ]; then
+      height=$((height + 2))
+    fi
+    h_percent=0
+    ;;
+esac
+
+tmux_output=$(tmux display-message -p "#{pane_left} #{pane_right} #{pane_top} #{pane_bottom} #{pane_width} #{pane_height}")
+pane_left=$(echo "$tmux_output" | cut -d' ' -f1)
+pane_right=$(echo "$tmux_output" | cut -d' ' -f2)
+pane_top=$(echo "$tmux_output" | cut -d' ' -f3)
+pane_bottom=$(echo "$tmux_output" | cut -d' ' -f4)
+pane_width=$(echo "$tmux_output" | cut -d' ' -f5)
+pane_height=$(echo "$tmux_output" | cut -d' ' -f6)
+
+pane_center_x=$(((pane_left + pane_right) / 2))
+pane_center_y=$(((pane_top + pane_bottom) / 2))
+
+if [ "$w_percent" -eq 1 ]; then
+  popup_width=$((${width%\%} * pane_width / 100))
+else
+  popup_width=${width%\%}
 fi
-if [[ "$height" =~ %$ ]]; then h_percent=1; else
-  if [ ! "$popup_border_lines" = "none" ]; then height=$(( height + 2 )); fi
-  h_percent=0;
+
+if [ "$h_percent" -eq 1 ]; then
+  popup_height=$((${height%\%} * pane_height / 100))
+else
+  popup_height=${height%\%}
 fi
 
-IFS=' ' read x y w h < <(tmux display-message -p \
-  "scale = 2; 
-  pane_center_x = ((#{pane_left} + #{pane_right}) / 2); 
-  pane_center_y = ((#{pane_top} + #{pane_bottom}) / 2);
-
-  if ( $w_percent ) {
-    popup_width = (${width%\%} / 100 * #{pane_width});
-  } else {
-    popup_width = ${width%\%}
-  }
-  if ( $h_percent ) {
-    popup_height = (${height%\%} / 100 * #{pane_height});
-  } else {
-    popup_height = ${height%\%}
-  }
-  
-  print pane_center_x - popup_width / 2;
-  print \" \";
-  print pane_center_y + popup_height / 2;
-  print \" \";
-  print popup_width;
-  print \" \";
-  print popup_height" | bc)
-x="${x%.*}"; y="${y%.*}"; w="${w%.*}"; h="${h%.*}"
+x=$((pane_center_x - popup_width / 2))
+y=$((pane_center_y + popup_height / 2))
+w=$popup_width
+h=$popup_height
 
 tmux display-popup \
   -e id="$id" \
@@ -113,4 +113,3 @@ tmux display-popup \
   -h "$h" \
   $e_flag -- \
   "$@"
-
