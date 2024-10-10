@@ -18,7 +18,7 @@ set shell bash
 # Previewer config
 set previewer ~/.config/lf/previewer.sh
 # File opener config
-cmd open $~/.config/lf/opener.sh "$f"
+cmd open %printf '\e[1;31mUSE o or O to open!!!\e[0m'
 
 cmd unzip %{{
   if [ -e "${f%.*}" ]; then
@@ -92,7 +92,7 @@ cmd goto-symlink-target &{{
 
 cmd fzf-jump ${{
   # dont make -maxdepth too big uwu
-  res="$(find . -depth -maxdepth 6 2>/dev/null | fzf --reverse --no-clear --scheme=path)"
+  res="$(find . -xdev -depth -maxdepth 6 2>/dev/null | fzf --reverse --no-clear --scheme=path)"
   if [ -z "$res" ]; then exit; fi
 
   if [ -d "$res" ]; then
@@ -201,6 +201,9 @@ map a %~/.config/lf/scripts/mount-archive.sh
 map E sudoedit
 
 map . :set hidden!
+
+map o $~/.config/lf/opener.sh "$f"
+map O %~/.config/lf/scripts/open-in-new-tmux-pane.sh ~/.config/lf/opener.sh "$f"
 
 # cleanup on-quit hook
 &~/.config/lf/scripts/add-hook.sh 'on-quit' 'source ~/.config/lf/scripts/common-defs.sh; if [ -n "$_lf_client_data_dir" ]; then rm -r "$_lf_client_data_dir"; fi'
