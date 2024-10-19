@@ -91,8 +91,10 @@ zsh-plugins-install() {
     git clone --depth 1 \
       'https://github.com/Aloxaf/fzf-tab' \
       "$_zsh_plugins_dir/fzf-tab"
-    git -C "$_zsh_plugins_dir/fzf-tab" apply \
-      <~/.config/zsh/patches/fzf-tab-remove-custom-colors.patch
+    (
+        cd "$_zsh_plugins_dir/fzf-tab"
+        git apply <~/.config/zsh/patches/fzf-tab-remove-custom-colors.patch
+    )
   fi
   if [ ! -d "$_zsh_plugins_dir/zsh-autosuggestions/" ]; then
     git clone --depth 1 \
