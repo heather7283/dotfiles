@@ -64,6 +64,7 @@ if command -v fzf >/dev/null 2>&1 && \
 [ -f "$_zsh_plugins_dir/fzf-tab/fzf-tab.plugin.zsh" ]; then
   source "$_zsh_plugins_dir/fzf-tab/fzf-tab.plugin.zsh"
   zstyle ':fzf-tab:*' default-color ''
+  zstyle ':fzf-tab:*' use-fzf-default-opts yes
 fi
 
 if _is_bloated && \

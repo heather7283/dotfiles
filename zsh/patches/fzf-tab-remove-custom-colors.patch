@@ -1,11 +1,11 @@
 diff --git a/lib/-ftb-fzf b/lib/-ftb-fzf
-index 516d9fa..1f757f3 100755
+index 62f93f1..03b7100 100755
 --- a/lib/-ftb-fzf
 +++ b/lib/-ftb-fzf
-@@ -82,10 +82,8 @@ fi
- _ftb_query="${_ftb_query}$(command "$dd" bs=1G count=1 status=none iflag=nonblock < /dev/tty 2>/dev/null)" || true
+@@ -88,10 +88,8 @@ if [[ "$use_fzf_default_opts" == "yes" ]]; then
+ fi
  
- FZF_DEFAULT_OPTS='' SHELL=$ZSH_NAME $fzf_command \
+ FZF_DEFAULT_OPTS=$fzf_default_opts SHELL=$ZSH_NAME $fzf_command \
 -  --ansi \
    --bind=$binds \
    --bind="${switch_group[1]}:reload($reload_command -1),${switch_group[2]}:reload($reload_command 1)" \
