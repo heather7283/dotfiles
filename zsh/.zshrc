@@ -91,7 +91,7 @@ zsh-plugins-install() {
     git clone --depth 1 \
       'https://github.com/Aloxaf/fzf-tab' \
       "$_zsh_plugins_dir/fzf-tab"
-    git apply -C "$_zsh_plugins_dir/fzf-tab" \
+    git -C apply "$_zsh_plugins_dir/fzf-tab" \
       <~/.config/zsh/patches/fzf-tab-remove-custom-colors.patch
   fi
   if [ ! -d "$_zsh_plugins_dir/zsh-autosuggestions/" ]; then
@@ -377,7 +377,7 @@ declare -aU precmd_functions
 declare -aU preexec_functions
 
 emit_prompt_control_sequence() {
-    print -Pn "\e]133;A\e\\"
+    printf "\033]133;A\033\\"
 }
 precmd_functions+=(emit_prompt_control_sequence)
 
