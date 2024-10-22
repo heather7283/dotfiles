@@ -20,15 +20,6 @@ set previewer ~/.config/lf/previewer.sh
 # File opener config
 cmd open %printf '\e[1;31mUSE o or O to open!!!\e[0m'
 
-cmd unzip %{{
-  if [ -e "${f%.*}" ]; then
-    echo "${f%.*} already exists"
-  else
-    mkdir -v "${f%.*}"
-    unzip -d "${f%.*}" "$f" > /dev/null
-  fi
-}}
-
 cmd copy-path &{{
   echo "$f" | wl-copy
 }}
@@ -204,6 +195,24 @@ map . :set hidden!
 
 map o $~/.config/lf/opener.sh "$f"
 map O %~/.config/lf/scripts/open-in-new-tmux-pane.sh ~/.config/lf/opener.sh "$f"
+
+map i
+map is :{{ set info size; }}
+map ic :{{ set info ctime; }}
+map ip :{{ set info perm; }}
+map iu :{{ set info user; }}
+map ig :{{ set info group; }}
+
+map s
+map sN :{{ set sortby natural; }}
+map sn :{{ set sortby name; }}
+map ss :{{ set sortby size; }}
+map sc :{{ set sortby ctime; }}
+map se :{{ set sortby ext; }}
+
+map x
+map xx %~/.config/lf/scripts/unarchive.sh -s "$f"
+map xX %~/.config/lf/scripts/unarchive.sh "$f"
 
 # cleanup on-quit hook
 &~/.config/lf/scripts/add-hook.sh 'on-quit' 'source ~/.config/lf/scripts/common-defs.sh; if [ -n "$_lf_client_data_dir" ]; then rm -r "$_lf_client_data_dir"; fi'

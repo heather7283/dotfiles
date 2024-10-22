@@ -6,7 +6,7 @@ echo_warn() {
 }
 
 echo_err() {
-  # bold, red 
+  # bold, red
   printf '\033[1;31m[%s] %s\033[0m\n' "$_script_name" "$1" >&2
 }
 
@@ -22,6 +22,7 @@ die() {
 
 # check if lf data dir exists
 if [ -n "$LF_DATA_HOME" ]; then
+  # FIXME: not POSIX
   _lf_data_dir="${LF_DATA_HOME//\/\//\/}/lf"
 else
   _lf_data_dir=~/.local/share/lf
@@ -70,7 +71,7 @@ if [ -z "$TMUX" ]; then
     if [ -z "$_ans" ]; then # no user answer, using default
       _ans="$_default_ans"
     fi
-    
+
     if [ "$_ans" = "y" ] || [ "$_ans" = "Y" ]; then
       return 0
     else
@@ -92,7 +93,7 @@ if [ -z "$TMUX" ]; then
     if [ -z "$_ans" ]; then # no user answer, using default
       _ans="$_default_ans"
     fi
-    
+
     if [ "$_ans" = "y" ] || [ "$_ans" = "Y" ]; then
       return 0
     else
@@ -106,6 +107,7 @@ if [ -z "$TMUX" ]; then
     _prompt="[${_script_name}] ${1}"
     printf '%s' "$_prompt" >&2
 
+    # FIXME: read -i is not POSIX
     read -r _ans -i "$2"
 
     _exitcode=$?
@@ -114,6 +116,7 @@ if [ -z "$TMUX" ]; then
   }
 else
   ask() {
+    # FIXME: from here and onwards, printf '%q' is not POSIX
     ~/.config/lf/scripts/tmux-popup.sh -w 70% -h 2 -E -- bash -c '
       _script_name='"$(printf '%q' "$_script_name")"'
 
@@ -149,10 +152,6 @@ else
       _prompt='"$(printf '%q' "[${_script_name}] ${1}")"'
       _initial_string='"$(printf '%q' "$2")"'
       _tmp_read_line_file='"$(printf '%q' "$_tmpfile")"'
-      
-      #_ans="$(zsh-readline -p "$_prompt" -s "$_initial_string")"
-      #_exitcode=$?
-      #printf "%s" "$_ans" >"$_tmp_read_line_file"
 
       echo "$_initial_string" >"$_tmp_read_line_file"
       "${EDITOR:-vi}" "$_tmp_read_line_file"
@@ -170,7 +169,7 @@ detect_busybox() {
   mv 2>&1 | grep -qe 'BusyBox'
   return $?
 }
-  
+
 stderr_wrapper() {
   if [ -z "$1" ]; then die "no command provided for stderr wrapper"; fi
   cmd="$1"
@@ -178,9 +177,9 @@ stderr_wrapper() {
     die "$cmd not found"
   fi
 
-  _stderr_file="$(mktmpfile "stderr_wrapper-${cmd}")"
+  _stderr_file="$(mktmpfile "stderr_wrapper-${cmd##*/}")"
   if [ -z "$_stderr_file" ]; then die "unable to create temp file"; fi
-  
+
   # Call wrapped command
   shift 1
   "$cmd" "$@" 2>"$_stderr_file"
@@ -233,14 +232,16 @@ stderr_wrapper() {
 
 :select() {
   # put cursor on $1
-  if [[ "$1" = */.* ]]; then
-    lf -remote "send $_lf_client_id :set hidden"
-  fi
+  case "$1" in
+  */.*)
+    lf -remote "send $_lf_client_id :set hidden";;
+  esac
   lf -remote "send $_lf_client_id :select '$1'"
 }
 
 # IFS: required to split filenames properly
-export IFS=$'\n'
+export IFS='
+'
 
 [ -n "$OLDTERM" ] && export TERM="$OLDTERM"
 
