@@ -1,12 +1,21 @@
 #!/usr/bin/env bash
 
-echo "Search the internet for..."
-query="$(zsh-readline | tr ' ' '+')"
+tmpfile="$(mktemp)"
+printf "Search the Internet for...\n" >"$tmpfile"
 
-if [ -z "$query" ]; then exit; fi
+nvim \
+    -c 'nnoremap <ESC> :q!<CR>' \
+    -c 'nnoremap <CR> :wq<CR>' \
+    -c 'call feedkeys("o")' \
+    "$tmpfile"
+query="$(sed -e '1d;/^$/d;s/ /+/g' "$tmpfile" | tr '\n' '+')"
 
-engine='https://duckduckgo.com/?t=ffab&q='
+if [ -n "$query" ]; then
+    engine='https://duckduckgo.com/?t=ffab&q='
 
-if ! pgrep "firefox"; then hyprctl dispatch exec firefox; fi
-firefox "${engine}${query}"
+    if ! pgrep "firefox" >/dev/null; then hyprctl dispatch exec firefox; fi
+    firefox "${engine}${query}"
+fi
+
+rm "$tmpfile"
 
