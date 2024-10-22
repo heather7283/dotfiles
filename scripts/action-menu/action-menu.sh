@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 
 level1=(
-  "[S]earch the web"$'\t'"~/.config/scripts/firefox-web-search.sh"
-  "Browse [7]tv emotes"$'\t'"~/.config/scripts/7tv-browser.sh"
-  "[T]ranslate text"$'\t'"~/.config/scripts/deeplx-translator.sh"
+  "Internet [S]earch"$'\t'"~/.config/scripts/firefox-web-search.sh"
+  "[7]tv browser"$'\t'"~/.config/scripts/7tv-browser.sh"
+  "[T]ranslator"$'\t'"~/.config/scripts/deeplx-translator/deeplx-translator.sh"
+  "[E]moji picker"$'\t'"~/.config/scripts/emoji-picker/picker.sh"
+  "[B]rowser history"$'\t'"~/.config/scripts/firefox-history-fzf/firefox-history-fzf.sh"
+  "Application [R]unner"$'\t'"~/.config/scripts/drun-fzf/drun-fzf.sh"
+  "[C]lipboard history"$'\t'"~/.config/scripts/cclip-fzf/picker.sh"
 )
 
 choose() {
@@ -18,12 +22,14 @@ choose() {
     --disabled \
     --multi \
     --sync \
+    --with-shell 'bash -c' \
     --bind 'load:select-all' \
     --bind 'change:transform:
       query={q};
-      if [ "${#query}" -gt 1 ];
-        query="${query:(-1)}"
-        then echo -n "change-query($query)";
+
+      if [ "${#query}" -gt 1 ]; then
+        query="${query: -1:1}";
+        printf "change-query($query)";
         plus_needed=1;
       fi;
 
@@ -32,16 +38,11 @@ choose() {
       if [ -n "$match" ]; then
         n="${match%%:*}";
         if [ "$plus_needed" = 1 ]; then echo -n "+"; fi;
-        echo "deselect-all+pos($n)+select+accept";
+        printf "deselect-all+pos($n)+select+accept";
       fi' \
     --bind 'enter:deselect-all+select+accept' \
     --bind 'double-click:deselect-all+select+accept' \
-    --preview 'chafa \
-      --format sixels \
-      --view-size ${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES} \
-      --scale max \
-      --align center,center \
-      ~/sticker.webp' \
+    --preview 'cat ~/.config/scripts/action-menu/art.txt' \
     --preview-window 'border-none' \
     --no-info \
     --no-scrollbar \
@@ -49,9 +50,6 @@ choose() {
     --marker=' ' \
     --reverse
 }
-
-# hide cursor
-#printf "\033[?25l" >/dev/tty; 
 
 IFS=$'\t' read -r description script_path < <(choose level1)
 exec "$script_path"
