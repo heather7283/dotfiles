@@ -18,4 +18,5 @@
 --bind=ctrl-h:backward-char
 --bind=ctrl-u:preview-half-page-up
 --bind=ctrl-d:preview-half-page-down
+--bind=ctrl-y:execute-silent:"wl-copy -t 'text/plain;charset=utf-8' {}"
 --bind=resize:refresh-preview
