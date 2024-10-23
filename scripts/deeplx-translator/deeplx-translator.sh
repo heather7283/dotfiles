@@ -30,7 +30,11 @@ Translation will appear here
 EOF
 
 sock_path="$(mktemp -u)"
-nvim --listen "$sock_path" -c "set nowritebackup noswapfile" "$tmpfile" &
+nvim --listen "$sock_path" \
+    -c 'nnoremap <ESC> :q!<CR>' \
+    -c 'nnoremap <CR> :w<CR>' \
+    -c "set nowritebackup noswapfile" \
+    "$tmpfile" &
 editor_pid="$!"
 
 {
