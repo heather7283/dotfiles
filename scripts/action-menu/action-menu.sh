@@ -8,6 +8,7 @@ level1=(
   "[B]rowser history"$'\t'"~/.config/scripts/firefox-history-fzf/firefox-history-fzf.sh"
   "Application [R]unner"$'\t'"~/.config/scripts/drun-fzf/drun-fzf.sh"
   "[C]lipboard history"$'\t'"~/.config/scripts/cclip-fzf/picker.sh"
+  "[M]PRIS control"$'\t'"~/.config/scripts/mpris-control/player-control.sh"
 )
 
 choose() {
@@ -42,7 +43,7 @@ choose() {
       fi' \
     --bind 'enter:deselect-all+select+accept' \
     --bind 'double-click:deselect-all+select+accept' \
-    --preview 'cat ~/.config/scripts/action-menu/art.txt' \
+    --preview 'cat ~/.config/scripts/action-menu/art.txt; echo "${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}"' \
     --preview-window 'border-none' \
     --no-info \
     --no-scrollbar \
