@@ -2,7 +2,7 @@
 
 level1=(
   "Internet [S]earch"$'\t'"~/.config/scripts/firefox-web-search.sh"
-  "[7]tv browser"$'\t'"~/.config/scripts/7tv-browser.sh"
+  "[7]tv browser"$'\t'"~/.config/scripts/7tv-browser/7tv-browser.sh"
   "[T]ranslator"$'\t'"~/.config/scripts/deeplx-translator/deeplx-translator.sh"
   "[E]moji picker"$'\t'"~/.config/scripts/emoji-picker/picker.sh"
   "[B]rowser history"$'\t'"~/.config/scripts/firefox-history-fzf/firefox-history-fzf.sh"
