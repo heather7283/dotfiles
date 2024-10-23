@@ -46,7 +46,6 @@ case "$mime_description" in
     len="${len:-0}" # fallback
     pos=2 # 2 means 1/2
 
-    tmpfile="$(mktemp -t "$$_lfvideopreview_XXXXXX.png")"
     if ffmpeg -y \
         -ss "$((len / pos))ms" \
         -i "$filename" \
@@ -61,7 +60,6 @@ case "$mime_description" in
         --animate=off \
         --size="$((size_x))x$((size_y - 2))";
     then success="yes"; no_cache=1; fi
-    rm -f "$tmpfile"
 
     # display additional info at the bottom
     tput cuf "$pos_x"
