@@ -22,6 +22,7 @@
 }
 
 /* Each module */
+#submap,
 #battery,
 #clock,
 #cpu,
@@ -87,14 +88,21 @@ button:hover {
   /*border-bottom: 2px solid transparent;*/
   /*To compensate for the top border and still have vertical centering*/
   /*padding-top: 2px;*/
-  padding-left: 10px;
-  padding-right: 10px;
-
+  padding-left: 0px;
+  padding-right: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  min-width: 36px;
 }
 
 #workspaces button:hover {
   background: rgba(0, 0, 0, 0.2);
   /*border-color: #aaaaaa;*/
+}
+
+#workspaces button.focused {
+  border-color: #A7C080;
+  background-color: #475258;
 }
 
 #workspaces button.active {
