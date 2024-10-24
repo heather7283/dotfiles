@@ -26,7 +26,8 @@ do_chafa() {
 }
 
 [ -z "${SEVENTV_BROWSER_TMPDIR}" ] && die "7TV_BROWSER_TMPDIR is unset"
-rm -rf "${SEVENTV_BROWSER_TMPDIR:?}"/*
+tmpdir="${SEVENTV_BROWSER_TMPDIR}/${$}"
+mkdir -p "$tmpdir" || die "create ${tmpdir} failed"
 
 cache_dir=~/.cache/7tv-browser
 
@@ -58,7 +59,6 @@ elif [ "$frame_count" -eq 1 ]; then
     do_chafa --scale max "$filepath"
 else
     msg "emote is animated"
-    tmpdir="${SEVENTV_BROWSER_TMPDIR}"
 
     msg "extracting frames..."
     magick "$filepath" -coalesce "${tmpdir}/frame%06d.jpg" || die "extract frames failed"
