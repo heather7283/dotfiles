@@ -17,6 +17,8 @@ flock -n "$lockfile" \
     footclient \
     --server-socket "$server_socket" \
     --override colors.background=3D484D \
+    --override colors.sixel0=3D484D \
     --app-id foot-popup \
+    --window-size-chars 80x24 \
     "$@"
 
