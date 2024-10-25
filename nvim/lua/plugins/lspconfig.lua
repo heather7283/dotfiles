@@ -1,11 +1,5 @@
 require("mason-lspconfig").setup({
   ensure_installed = {
-    "basedpyright",
-    "lua_ls",
-    "bashls",
-    "clangd",
-    "tsserver",
-    "texlab"
   }
 })
 
