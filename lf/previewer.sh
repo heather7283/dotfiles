@@ -10,34 +10,37 @@ pos_y=$5
 
 no_cache=0
 
+chafa_wrapper() {
+  chafa \
+    --format sixel \
+    --polite on \
+    --passthrough none \
+    --colors full \
+    --optimize 9 \
+    --animate off \
+    --size "${size_x}x$((size_y - 2))" \
+    "$@"
+}
+
 mime_description=$(file --brief --mime -- "$filename")
 case "$mime_description" in
   image/*)
     bytes="$(stat -c '%s' "$filename")"
     if [ "$bytes" -gt "$((1024 * 1024 * 10))" ]; then # 10 megs
-      echo "file too big: disabling image preview" | fold -w "$size_x"
-      echo
-      if magick identify -ping \
-          -format '%m %wx%h, %[colorspace], %r' \
-          "$filename" 2>&1 | fold -w "$size_x"; then
-        success="yes"
-      fi
+      printf "file too big: disabling image preview\n\n" | fold -w "$size_x"
+      magick identify -ping \
+        -format '%m %wx%h, %[colorspace], %r' \
+        "$filename" 2>&1 | fold -w "$size_x" && success="yes"
     else
-      if chafa \
-        --format sixel \
-        --polite on \
-        --colors full \
-        --optimize 9 \
-        --animate off \
-        --size "$((size_x))x$((size_y - 2))" \
-        "$filename";
-      then success="yes"; no_cache=1; fi
-
+      if chafa_wrapper "$filename"; then
+        success="yes"
+        no_cache=1
+      fi
       # display additional info at the bottom
       tput cuf "$pos_x"
       magick identify -ping \
-          -format '%m %wx%h, %[colorspace], %r' \
-          "$filename" | head -c "$size_x"
+        -format '%m %wx%h, %[colorspace], %r' \
+        "$filename" | head -c "$size_x"
     fi
     ;;
   video/*)
@@ -46,42 +49,36 @@ case "$mime_description" in
     len="${len:-0}" # fallback
     pos=2 # 2 means 1/2
 
-    if ffmpeg -y \
-        -ss "$((len / pos))ms" \
-        -i "$filename" \
-        -vf "scale='min(640,iw)':min'(480,ih)':force_original_aspect_ratio=decrease" \
-        -vframes 1 \
-        -f apng pipe:1 | \
-      chafa \
-        --format=sixel \
-        --polite=on \
-        --colors=full \
-        --optimize=9 \
-        --animate=off \
-        --size="$((size_x))x$((size_y - 2))";
-    then success="yes"; no_cache=1; fi
+    if ffmpeg \
+      -ss "$((len / pos))ms" \
+      -i "$filename" \
+      -vf "scale='min(640,iw)':'min(480,ih)':force_original_aspect_ratio=decrease" \
+      -vframes 1 \
+      -f apng pipe:1 | chafa_wrapper;
+    then
+      success="yes"
+      no_cache=1
+    fi
 
     # display additional info at the bottom
     tput cuf "$pos_x"
-    len="${len%.*}"
     # covert seconds to hh:mm:ss
     total_sec="$((len / 1000))"
     sec="$((total_sec % 60))"
     min="$(((total_sec / 60) % 60))"
     hr="$((total_sec / 3600))"
-    #time_string="$([ "$hr" -gt 0 ] && printf "%dh" "$hr")$([ "$min" -gt 0 ] && printf "%dm" "$min")${sec}s"
-    time_string="${hr}h${min}m${sec}s"
+    time_string="$([ "$hr" -gt 0 ] && printf "%dh" "$hr")$([ "$min" -gt 0 ] && printf "%dm" "$min")${sec}s"
     printf '%s, %dx%d, %s fps, %s' "$time_string" "$w" "$h" "$fps" "$codec" | head -c "$size_x"
     ;;
   application/pdf*)
-    if magick convert -background '#FFFFFF' -alpha deactivate "${filename}[0]" png:- | \
-    chafa \
-      --format=sixel \
-      --polite=on \
-      --colors=full \
-      --optimize=9 \
-      --animate=off \
-      --size="$((size_x))x$((size_y - 1))"; then success="yes"; no_cache=1; fi
+    if magick convert \
+      -background '#FFFFFF' \
+      -alpha deactivate \
+      "${filename}[0]" jpg:- | chafa_wrapper;
+    then
+      success="yes"
+      no_cache=1
+    fi
     ;;
   audio/*)
     mediainfo "$filename" | \
