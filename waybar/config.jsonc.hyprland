@@ -2,14 +2,14 @@
   "layer": "top",
   "height": 28,
   "modules-left": [
-    "sway/workspaces",
-    "sway/mode"
+    "hyprland/workspaces",
+    "hyprland/submap"
   ],
   "modules-center": [
     "clock"
   ],
   "modules-right": [
-    "sway/language",
+    "hyprland/language",
     "pulseaudio",
     "bluetooth",
     "network",
@@ -75,7 +75,7 @@
     "format": "{:%H:%M}",
     "tooltip-format": "{:%a, %d %b %G}"
   },
-  "sway/workspaces": {
+  "hyprland/workspaces": {
     "format": "{icon}",
     "on-click": "activate",
     "format-icons": {
@@ -102,10 +102,9 @@
       "9": [],
       "10": []
     },
-    "sort-by-number": true,
-    "disable-scroll": true
+    "sort-by-number": true
   },
-  "sway/mode": {
+  "hyprland/submap": {
     "format": "{}"
   }
 }
