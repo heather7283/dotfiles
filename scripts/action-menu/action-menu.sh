@@ -9,6 +9,7 @@ level1=(
   "Application [R]unner"$'\t'"~/.config/scripts/drun-fzf/drun-fzf.sh"
   "[C]lipboard history"$'\t'"~/.config/scripts/cclip-fzf/picker.sh"
   "[M]PRIS control"$'\t'"~/.config/scripts/mpris-control/player-control.sh"
+  "[A]udio control"$'\t'"pulsemixer"
 )
 
 choose() {
