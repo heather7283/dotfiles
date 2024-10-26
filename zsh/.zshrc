@@ -27,17 +27,17 @@ _fake_space='%F{black}ꙋ%f'
 case "$HOST" in
   "FA506IH")
     _load_bloat=1
-    export PS1="${_fake_space}%B%1~ %0(?.:З.>:З)%b ";;
+    PS1="${_fake_space}%B%1~ %0(?.:З.>:З)%b ";;
   "QboxBlue")
-    export PS1="${_fake_space}%F{blue}%B%n@%m%b%f %1~ %B%(#.#.$)%b ";;
+    PS1="${_fake_space}%F{blue}%B%n@%m%b%f %1~ %B%(#.#.$)%b ";;
   "archlinux") # default hostname for archlinux VMs
-    export PS1="${_fake_space}%B[VM] %n@%m%b %1~ %B%(#.#.$)%b ";;
+    PS1="${_fake_space}%B[VM] %n@%m%b %1~ %B%(#.#.$)%b ";;
   *)  # generic prompt
-    export PS1="${_fake_space}%B%n@%m%b %1~ %B%(#.#.$)%b ";;
+    PS1="${_fake_space}%B%n@%m%b %1~ %B%(#.#.$)%b ";;
 esac
 
 if [ -n "$TERMUX_VERSION" ]; then
-  export PS1="${_fake_space}%F{green}%B%n@%m%b%f %1~ %B%(#.#.$)%b "
+  PS1="${_fake_space}%F{green}%B%n@%m%b%f %1~ %B%(#.#.$)%b "
 fi
 # ========== Prompt ==========
 
@@ -335,7 +335,7 @@ mkdirs() {
 
 tor_activate() {
   export all_proxy="socks5://127.0.0.1:9050"
-  export RPROMPT="[tor proxy]"
+  RPROMPT="[tor proxy]"
 }
 
 tor_deactivate() {
@@ -345,7 +345,7 @@ tor_deactivate() {
 
 zapret_activate() {
   export all_proxy="socks5://127.0.0.1:8081"
-  export RPROMPT="[zapret proxy]"
+  RPROMPT="[zapret proxy]"
 }
 
 zapret_deactivate() {
