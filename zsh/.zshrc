@@ -16,21 +16,28 @@ fpath+=(~/.config/zsh/functions/)
 
 
 # ========== Prompt ==========
-# Prompt
+# ꙋ aka CYRILLIC SMALL LETTER MONOGRAPH UK (U+A64B) plays an important role here.
+# It's rendered black so it effectively serves as a space, but since
+# it's so obscure we are unlikely to ever encounter it in the wild.
+# This makes it possible to jump between prompts by searching for this
+# specific character. Yes, I am aware that OSC 133 exists, but for some reason
+# zsh refuses to cooperate with me and I can't get OSC 133 to work no matter what.
+_fake_space='%F{black}ꙋ%f'
+
 case "$HOST" in
   "FA506IH")
     _load_bloat=1
-    export PS1="%B %1~ %0(?.:З.>:З)%b ";;
+    export PS1="${_fake_space}%B%1~ %0(?.:З.>:З)%b ";;
   "QboxBlue")
-    export PS1="%F{blue}%B%n@%m%b%f %1~ %B%(#.#.$)%b ";;
+    export PS1="${_fake_space}%F{blue}%B%n@%m%b%f %1~ %B%(#.#.$)%b ";;
   "archlinux") # default hostname for archlinux VMs
-    export PS1="%B[VM] %n@%m%b %1~ %B%(#.#.$)%b ";;
+    export PS1="${_fake_space}%B[VM] %n@%m%b %1~ %B%(#.#.$)%b ";;
   *)  # generic prompt
-    export PS1="%B%n@%m%b %1~ %B%(#.#.$)%b ";;
+    export PS1="${_fake_space}%B%n@%m%b %1~ %B%(#.#.$)%b ";;
 esac
 
 if [ -n "$TERMUX_VERSION" ]; then
-  export PS1="%F{green}%B%n@%m%b%f %1~ %B%(#.#.$)%b "
+  export PS1="${_fake_space}%F{green}%B%n@%m%b%f %1~ %B%(#.#.$)%b "
 fi
 # ========== Prompt ==========
 
@@ -376,11 +383,6 @@ foot_active_window() {
 # ========== Hooks ==========
 declare -aU precmd_functions
 declare -aU preexec_functions
-
-emit_prompt_control_sequence() {
-    printf "\033]133;A\033\\"
-}
-precmd_functions+=(emit_prompt_control_sequence)
 
 # set beam cursor for each new prompt
 reset_cursor() {
