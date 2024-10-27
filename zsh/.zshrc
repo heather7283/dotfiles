@@ -77,7 +77,7 @@ fi
 if _is_bloated && \
 [ -f "$_zsh_plugins_dir/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]; then
   source "$_zsh_plugins_dir/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
-  fast-theme ~/.config/zsh/fsh-theme-overlay.ini >/dev/null
+  fast-theme ~/.config/zsh/fsh-theme.ini >/dev/null
   # Prevents visual artifacts when pasting
   zle_highlight+=('paste:none')
 fi
@@ -95,32 +95,33 @@ zsh-plugins-install() {
     mkdir -pv "$_zsh_plugins_dir"
   fi
 
-  if [ ! -d "$_zsh_plugins_dir/fzf-tab/" ]; then
+  if [ ! -d "${_zsh_plugins_dir}/fzf-tab/" ]; then
     git clone --depth 1 \
       'https://github.com/Aloxaf/fzf-tab' \
-      "$_zsh_plugins_dir/fzf-tab"
+      "${_zsh_plugins_dir}/fzf-tab"
     sh -c "cd ${_zsh_plugins_dir}/fzf-tab && git apply \
         <~/.config/zsh/patches/fzf-tab-remove-custom-colors.patch"
   fi
-  if [ ! -d "$_zsh_plugins_dir/zsh-autosuggestions/" ]; then
+  if [ ! -d "${_zsh_plugins_dir}/zsh-autosuggestions/" ]; then
     git clone --depth 1 \
       'https://github.com/zsh-users/zsh-autosuggestions' \
-      "$_zsh_plugins_dir/zsh-autosuggestions"
+      "${_zsh_plugins_dir}/zsh-autosuggestions"
   fi
-  if [ ! -d "$_zsh_plugins_dir/fast-syntax-highlighting/" ]; then
+  if [ ! -d "${_zsh_plugins_dir}/fast-syntax-highlighting/" ]; then
     git clone --depth 1 \
       'https://github.com/zdharma-continuum/fast-syntax-highlighting' \
-      "$_zsh_plugins_dir/fast-syntax-highlighting"
+      "${_zsh_plugins_dir}/fast-syntax-highlighting"
+    find "${_zsh_plugins_dir}/fast-syntax-highlighting/→chroma" -type f -delete
   fi
-  if [ ! -d "$_zsh_plugins_dir/zsh-completions/" ]; then
+  if [ ! -d "${_zsh_plugins_dir}/zsh-completions/" ]; then
     git clone --depth 1 \
       'https://github.com/zsh-users/zsh-completions.git' \
-      "$_zsh_plugins_dir/zsh-completions"
+      "${_zsh_plugins_dir}/zsh-completions"
   fi
-  if [ ! -d "$_zsh_plugins_dir/gentoo-zsh-completions/" ]; then
+  if [ ! -d "${_zsh_plugins_dir}/gentoo-zsh-completions/" ]; then
     git clone --depth 1 \
       'https://github.com/gentoo/gentoo-zsh-completions.git' \
-      "$_zsh_plugins_dir/gentoo-zsh-completions"
+      "${_zsh_plugins_dir}/gentoo-zsh-completions"
   fi
 }
 
