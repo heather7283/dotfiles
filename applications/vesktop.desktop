@@ -2,6 +2,5 @@
 Name=Vesktop
 Type=Application
 # makes vesktop unable to use nvidia GPU (makes it more stable)
-#Exec=bwrap --dev-bind / / --ro-bind-try /dev/dri/by-name/nvidia-render /dev/dri/by-name/nvidia-render --ro-bind-try /dev/dri/by-name/nvidia-card /dev/dri/by-name/nvidia-card --ro-bind /home/heather /home/heather --bind /home/heather/downloads /home/heather/downloads --bind ~/.config/vesktop ~/.config/vesktop vesktop-bin --enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,VaapiVideoDecoder,WebRTCPipeWireCapturer --ozone-platform=wayland
-Exec=vesktop-bin --enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,VaapiVideoDecoder,WebRTCPipeWireCapturer --ozone-platform=wayland
+Exec=sh -c "exec bwrap --dev-bind / / --ro-bind ~ ~ --bind ~/downloads ~/downloads --bind ~/.config/vesktop ~/.config/vesktop --bind ~/.cache/vesktop ~/.cache/vesktop --bind ~/.local/share/vesktop ~/.local/share/vesktop vesktop-bin --enable-features=VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,VaapiVideoDecoder,WebRTCPipeWireCapturer --disable-features=UseMultiPlaneFormatForSoftwareVideo --ozone-platform=wayland"
 Terminal=false
