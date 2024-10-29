@@ -1,14 +1,17 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-IFS=$'\t' read -r name filename filepath < <(~/.config/scripts/drun-fzf/parse-desktop-files.py | fzf \
+tab='	'
+IFS="$tab"
+
+result="$(~/.config/scripts/drun-fzf/parse-desktop-files.py | fzf \
   --no-clear \
   --with-nth 1..2 \
   --nth 1..2 \
-  --delimiter $'\t')
+  --delimiter "$tab")"
 
-if [ -z "$filepath" ]; then
-  exit 1
-fi
+[ -z "$result" ] && exit
+set -- $result
+filepath="$3"
 
-~/.config/scripts/run-desktop-file.sh "$filepath"
+run-desktop-file "$filepath"
 
