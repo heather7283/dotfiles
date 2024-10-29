@@ -247,6 +247,7 @@ alias gdb='gdb -q'
 alias ffmpeg='ffmpeg -hide_banner'
 alias ffprobe='ffprobe -hide_banner'
 alias ffplay='ffplay -hide_banner'
+alias chafa='chafa --passthrough none'
 alias torrent='transmission-cli'
 
 alias ULTRAKILL='kill -KILL'
