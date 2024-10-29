@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 tmpfile="$(mktemp)"
 printf "Search the Internet for...\n" >"$tmpfile"
