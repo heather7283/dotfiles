@@ -12,9 +12,7 @@ query="$(sed -e '1d;/^$/d;s/ /+/g' "$tmpfile" | tr '\n' '+')"
 
 if [ -n "$query" ]; then
     engine='https://duckduckgo.com/?t=ffab&q='
-
-    if ! pgrep "firefox" >/dev/null; then hyprctl dispatch exec firefox; fi
-    firefox "${engine}${query}"
+    open-in-browser "${engine}${query}"
 fi
 
 rm "$tmpfile"

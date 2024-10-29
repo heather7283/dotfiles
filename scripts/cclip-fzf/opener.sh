@@ -6,10 +6,7 @@ preview="$3"
 
 # open links in firefox
 if [[ "$preview" =~ ^https?:\/\/ ]]; then
-  if ! pgrep firefox; then
-    hyprctl dispatch exec -- firefox
-  fi
-  firefox "$(cclip get "$id")"
+  open-in-browser "$(cclip get "$id")"
 # open images in imv
 elif [[ "$mime" =~ image/.* ]]; then
   tmp_file="/tmp/imv_stdin_$$"
