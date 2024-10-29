@@ -1,26 +1,26 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-addr="$(hyprctl activewindow -j | jq -r ".address")"
-IFS=$'\t' read -r pid initial_class < <(hyprctl clients -j | jq -r ".[] | select(.address == \""$addr"\") | ( .pid, .initialClass )" | tr '\n' '\t')
+tab='	'
+IFS="$tab"
+
+result="$(hyprctl activewindow -j | jq -r '{ a: .address, b: .pid, c: .initialClass } | join("\t")')"
+set -- $result
+addr="$1"
+pid="$2"
+initial_class="$3"
+
+hyprctl dispatch closewindow address:"$addr"
 
 # prevent killing foot server
-if [[ "$initial_class" = *foot* ]]; then
-  hyprctl dispatch closewindow address:"$addr"
-  exit
-fi
+case "$initial_class" in
+*foot*)
+    exit;;
+esac
 
-# if process only has 1 window, close it and then force kill the process after 3 seconds
-if [ "$(hyprctl clients -j | jq -r "[.[] | select(.pid == $pid)] | length")" -le 1 ]; then
-  hyprctl dispatch closewindow address:"$addr"
+sleep 3
 
-  sleep 3
-
-  # some windows might open confirmation popups before closing, check for this case
-  if [ "$(hyprctl clients -j | jq -r "[.[] | select(.pid == $pid)] | length")" -le 1 ]; then
+# if process has no windows opened but is still alive after 3 seconds, kill it
+if hyprctl clients -j | jq -er --arg pid "$pid" '[.[] | select(.pid == $pid)] | length < 1'; then
     kill -TERM "$pid"
-  fi
-# if process has multiple windows, just close one of them
-else
-  hyprctl dispatch closewindow address:"$addr"
 fi
 
