@@ -1,4 +1,7 @@
-#!/usr/bin/env bash
+#!/bin/sh
+
+tab='	'
+IFS="$tab"
 
 temp_file="$(mktemp --dry-run /tmp/places.sqlite.XXXXXX)"
 cp ~/.mozilla/firefox/default/places.sqlite "$temp_file"
@@ -21,23 +24,24 @@ ORDER BY
     visit_date;
 "
 
-url="$(sqlite3 \
-  -separator $'\t' \
+result="$(sqlite3 \
+  -separator "$tab" \
   "$temp_file" \
   "$query" |\
 fzf \
   --tac \
-  --delimiter $'\t' \
+  --delimiter "$tab" \
   --scheme history \
   --tiebreak begin,index \
   --preview 'echo {2..}' \
   --preview-window 'up,1,wrap' \
   --bind 'ctrl-y:execute-silent(echo {2..} | wl-copy -t "text/plain;charset=utf-8")' \
-  --no-hscroll | cut -f2 -d$'\t')"
-
+  --no-hscroll)"
 rm "${temp_file}"
 
-if [ -n "$url" ]; then
-  hyprctl dispatch exec -- firefox "$url"
-fi
+[ -z "$result" ] && exit
+set -- $result
+url="$2"
+
+open-in-browser "$url"
 
