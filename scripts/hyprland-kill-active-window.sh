@@ -20,7 +20,9 @@ esac
 sleep 3
 
 # if process has no windows opened but is still alive after 3 seconds, kill it
-if hyprctl clients -j | jq -er --arg pid "$pid" '[.[] | select(.pid == $pid)] | length < 1'; then
+if hyprctl clients -j | \
+    jq -er --arg pid "$pid" '[.[] | select(.pid == ($pid | tonumber))] | length < 1';
+then
     kill -TERM "$pid"
 fi
 
