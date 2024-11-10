@@ -104,11 +104,11 @@ if [ -z "$TMUX" ]; then
   read_line() {
     # $1 - prompt
     # $2 - initial string
+    # FIXME: $2 is ignored
     _prompt="[${_script_name}] ${1}"
     printf '%s' "$_prompt" >&2
 
-    # FIXME: read -i is not POSIX
-    read -r _ans -i "$2"
+    read -r _ans
 
     _exitcode=$?
     printf '%s' "$_ans"
@@ -154,7 +154,11 @@ else
       _tmp_read_line_file='"$(printf '%q' "$_tmpfile")"'
 
       echo "$_initial_string" >"$_tmp_read_line_file"
-      "${EDITOR:-vi}" "$_tmp_read_line_file"
+      if [ "$EDITOR" = nvim ]; then
+        nvim -c "nnoremap <ESC> :q!<CR>" -c "nnoremap <CR> :wq<CR>" "$_tmp_read_line_file"
+      else
+        "${EDITOR:-vi}" "$_tmp_read_line_file"
+      fi
       exit $_exitcode
     '
     _exitcode=$?
@@ -188,7 +192,11 @@ stderr_wrapper() {
   if [ ! "$_exit_status" = 0 ]; then
     echo_err "${_exit_status}: check ${_stderr_file} for details"
     if [ -n "$TMUX" ]; then
-      ~/.config/lf/scripts/tmux-popup.sh -E -- "$EDITOR" "$_stderr_file"
+      if [ "$EDITOR" = nvim ]; then
+        ~/.config/lf/scripts/tmux-popup.sh -E -- nvim -c "nnoremap <ESC> :q!<CR>" "$_stderr_file"
+      else
+        ~/.config/lf/scripts/tmux-popup.sh -E -- "${EDITOR:-vi}" "$_stderr_file"
+      fi
       rm "$_stderr_file"
     fi
   else
