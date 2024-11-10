@@ -14,7 +14,7 @@ die() {
 
 command -v deeplx >/dev/null || die "deeplx is not installed"
 
-deeplx 2>&1 1>/dev/null&
+deeplx 1>/dev/null 2>&1&
 sleep 0.1
 
 tmpfile="$(mktemp)"
@@ -71,7 +71,7 @@ while true; do
     # clear prev translation
     sed -i '/^=*$/{n;:a;n;/^=*$/{q};ba}' "$tmpfile" || die "sed error"
 
-    if [ -z "$translation" ]; then
+    if [ "$translation" = 'null' ]; then
         printf '%s' "$response" >>"$tmpfile"
     elif [ -z "$alternatives" ]; then
         printf '%s' "$translation" >>"$tmpfile"
