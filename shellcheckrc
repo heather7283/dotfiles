@@ -8,3 +8,5 @@ disable=SC2046
 disable=SC2086
 # Variable appears unused. Verify use (or export if used externally).
 disable=SC2034
+# Tilde does not expand in quotes. Use $HOME.
+disable=SC2088
