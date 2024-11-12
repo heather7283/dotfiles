@@ -140,7 +140,6 @@
 *platformio.ini     	
 *pom.xml            	
 *Procfile           	
-*profile            	󱆃
 *pyproject.toml     	
 *Rakefile           	
 *README             	󰂺
@@ -198,7 +197,6 @@
 *.bmp                	
 *.br                 	
 *.bst                	
-*.bundle             	
 *.bz                 	
 *.bz2                	
 *.bz3                	
@@ -211,7 +209,6 @@
 *.cert               	
 *.cfg                	
 *.cjs                	
-*.class              	
 *.clj                	
 *.cljs               	
 *.cls                	
