@@ -27,7 +27,8 @@ _fake_space='%F{black}ꙋ%f'
 case "$HOST" in
   "FA506IH")
     _load_bloat=1
-    PS1="${_fake_space}%B%1~ %0(?.:З.>:З)%b ";;
+    #PS1="${_fake_space}%B%1~ %0(?.:З.>:З)%b ";;
+    PS1="${_fake_space}%B%n@%F{magenta}%m%f%b %1~ %B%(#.#.$)%b ";;
   "QboxBlue")
     PS1="${_fake_space}%F{blue}%B%n@%m%b%f %1~ %B%(#.#.$)%b ";;
   "archlinux") # default hostname for archlinux VMs
