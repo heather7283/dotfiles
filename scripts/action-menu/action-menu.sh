@@ -5,6 +5,7 @@ level1=(
   "[7]tv browser"$'\t'"~/.config/scripts/7tv-browser/7tv-browser.sh"
   "[T]ranslator"$'\t'"~/.config/scripts/deeplx-translator/deeplx-translator.sh"
   "[E]moji picker"$'\t'"~/.config/scripts/emoji-picker/picker.sh"
+  "[U]nicode picker"$'\t'"~/.config/scripts/unicode-picker/picker.sh"
   "[B]rowser history"$'\t'"~/.config/scripts/firefox-history-fzf/firefox-history-fzf.sh"
   "Application [R]unner"$'\t'"~/.config/scripts/drun-fzf/drun-fzf.sh"
   "[C]lipboard history"$'\t'"~/.config/scripts/cclip-fzf/picker.sh"
