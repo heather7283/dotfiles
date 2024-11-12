@@ -273,7 +273,7 @@ alias fzfgrep='FZF_DEFAULT_COMMAND=true fzf \
 # ========== Envvars ==========
 command -v nvim 1>/dev/null 2>&1 && export MANPAGER='nvim -c ":set signcolumn=no" -c "Man!"'
 export MANOPT='-E\ ascii'
-export LESS='--use-color --RAW-CONTROL-CHARS --chop-long-lines'
+export LESS='--use-color --RAW-CONTROL-CHARS --chop-long-lines --mouse'
 export BASH_ENV=~/.config/bash/non-interactive.sh
 export HOST="$HOST"
 export USER="$USER"
