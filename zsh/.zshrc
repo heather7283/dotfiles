@@ -16,30 +16,55 @@ fpath+=(~/.config/zsh/functions/)
 
 
 # ========== Prompt ==========
+# try to set color based on current distro if available
+source <(grep -e '^ANSI_COLOR=' -e '^NAME=' /etc/os-release)
+if [ "$NAME" = "Gentoo" ]; then
+    # for some reason gentoo's ANSI_COLOR is green lmao wtf
+    prompt_hostname_color_seq_start='%F{magenta}'
+    prompt_hostname_color_seq_end='%f'
+elif [ -n "$ANSI_COLOR" ]; then
+    prompt_hostname_color_seq_start='%{'"$(printf "\033[${ANSI_COLOR}m")"'%}'
+    prompt_hostname_color_seq_end='%{'"$(printf "\033[0m")"'%}'
+elif [ "$NAME" = "Alpine Linux" ]; then
+    prompt_hostname_color_seq_start='%F{blue}'
+    prompt_hostname_color_seq_end='%f'
+elif [ -n "$TERMUX_VERSION" ]; then
+    prompt_hostname_color_seq_start='%F{green}'
+    prompt_hostname_color_seq_end='%f'
+else
+    prompt_hostname_color_seq_start=''
+    prompt_hostname_color_seq_end=''
+fi
+unset ANSI_COLOR
+unset NAME
+
 # ꙋ aka CYRILLIC SMALL LETTER MONOGRAPH UK (U+A64B) plays an important role here.
 # It's rendered black so it effectively serves as a space, but since
 # it's so obscure we are unlikely to ever encounter it in the wild.
 # This makes it possible to jump between prompts by searching for this
 # specific character. Yes, I am aware that OSC 133 exists, but for some reason
 # zsh refuses to cooperate with me and I can't get OSC 133 to work no matter what.
-_fake_space='%F{black}ꙋ%f'
+local prompt_fake_space_seq='%F{black}ꙋ%f'
 
-case "$HOST" in
-  "FA506IH")
-    _load_bloat=1
-    #PS1="${_fake_space}%B%1~ %0(?.:З.>:З)%b ";;
-    PS1="${_fake_space}%B%n@%F{magenta}%m%f%b %1~ %B%(#.#.$)%b ";;
-  "QboxBlue")
-    PS1="${_fake_space}%F{blue}%B%n@%m%b%f %1~ %B%(#.#.$)%b ";;
-  "archlinux") # default hostname for archlinux VMs
-    PS1="${_fake_space}%B[VM] %n@%m%b %1~ %B%(#.#.$)%b ";;
-  *)  # generic prompt
-    PS1="${_fake_space}%B%n@%m%b %1~ %B%(#.#.$)%b ";;
-esac
+update_prompt() {
+    PS1="${prompt_fake_space_seq}"          # prompt starts with fake space
+    PS1="${PS1}%B%n@"                       # username@ (bold)
+                                            # hostname (colored)
+    PS1="${PS1}${prompt_hostname_color_seq_start}%m${prompt_hostname_color_seq_end}"
+    PS1="${PS1}%b"                          # disable bold
+    PS1="${PS1} %1~ "                       # last component of pwd or ~ if in home
+    PS1="${PS1}%B%(#.#.$)%b "               # # or $ depending on user (bold)
 
-if [ -n "$TERMUX_VERSION" ]; then
-  PS1="${_fake_space}%F{green}%B%n@%m%b%f %1~ %B%(#.#.$)%b "
-fi
+    case "$HOST" in
+      "FA506IH")
+        _load_bloat=1
+    esac
+
+    #if [ "$SHLVL" -gt 1 ]; then
+    #    PS1="[LVL ${SHLVL}]${PS1}"
+    #fi
+}
+update_prompt
 # ========== Prompt ==========
 
 
