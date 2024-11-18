@@ -87,8 +87,14 @@ prompt_component_exitcode() {
     fi
 }
 
+prompt_component_ssh() {
+    if [ -n "$SSH_CONNECTION" ]; then
+        printf '󱂺 SSH'
+    fi
+}
+
 typeset -a prompt_components
-prompt_components=(userhostname exitcode venv lf shlvl)
+prompt_components=(userhostname exitcode ssh venv lf shlvl)
 prompt_components_opening='['
 prompt_components_closing=']'
 prompt_components_separator='-'
