@@ -55,6 +55,6 @@ notify_job_finish() {
                 "$LAST_JOB_EXIT_STATUS")"
     fi
 
-    printf '\nfinished in %s with exit status %d\n' \
+    printf '\n󱑎 Finished in %s with exit code %d\n' \
         "$(format_seconds "$elapsed_time")" "$LAST_JOB_EXIT_STATUS"
 }
