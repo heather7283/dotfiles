@@ -17,10 +17,13 @@ fpath+=(~/.config/zsh/functions/)
 
 # ========== Prompt ==========
 # try to set color based on current distro if available
-source <(grep -e '^ANSI_COLOR=' -e '^NAME=' /etc/os-release)
+source <(grep -e '^ANSI_COLOR=' -e '^NAME=' /etc/os-release 2>/dev/null)
 if [ "$NAME" = "Gentoo" ]; then
     # for some reason gentoo's ANSI_COLOR is green lmao wtf
     prompt_hostname_color_seq_start='%F{magenta}'
+    prompt_hostname_color_seq_end='%f'
+elif [[ "$NAME" =~ "~Debian.*" ]]; then
+    prompt_hostname_color_seq_start='%F{red}'
     prompt_hostname_color_seq_end='%f'
 elif [ -n "$ANSI_COLOR" ]; then
     prompt_hostname_color_seq_start='%{'"$(printf "\033[${ANSI_COLOR}m")"'%}'
@@ -46,25 +49,84 @@ unset NAME
 # zsh refuses to cooperate with me and I can't get OSC 133 to work no matter what.
 local prompt_fake_space_seq='%F{black}ꙋ%f'
 
+prompt_newline='
+'
+prompt_multiline=1
+
+prompt_component_shlvl() {
+    if [ "$SHLVL" -gt 1 ]; then
+        printf ' shlvl %s' "${SHLVL}"
+    fi
+}
+
+prompt_component_lf() {
+    if [ "$lf_user_runninginlf" = 1 ]; then
+        printf '󱏒 lf'
+    fi
+}
+
+prompt_component_userhostname() {
+    printf '%s' "%B%n@${prompt_hostname_color_seq_start}%m${prompt_hostname_color_seq_end}%b"
+}
+
+prompt_component_venv() {
+    if [ -n "$VIRTUAL_ENV" ]; then
+        local project_name="${${VIRTUAL_ENV%/*}##*/}"
+        local max_len=16
+        if [ "${#project_name}" -gt "$max_len" ]; then
+            printf '󰌠 %s' "${project_name:0:$((max_len - 1))}…"
+        else
+            printf '󰌠 %s' "${project_name}"
+        fi
+    fi
+}
+
+prompt_component_exitcode() {
+    if [ ! "$LAST_JOB_EXIT_STATUS" = 0 ]; then
+        printf '%%B%%F{red}✗ %s%%f%%b' "$LAST_JOB_EXIT_STATUS"
+    fi
+}
+
+typeset -a prompt_components
+prompt_components=(userhostname exitcode venv lf shlvl)
+prompt_components_opening='['
+prompt_components_closing=']'
+prompt_components_separator='-'
+
 update_prompt() {
-    PS1="${prompt_fake_space_seq}"          # prompt starts with fake space
-    PS1="${PS1}%B%n@"                       # username@ (bold)
-                                            # hostname (colored)
-    PS1="${PS1}${prompt_hostname_color_seq_start}%m${prompt_hostname_color_seq_end}"
-    PS1="${PS1}%b"                          # disable bold
-    PS1="${PS1} %1~ "                       # last component of pwd or ~ if in home
-    PS1="${PS1}%B%(#.#.$)%b "               # # or $ depending on user (bold)
-
-    case "$HOST" in
-      "FA506IH")
-        _load_bloat=1
-    esac
-
-    #if [ "$SHLVL" -gt 1 ]; then
-    #    PS1="[LVL ${SHLVL}]${PS1}"
-    #fi
+    PS1=""
+    if [ "$prompt_multiline" = 1 ]; then
+        for ((i = 1; i <= "${#prompt_components}"; i++)); do
+            local component="$prompt_components[i]"
+            local content="$(prompt_component_"${component}")"
+            [ -z "$content" ] && continue
+            content="${prompt_components_opening}${content}${prompt_components_closing}"
+            if [ ! "$i" = 1 ]; then
+                content="${prompt_components_separator}${content}"
+            fi
+            PS1="${PS1}${content}"
+        done
+        unset i
+        if [ -n "$PS1" ]; then
+            PS1="┌${PS1}${prompt_newline}"
+        fi
+        PS1="${PS1}└[%3~] %B%(#.#.$)%b${prompt_fake_space_seq}"
+    else
+        PS1="${PS1}%B%n@"                       # username@ (bold)
+                                                # hostname (colored)
+        PS1="${PS1}${prompt_hostname_color_seq_start}%m${prompt_hostname_color_seq_end}"
+        PS1="${PS1}%b"                          # disable bold
+        PS1="${PS1} %1~ "                       # last component of pwd or ~ if in home
+        PS1="${PS1}%B%(#.#.$)%b"                # # or $ depending on user (bold)
+        PS1="${PS1}${prompt_fake_space_seq}"    # fake space at the end
+    fi
 }
 update_prompt
+
+case "$HOST" in
+  "FA506IH")
+    _load_bloat=1
+esac
 # ========== Prompt ==========
 
 
@@ -430,7 +492,7 @@ save_job_exit_status() {
 precmd_functions=(save_job_exit_status $precmd_functions)
 
 autoload -U notify_job_finish
-precmd_functions+=(notify_job_finish)
+precmd_functions+=(notify_job_finish update_prompt)
 # ========== Hooks ==========
 
 if [ -z "$WAYLAND_DISPLAY" ] && [[ "$TTY" = /dev/tty* ]]; then
