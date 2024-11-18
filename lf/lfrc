@@ -15,6 +15,8 @@ set scrolloff 4
 
 set shell bash
 
+set user_runninginlf 1
+
 # Previewer config
 set previewer ~/.config/lf/previewer.sh
 # File opener config
