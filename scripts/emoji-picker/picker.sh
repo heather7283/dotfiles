@@ -1,8 +1,9 @@
 #!/bin/sh
 
-selected="$(fzf <~/.config/scripts/emoji-picker/emoji-list.txt \
-    -d "$(printf '\t')" \
-    --bind 'ctrl-y:execute-silent(printf '%s' {1} | wl-copy -t text/plain\;charset=utf-8)')"
+tab='	'
+IFS="$tab"
+
+selected="$(fzf -d "$tab" <~/.config/scripts/emoji-picker/emoji-list.txt)"
 [ -z "$selected" ] && exit
 
 set -- $selected
