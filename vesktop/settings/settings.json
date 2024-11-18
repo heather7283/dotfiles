@@ -419,7 +419,9 @@
             "enabled": false
         },
         "Translate": {
-            "enabled": true
+            "enabled": true,
+            "autoTranslate": false,
+            "showChatBarButton": true
         },
         "TypingIndicator": {
             "enabled": false
@@ -648,6 +650,12 @@
         },
         "UserMessagesPronouns": {
             "enabled": false
+        },
+        "DynamicImageModalAPI": {
+            "enabled": false
+        },
+        "FixImagesQuality": {
+            "enabled": false
         }
     },
     "notifications": {
@@ -660,6 +668,6 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1729679067850
+        "settingsSyncVersion": 1731678521655
     }
 }
