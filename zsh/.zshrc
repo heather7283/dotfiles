@@ -116,15 +116,15 @@ update_prompt() {
         if [ -n "$PS1" ]; then
             PS1="┌${PS1}${prompt_newline}"
         fi
-        PS1="${PS1}└[%3~] %B%(#.#.$)%b${prompt_fake_space_seq}"
+        PS1="${PS1}└[%3~]${prompt_fake_space_seq}%B%(#.#.$)%b "
     else
-        PS1="${PS1}%B%n@"                       # username@ (bold)
-                                                # hostname (colored)
+        PS1="${PS1}%B%n@"                        # username@ (bold)
+                                                 # hostname (colored)
         PS1="${PS1}${prompt_hostname_color_seq_start}%m${prompt_hostname_color_seq_end}"
-        PS1="${PS1}%b"                          # disable bold
-        PS1="${PS1} %1~ "                       # last component of pwd or ~ if in home
-        PS1="${PS1}%B%(#.#.$)%b"                # # or $ depending on user (bold)
-        PS1="${PS1}${prompt_fake_space_seq}"    # fake space at the end
+        PS1="${PS1}%b"                           # disable bold
+        PS1="${PS1} %1~${prompt_fake_space_seq}" # last component of pwd or ~ if in home
+        PS1="${PS1}%B%(#.#.$)%b"                 # or $ depending on user (bold)
+        PS1="${PS1} "                            # space at the end
     fi
 }
 update_prompt
