@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-IFS=$'\t' read -r id mime preview <<<"$1"
+IFS=$'\t' read -r id mime timestamp preview <<<"$1"
 
 chafa_wrapper() {
     chafa \
