@@ -11,6 +11,7 @@
 --color=prompt:#3D484D
 --color=pointer:#A7C080
 --color=scrollbar:#7A8478
+--color=preview-label:#859289
 --no-ansi
 --scrollbar=█
 --highlight-line
