@@ -20,7 +20,7 @@ if [[ "$mime" =~ ^image/.*$ ]]; then
 # hex colors
 elif [[ "$preview" =~ ^(#|0x)?[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$ ]]; then
   item="${preview#\#}"
-  item="${preview#0x}"
+  item="${item#0x}"
   r="$((16#${item:0:2}))"
   g="$((16#${item:2:2}))"
   b="$((16#${item:4:2}))"
