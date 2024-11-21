@@ -43,10 +43,10 @@ while true; do
 
     # the most cursed shell code I've ever written
     src_lang="$(head -n 1 "$tmpfile" \
-        | awk -F ': ' -e '/^SRC_LANG: .*$/ {print $2; exit}')"
+        | awk -F ': ' -e '/^SRC_LANG: .*$/ {print toupper($2); exit}')"
     [ -z "$src_lang" ] && die "unable to determine source language"
     tgt_lang="$(tail -n +2 "$tmpfile" | head -n 1 \
-        | awk -F ': ' -e '/^DST_LANG: .*$/ {print $2; exit}')"
+        | awk -F ': ' -e '/^DST_LANG: .*$/ {print toupper($2); exit}')"
     [ -z "$tgt_lang" ] && die "unable to determine target language"
     query="$(awk -e 'BEGIN {started=0} /^=*$/ {if (started == 0) {started=1} else {exit}} {if (started == 1) {started=2} else if (started == 2) {print}}' "$tmpfile")"
     [ -z "$query" ] && die "empty query"
