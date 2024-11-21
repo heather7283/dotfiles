@@ -1,19 +1,15 @@
 #!/bin/sh
 
 tab='	'
-IFS="$tab"
+newline='
+'
 
 temp_file="$(mktemp --dry-run /tmp/places.sqlite.XXXXXX)"
 cp ~/.mozilla/firefox/default/places.sqlite "$temp_file"
 
-# shits itself on wide characters like cjk :woe:
-query="
+query='
 SELECT
-    CASE
-        WHEN LENGTH(title) IS NULL THEN 'No title                                '
-        WHEN LENGTH(title) > 42 THEN CONCAT(SUBSTR(title, 1, 40), '..')
-        ELSE SUBSTR(title || '                                        ', 1, 42)
-    END AS title,
+    title,
     moz_places.url
 FROM
     moz_places,
@@ -22,24 +18,29 @@ WHERE
     moz_places.id = moz_historyvisits.place_id
 ORDER BY
     visit_date;
-"
+'
 
-result="$(sqlite3 \
+result="$(
+sqlite3 \
   -separator "$tab" \
   "$temp_file" \
-  "$query" |\
+  "$query" | \
+awk \
+  -F '\t' \
+  -e '{title=(length($1) == 0)?"No title":$1; url=$2; printf "==> %s\n%s%c", title, url, 0}' | \
 fzf \
+  --read0 \
   --tac \
-  --delimiter "$tab" \
+  --delimiter "$newline" \
   --scheme history \
   --tiebreak begin,index \
-  --preview 'echo {2..}' \
-  --preview-window 'up,1,wrap' \
   --bind 'ctrl-y:execute-silent(echo {2..} | wl-copy -t "text/plain;charset=utf-8")' \
-  --no-hscroll)"
+  --no-hscroll
+)"
 rm "${temp_file}"
 
 [ -z "$result" ] && exit
+IFS="$newline"
 set -- $result
 url="$2"
 
