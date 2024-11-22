@@ -116,7 +116,7 @@ update_prompt() {
         if [ -n "$PS1" ]; then
             PS1="┌${PS1}${prompt_newline}"
         fi
-        PS1="${PS1}└[%3~]${prompt_fake_space_seq}%B%(#.#.$)%b "
+        PS1="${PS1}└[%24<…<%3~%<<]${prompt_fake_space_seq}%B%(#.#.$)%b "
     else
         PS1="${PS1}%B%n@"                        # username@ (bold)
                                                  # hostname (colored)
