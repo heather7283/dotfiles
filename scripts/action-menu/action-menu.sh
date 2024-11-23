@@ -11,6 +11,7 @@ level1=(
   "[C]lipboard history"$'\t'"~/.config/scripts/cclip-fzf/picker.sh"
   "[M]PRIS control"$'\t'"~/.config/scripts/mpris-control/player-control.sh"
   "[A]udio control"$'\t'"pulsemixer"
+  "[Q]alculate"$'\t'"tmux new-session qalc"
 )
 
 choose() {
