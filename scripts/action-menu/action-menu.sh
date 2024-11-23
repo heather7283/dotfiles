@@ -55,5 +55,5 @@ choose() {
 }
 
 IFS=$'\t' read -r description script_path < <(choose level1)
-exec "$script_path"
+exec $script_path
 
