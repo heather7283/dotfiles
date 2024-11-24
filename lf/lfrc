@@ -23,7 +23,7 @@ set previewer ~/.config/lf/previewer.sh
 cmd open %printf '\e[1;31mUSE o or O to open!!!\e[0m'
 
 cmd copy-path &{{
-  echo "$f" | wl-copy
+  printf "$f" | wl-copy
 }}
 
 cmd copy-file %{{
