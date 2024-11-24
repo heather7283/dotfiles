@@ -1,10 +1,11 @@
-#!/bin/sh
+#!/bin/sh -x
 
 # find real executable
 real_exe_name="fzf"
 OLDPATH="$PATH"
 home=~
 PATH="$(echo "$PATH" | sed -e "s|${home}[^:]*:||g")"
+PATH="${PATH##:}"
 real_exe="$(command -v "$real_exe_name")"
 if [ -z "$real_exe" ]; then
     echo "real ${real_exe_name} executable not found in ${PATH}"
