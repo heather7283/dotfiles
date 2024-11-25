@@ -22,7 +22,7 @@ if [ "$NAME" = "Gentoo" ]; then
     # for some reason gentoo's ANSI_COLOR is green lmao wtf
     prompt_hostname_color_seq_start='%F{magenta}'
     prompt_hostname_color_seq_end='%f'
-elif [[ "$NAME" =~ "~Debian.*" ]]; then
+elif [[ "$NAME" =~ ^Debian.* ]]; then
     prompt_hostname_color_seq_start='%F{red}'
     prompt_hostname_color_seq_end='%f'
 elif [ -n "$ANSI_COLOR" ]; then
