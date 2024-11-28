@@ -9,7 +9,6 @@ pos_x=$4
 pos_y=$5
 
 no_cache=0
-
 #old_preview_file=/tmp/lfoldpreview.pid
 #old_preview_pid="$(cat "$old_preview_file")"
 #kill -KILL "$old_preview_pid" &
@@ -110,7 +109,9 @@ json_preview() {
 }
 
 text_preview() {
-    cut -c 1-"$size_x" "$filename" && success="yes"
+    awk -v w="$size_x" -v h="$size_y" \
+        '{print substr($0, 0, w)} (NR >= h) {exit}' \
+        "$filename" && success="yes"
 }
 
 fallback_preview() {
