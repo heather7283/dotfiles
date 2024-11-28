@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+[ -n "$OLDTERM" ] && export TERM="$OLDTERM"
+
 filename="$(realpath "$1")"
 
 # first match based on extension
