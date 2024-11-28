@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 
 # find real executable
 real_exe_name="fzf"
