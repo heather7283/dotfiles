@@ -46,6 +46,7 @@ cmd copy-file %{{
 cmd make-file %exec ~/.config/lf/scripts/make-file.sh
 cmd make-dir %exec ~/.config/lf/scripts/make-dir.sh
 cmd make-symlink %exec ~/.config/lf/scripts/make-symlink.sh
+cmd make-file-from-clibpoard %exec ~/.config/lf/scripts/make-file-from-clibpoard.sh
 
 cmd del %exec ~/.config/lf/scripts/delete.sh
 cmd rename %exec ~/.config/lf/scripts/rename.sh
@@ -175,6 +176,7 @@ map m
 map md make-dir
 map mf make-file
 map ml make-symlink
+map mc make-file-from-clibpoard
 
 map C unselect
 
