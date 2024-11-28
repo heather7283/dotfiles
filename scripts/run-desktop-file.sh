@@ -26,9 +26,17 @@ fi
 # we will append all extra args after exec_line
 shift 1
 
-if [ "$is_term" = "true" ]; then
-  hyprctl dispatch exec -- foot -- $exec_line "$@" >/dev/null
+if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
+  if [ "$is_term" = "true" ]; then
+    hyprctl dispatch exec -- foot -- $exec_line "$@" >/dev/null
+  else
+    hyprctl dispatch exec -- $exec_line "$@" >/dev/null
+  fi
 else
-  hyprctl dispatch exec -- $exec_line "$@" >/dev/null
+  if [ "$is_term" = "true" ]; then
+    swaymsg exec -- foot -- $exec_line "$@" >/dev/null
+  else
+    swaymsg exec -- $exec_line "$@" >/dev/null
+  fi
 fi
 
