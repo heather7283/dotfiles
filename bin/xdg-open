@@ -12,7 +12,7 @@ query="${1#file://}"
 query="$(urldecode "$query")" # I hate you telegram desktop
 
 if [[ "$query" =~ ^(https?:\/\/)(.*)$ ]]; then
-  hyprctl dispatch exec -- firefox \'"$query"\'
+  open-in-browser "$query"
   exit
 fi
 
