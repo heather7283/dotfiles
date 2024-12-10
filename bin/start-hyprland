@@ -7,12 +7,12 @@ if [ -z "${uid}" ]; then
 fi
 
 export XDG_RUNTIME_DIR="/tmp/${uid}-runtime-dir"
-if [ ! -d "${XDG_RUNTIME_DIR}" ]; then
-  mkdir -p "${XDG_RUNTIME_DIR}" || exit 1
-  chmod 0700 "${XDG_RUNTIME_DIR}" || exit 1
-else
+if [ -d "${XDG_RUNTIME_DIR}" ]; then
   rm -rf "${XDG_RUNTIME_DIR}" || exit 1
 fi
+mkdir -p "${XDG_RUNTIME_DIR}" || exit 1
+chmod 0700 "${XDG_RUNTIME_DIR}" || exit 1
+
 export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/dbus.sock"
 
 # https://github.com/hyprwm/Hyprland/pull/7358
