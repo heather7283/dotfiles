@@ -277,7 +277,7 @@
             "enabled": false
         },
         "NoScreensharePreview": {
-            "enabled": true
+            "enabled": false
         },
         "NoTypingAnimation": {
             "enabled": true
@@ -668,6 +668,6 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1731678521655
+        "settingsSyncVersion": 1733736283125
     }
 }
