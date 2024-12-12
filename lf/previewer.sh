@@ -32,7 +32,7 @@ image_preview() {
     printf "file too big: disabling image preview\n\n" | fold -w "$size_x"
     magick identify -ping \
       -format '%m %wx%h, %[colorspace], %r' \
-      "$filename" 2>&1 | fold -w "$size_x" && success="yes"
+      "${filename}[0]" 2>&1 | fold -w "$size_x" && success="yes"
   else
     if chafa_wrapper "$filename"; then
       success="yes"
@@ -42,7 +42,7 @@ image_preview() {
     tput cuf "$pos_x"
     magick identify -ping \
       -format '%m %wx%h, %[colorspace], %r' \
-      "$filename" | head -c "$size_x"
+      "${filename}[0]" | head -c "$size_x"
   fi
 }
 
@@ -131,7 +131,7 @@ case "$extension" in
     pdf_preview;;
   flac|wav|mp3|opus|ape)
     audio_preview;;
-  tar|gz|xz|zst|bz2|zstd|tgz|txz|tzst|tzstd|tbz2|zip|rar|jar)
+  tar|gz|xz|zst|bz2|zstd|tgz|txz|tzst|tzstd|tbz2|zip|rar|jar|rpm)
     archive_preview;;
 esac
 
