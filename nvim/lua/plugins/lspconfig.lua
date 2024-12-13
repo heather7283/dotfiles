@@ -52,19 +52,22 @@ local handlers = {
       capabilities = capabilities
     })
   end,
-
-  ["clangd"] = function()
-    require("lspconfig").clangd.setup({
-      cmd = {
-        "clangd",
-        "--background-index",
-        "--all-scopes-completion",
-        "--completion-style=detailed"
-      },
-      capabilities = capabilities
-    })
-  end,
 }
+
+-- use system clangd
+local clangd_path = vim.fn.exepath("clangd");
+if (clangd_path) then
+  require("lspconfig").clangd.setup({
+    cmd = {
+      clangd_path,
+      "--background-index",
+      "--all-scopes-completion",
+      "--completion-style=detailed",
+      "--header-insertion-decorators"
+    },
+    capabilities = capabilities
+  })
+end
 
 require("mason-lspconfig").setup_handlers(handlers)
 
