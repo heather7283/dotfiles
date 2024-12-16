@@ -1,6 +1,11 @@
-#!/usr/bin/env -S bash
+#!/usr/bin/env bash
 
-IFS=$'\t' read -r id mime timestamp preview <<<"$1"
+IFS='	'
+set -- $1
+id="$1"
+mime="$2"
+timestamp="$3"
+preview="$4"
 
 chafa_wrapper() {
     chafa \
@@ -13,22 +18,29 @@ chafa_wrapper() {
 
 yt_cache_dir=~/.cache/yt-thumbnails
 youtube_preview() {
-    video_id="${1:?}"
+    video_id="$1"
     [ -d "$yt_cache_dir" ] || mkdir -p "$yt_cache_dir" || return
     cache_file="${yt_cache_dir}/${video_id}.jpg"
     thumbnail_url="https://img.youtube.com/vi/${video_id}/3.jpg"
     if [ ! -f "$cache_file" ]; then
-        curl -s "$thumbnail_url" >"$cache_file" || { rm "$cache_file"; return; }
+        if ! curl -Ss "$thumbnail_url" >"$cache_file"; then
+            rm "$cache_file" >/dev/null 2>&1
+            return
+        fi
     fi
-    chafa_wrapper <"$cache_file" && success=1
+
+    if chafa_wrapper <"$cache_file"; then
+        success=1
+    else
+        rm "$cache_file"
+    fi
 }
 
 success=0
 
 # images
 if [[ "$mime" =~ ^image/.*$ ]]; then
-  cclip get "$id" | chafa_wrapper
-  success=1
+  cclip get "$id" | chafa_wrapper && success=1
 # hex colors
 elif [[ "$preview" =~ ^(#|0x)?[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$ ]]; then
   item="${preview#\#}"
@@ -38,7 +50,7 @@ elif [[ "$preview" =~ ^(#|0x)?[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$ ]]; then
   b="$((16#${item:4:2}))"
   echo "#$item"
   echo "$r $g $b"
-  printf "\033[48;2;${r};${g};${b}m %*s \033[0m" "$FZF_PREVIEW_COLUMNS" ""
+  printf "\033[48;2;${r};${g};${b}m%*s\033[0m" "$FZF_PREVIEW_COLUMNS" ""
   success=1
 # youtube
 elif [[ "$preview" =~ ^https:\/\/(www\.)?youtu\.?be(\.com\/watch\?v=)? ]]; then
