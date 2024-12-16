@@ -18,7 +18,7 @@ set shell bash
 set user_runninginlf 1
 
 # Previewer config
-set previewer ~/.config/lf/previewer.sh
+set previewer ~/.config/lf/scripts/previewer.sh
 # File opener config
 cmd open %printf '\e[1;31mUSE o or O to open!!!\e[0m'
 
@@ -226,8 +226,8 @@ map E sudoedit
 
 map . :set hidden!
 
-map o $~/.config/lf/opener.sh "$f"
-map O %~/.config/lf/scripts/open-in-new-tmux-pane.sh ~/.config/lf/opener.sh "$f"
+map o $~/.config/lf/scripts/opener.sh "$f"
+map O %~/.config/lf/scripts/open-in-new-tmux-pane.sh ~/.config/lf/scripts/opener.sh "$f"
 
 map i
 map is :{{ set info size; }}
