@@ -85,6 +85,7 @@ cmd goto-symlink-target &{{
 }}
 
 cmd fzf-jump ${{
+  [ -n "$OLDTERM" ] && export TERM="$OLDTERM"
   # dont make -maxdepth too big uwu
   res="$(find . -xdev -depth -maxdepth 6 2>/dev/null | fzf --reverse --no-clear --scheme=path)"
   if [ -z "$res" ]; then exit; fi
@@ -102,7 +103,34 @@ cmd fzf-jump ${{
   lf -remote "send $id $cmd \"$res\""
 }}
 
+cmd fzf-rg-jump ${{
+  [ -n "$OLDTERM" ] && export TERM="$OLDTERM"
+  export FZF_DEFAULT_COMMAND=true
+  rg_preview_cmd='rg --pretty --context "$((FZF_PREVIEW_LINES / 4))" --smart-case -e {q} {} 2>/dev/null'
+  rg_find_cmd='rg --files-with-matches --smart-case -e {q} || true'
+  res="$(fzf \
+    --bind "change:reload(${rg_find_cmd})" \
+    --preview "${rg_preview_cmd}" \
+    --preview-window up \
+    --disabled
+  )"
+  if [ -z "$res" ]; then exit; fi
+
+  if [ -d "$res" ]; then
+    cmd="cd"
+  else
+    cmd="select"
+    if [[ "$(basename "$res")" =~ ^. ]]; then
+      lf -remote "send $id set hidden true"
+    fi
+  fi
+  # no idea what this sed does lol I copied it from lf wiki xdd
+  res="$(printf '%s' "$res" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+  lf -remote "send $id $cmd \"$res\""
+}}
+
 cmd fzf-bookmarks ${{
+  [ -n "$OLDTERM" ] && export TERM="$OLDTERM"
   if [ ! -f ~/.config/gtk-3.0/bookmarks ]; then exit; fi
 
   res="$(sed -e 's/file:\/\///' ~/.config/gtk-3.0/bookmarks | fzf --reverse --no-clear)"
@@ -188,6 +216,7 @@ map gt goto-symlink-target
 map g/ :cd /
 
 map f fzf-jump
+map F fzf-rg-jump
 map b fzf-bookmarks
 map <c-r> fzf-history
 
