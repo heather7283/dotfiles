@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env -S bash
 
 IFS=$'\t' read -r id mime timestamp preview <<<"$1"
 
@@ -9,6 +9,18 @@ chafa_wrapper() {
         --scale max \
         --optimize 9 \
         --view-size "${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}"
+}
+
+yt_cache_dir=~/.cache/yt-thumbnails
+youtube_preview() {
+    video_id="${1:?}"
+    [ -d "$yt_cache_dir" ] || mkdir -p "$yt_cache_dir" || return
+    cache_file="${yt_cache_dir}/${video_id}.jpg"
+    thumbnail_url="https://img.youtube.com/vi/${video_id}/3.jpg"
+    if [ ! -f "$cache_file" ]; then
+        curl -s "$thumbnail_url" >"$cache_file" || { rm "$cache_file"; return; }
+    fi
+    chafa_wrapper <"$cache_file" && success=1
 }
 
 success=0
@@ -34,11 +46,7 @@ elif [[ "$preview" =~ ^https:\/\/(www\.)?youtu\.?be(\.com\/watch\?v=)? ]]; then
   url="${url#https://youtu.be/}"
   url="${url%%&*}"
   url="${url%"${url##*[![:space:]]}"}" # strip trailing whitespace
-  if
-    curl --no-progress-meter "https://img.youtube.com/vi/${url}/3.jpg" | chafa_wrapper
-  then
-    success=1
-  fi
+  youtube_preview "$url"
 fi
 
 # fallback
