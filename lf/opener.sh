@@ -1,20 +1,19 @@
 #!/usr/bin/env bash
 
-[ -n "$OLDTERM" ] && export TERM="$OLDTERM"
-
-filename="$(realpath "$1")"
+filename="$1"
+extension="${filename##*.}"
 
 # first match based on extension
-case "${filename,,}" in
-  *.png|*.jpeg|*.jpg|*.jxl|*.webp|*.gif)
+case "$extension" in
+  png|jpeg|jpg|jxl|webp|gif)
       exec mvi "$filename";;
-  *.mp3|*.flac|*.opus|*.wav|*.ape)
+  mp3|flac|opus|wav|ape)
       exec mpv --no-video "$filename";;
-  *.mkv|*.mp4)
+  mkv|mp4)
       exec mpv --force-window=immediate "$filename";;
-  *.webm) # can be either video or music, so dont force window
+  webm) # can be either video or music, so dont force window
       exec mpv "$filename";;
-  *.djvu|*.pdf)
+  djvu|pdf)
       exec zathura "$filename";;
 esac
 
@@ -35,5 +34,6 @@ if [[ "$mime_description" =~ charset= ]] && [[ ! "$mime_description" =~ charset=
   exec "${EDITOR:-vi}" "$filename"
 fi
 
-exec xdg-open "$filename"
+~/.config/lf/scripts/tmux-popup.sh -h 2 -- \
+    sh -c "printf '\033[31;1mUnknown type:\033[0m\n  ${mime_description}'"
 
