@@ -51,6 +51,6 @@ fi
 
 # fallback
 if [ "$success" = 0 ]; then
-  cclip get "$id" | sed -e "s/.\{${FZF_PREVIEW_COLUMNS}\}/&\n/g"
+  cclip get "$id"
 fi
 

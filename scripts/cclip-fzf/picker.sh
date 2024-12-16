@@ -11,6 +11,7 @@ fzf \
   --scheme history \
   --no-clear \
   --preview 'exec ~/.config/scripts/cclip-fzf/previewer.sh {}' \
+  --preview-window right,wrap \
   --bind 'focus:transform-preview-label:date -d @{3} "+%a, %d %b %Y %H:%M:%S %Z"' \
   --preview-label-pos bottom \
   --bind "ctrl-o:become(~/.config/scripts/cclip-fzf/opener.sh {1} {2} {4})" \
