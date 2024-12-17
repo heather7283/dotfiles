@@ -1,13 +1,24 @@
+/**
+ * @name Squared
+ * @author Saltssaumure
+ * @authorLink https://github.com/Saltssaumure
+ * @description Squares all circles in Discord with adjustable corner roundness.
+ * @license MIT
+ * @version 1.8
+ * @invite uy8nKQVatp
+ * @source https://github.com/MiniDiscordThemes/Squared
+ * @website https://saltssaumure.github.io/Squared
+ * @donate https://ko-fi.com/saltssaumure
+*/
+
+@import url("https://minidiscordthemes.github.io/Squared/sq.min.css");
+
+/* See https://github.com/MiniDiscordThemes/Squared#customisation for customisation settings. */
+:root {
+    --squared-radius: 0;
+}
+
 * {
   border-radius: 0 !important;
 }
 
-.avatar_e9f61e * {
-  mask-image: none !important
-}
-.scroller_fea3ef * {
-  mask-image: none !important
-}
-.avatar_b2ca13 * {
-  mask-image: none !important
-}
