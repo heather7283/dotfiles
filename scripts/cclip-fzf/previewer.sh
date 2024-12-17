@@ -57,6 +57,7 @@ elif [[ "$preview" =~ ^https:\/\/(www\.)?youtu\.?be(\.com\/watch\?v=)? ]]; then
   url="${preview#https://www.youtube.com/watch?v=}"
   url="${url#https://youtu.be/}"
   url="${url%%&*}"
+  url="${url%%\?*}"
   url="${url%"${url##*[![:space:]]}"}" # strip trailing whitespace
   youtube_preview "$url"
 fi
