@@ -157,7 +157,8 @@ cmd fzf-history ${{
 cmd drag ${{
   source ~/.config/lf/scripts/common-defs.sh
 
-  ripdrag --no-click --and-exit $fx
+  # ripdrag --no-click --and-exit $fx
+  dragon --all --and-exit $fx
 }}
 
 cmd sudoedit ${{
