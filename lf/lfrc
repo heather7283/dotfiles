@@ -249,7 +249,12 @@ map xx %~/.config/lf/scripts/unarchive.sh -s "$f"
 map xX %~/.config/lf/scripts/unarchive.sh "$f"
 
 # cleanup on-quit hook
-&~/.config/lf/scripts/add-hook.sh 'on-quit' 'source ~/.config/lf/scripts/common-defs.sh; if [ -n "$_lf_client_data_dir" ]; then rm -r "$_lf_client_data_dir"; fi'
+cmd on-quit &{{
+    source ~/.config/lf/scripts/common-defs.sh;
+    if [ -n "$_lf_client_data_dir" ]; then
+        rmdir "$_lf_client_data_dir";
+    fi
+}}
 
 # https://github.com/gokcehan/lf/issues/442
 cmap <backspace> cmd-left

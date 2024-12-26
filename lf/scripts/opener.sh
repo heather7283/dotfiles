@@ -15,6 +15,8 @@ case "$extension" in
       exec mpv "$filename";;
   djvu|pdf)
       exec zathura "$filename";;
+  docx)
+      exec ~/LibreOffice-still.standard-x86_64.AppImage "$(realpath "$filename")";;
 esac
 
 # match based on mime type

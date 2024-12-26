@@ -37,9 +37,9 @@ image_preview() {
     if chafa_wrapper "$filename"; then
       success="yes"
       no_cache=1
+      tput cuf "$pos_x"
     fi
     # display additional info at the bottom
-    tput cuf "$pos_x"
     magick identify -ping \
       -format '%m %wx%h, %[colorspace], %r' \
       "${filename}[0]" | head -c "$size_x"
@@ -61,10 +61,10 @@ video_preview() {
   then
     success="yes"
     no_cache=1
+    tput cuf "$pos_x"
   fi
 
   # display additional info at the bottom
-  tput cuf "$pos_x"
   # covert seconds to hh:mm:ss
   total_sec="$((len / 1000))"
   sec="$((total_sec % 60))"
@@ -127,7 +127,7 @@ case "$extension" in
     image_preview;;
   mkv|mp4|webm)
     video_preview;;
-  pdf)
+  pdf|djvu)
     pdf_preview;;
   flac|wav|mp3|opus|ape)
     audio_preview;;
