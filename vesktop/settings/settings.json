@@ -374,9 +374,9 @@
             "enabled": false
         },
         "ShowHiddenChannels": {
-            "enabled": false,
+            "enabled": true,
             "hideUnreads": true,
-            "showMode": 1,
+            "showMode": 0,
             "defaultAllowedUsersAndRolesDropdownState": true
         },
         "ShowMeYourName": {
@@ -421,7 +421,10 @@
         "Translate": {
             "enabled": true,
             "autoTranslate": false,
-            "showChatBarButton": true
+            "showChatBarButton": true,
+            "service": "google",
+            "receivedInput": "auto",
+            "receivedOutput": "en"
         },
         "TypingIndicator": {
             "enabled": false
@@ -503,7 +506,7 @@
             "enabled": true
         },
         "ReviewDB": {
-            "enabled": true,
+            "enabled": false,
             "notifyReviews": true,
             "showWarning": false,
             "hideTimestamps": true,
@@ -529,7 +532,12 @@
             "enabled": false
         },
         "ShowHiddenThings": {
-            "enabled": false
+            "enabled": true,
+            "showTimeouts": true,
+            "showInvitesPaused": true,
+            "showModView": true,
+            "disableDiscoveryFilters": true,
+            "disableDisallowedDiscoveryFilters": true
         },
         "PartyMode": {
             "enabled": false
@@ -668,6 +676,6 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1733736283125
+        "settingsSyncVersion": 1735154540657
     }
 }
