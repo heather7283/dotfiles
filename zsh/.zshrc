@@ -5,7 +5,12 @@ KEYTIMEOUT=10
 # match files beginning with a . without explicitly specifying the dot
 setopt globdots
 # history size
-HISTSIZE=100
+HISTSIZE=2147483647
+SAVEHIST=2147483647
+# save each shell history into its own file (for funny statistics later)
+_history_dir=~/.local/share/zsh/history/
+if [ ! -d "$_history_dir" ]; then mkdir -p "$_history_dir"; fi
+HISTFILE="${_history_dir}/histfile-${$}-${RANDOM}-${RANDOM}"
 # don't load unnecessary eye candy
 _load_bloat=0
 # I fucking hate lf bro
@@ -359,6 +364,7 @@ alias fzfgrep='FZF_DEFAULT_COMMAND=true fzf \
     --context "$((FZF_PREVIEW_LINES / 4))" \
     --smart-case \
     -e {q} {} 2>/dev/null'\'' \
+  --preview-window up \
   --disabled'
 # ========== Aliases ==========
 
