@@ -74,3 +74,16 @@ vim.diagnostic.config({
 })
 
 opt.termguicolors = true
+
+-- prevents :h from splitting window, written by the box
+vim.opt.splitbelow = false
+vim.opt.splitright = false
+vim.api.nvim_create_autocmd("BufEnter", {
+  group = vim.api.nvim_create_augroup("help_in_current_window", { clear = true }),
+  callback = function()
+    if vim.bo.buftype == "help" then
+      vim.cmd("only")
+    end
+  end,
+})
+
