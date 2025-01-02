@@ -17,22 +17,24 @@ local plugins = {
   -- lsp
   {
     "mason-lspconfig.nvim",
-    dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" },
-    config = function(_, opts)
+    event = "VeryLazy",
+    dependencies = {
+      {
+        "neovim/nvim-lspconfig",
+        config = function()
+          -- no-op intentionally
+        end
+      },
+      {
+        "williamboman/mason.nvim",
+        cmd = { "Mason", "MasonInstall", "MasonInstallAll", "MasonUpdate" },
+        config = function()
+          -- no-op intentionally
+        end
+      },
+    },
+    config = function()
       require("plugins.lspconfig")
-    end
-  },
-  {
-    "neovim/nvim-lspconfig",
-    event = "User FilePost",
-    config = function(_, opts)
-    end
-  },
-  {
-    "williamboman/mason.nvim",
-    cmd = { "Mason", "MasonInstall", "MasonInstallAll", "MasonUpdate" },
-    config = function(_, opts)
-      require("mason").setup()
     end
   },
 
@@ -41,23 +43,19 @@ local plugins = {
     "hrsh7th/nvim-cmp",
     -- load in insert mode only
     event = "InsertEnter",
-    config = function(_, opts)
-      require("cmp").setup(require("plugins.cmp"))
+    config = function()
+      require("plugins.cmp")
     end,
     dependencies = {
       {
         "L3MON4D3/LuaSnip",
-        opts = {
-          history = true,
-          updateevents = "TextChanged,TextChangedI"
-        },
-        config = function(_, opts)
+        config = function()
           require("plugins.luasnip")
         end
       },
       {
         "windwp/nvim-autopairs",
-        config = function(_, opts)
+        config = function()
           require("plugins.autopairs")
         end
       },
@@ -68,82 +66,35 @@ local plugins = {
         "hrsh7th/cmp-nvim-lsp",
         "hrsh7th/cmp-buffer",
         "hrsh7th/cmp-path",
-        "micangl/cmp-vimtex",
       },
     }
   },
 
   {
     "kylechui/nvim-surround",
-    -- event = "InsertEnter",
-    config = function(_, opts)
-      require("nvim-surround").setup(opts)
-    end
-  },
-
-  {
-    "kevinhwang91/nvim-ufo",
-    lazy = false,
-    dependencies = {
-      "kevinhwang91/promise-async"
-    },
-    config = function(_, opts)
-      require("ufo").setup(require("plugins.nvim-ufo"))
-      -- vim.api.nvim_set_hl(0, "Folded", { bg = "#2D353B", force = true })
+    event = "VeryLazy",
+    config = function()
+      require("nvim-surround").setup()
     end
   },
 
   -- treesitter
   {
     "nvim-treesitter/nvim-treesitter",
-    dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
     build = ":TSUpdate",
-    event = { "BufReadPost", "BufNewFile" },
+    event = { "VeryLazy", "BufNewFile" },
     cmd = { "TSInstall", "TSBufEnable", "TSBufDisable", "TSModuleInfo" },
-    config = function(_, opts)
-      require("nvim-treesitter.configs").setup(require("plugins.treesitter"))
-    end
-  },
-  {
-    "nvim-treesitter/nvim-treesitter-textobjects",
-    event = { "BufReadPost", "BufNewFile" }
-  },
-
-  -- DAP
-  -- {
-  --   "mfussenegger/nvim-dap",
-  --   cmd = "DapContinue",
-  --   dependencies = { "rcarriga/nvim-dap-ui", "mfussenegger/nvim-dap-python", "jay-babu/mason-nvim-dap.nvim", "nvim-neotest/nvim-nio" }
-  -- },
-
-  {
-    "lervag/vimtex",
-    ft = "tex",
     config = function()
-      vim.g.maplocalleader = "\\"
-      vim.g.vimtex_view_method = 'zathura'
+      require("plugins.treesitter")
     end
-  },
-
-  -- Indentation
-  {
-    "lukas-reineke/indent-blankline.nvim",
-    event = "User FilePost",
-    config = function(_, opts)
-      require("ibl").setup(require("plugins.ibl"))
-
-      local hooks = require("ibl.hooks")
-      hooks.register(hooks.type.WHITESPACE, hooks.builtin.hide_first_space_indent_level)
-      hooks.register(hooks.type.WHITESPACE, hooks.builtin.hide_first_tab_indent_level)
-    end,
   },
 
   -- git integration
   {
     "lewis6991/gitsigns.nvim",
-    event = "User FilePost",
-    config = function(_, opts)
-      require("gitsigns").setup(require("plugins.gitsigns"))
+    event = "VeryLazy",
+    config = function()
+      require("gitsigns").setup()
     end
   },
 
@@ -151,8 +102,8 @@ local plugins = {
   {
     "nvim-lualine/lualine.nvim",
     lazy = false,
-    config = function(_, opts)
-      require("lualine").setup(require("plugins.lualine"))
+    config = function()
+      require("plugins.lualine")
     end,
     dependencies = { "nvim-tree/nvim-web-devicons" },
   },

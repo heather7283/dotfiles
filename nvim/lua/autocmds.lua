@@ -1,11 +1,10 @@
-local autocmd = vim.api.nvim_create_autocmd
-
--- user event that loads after UIEnter + only if file buf is there
-autocmd({ "UIEnter", "BufReadPost", "BufNewFile" }, {
+-- I have no idea what it does, I copied it from nvchad, and if I
+-- delete it shit stops working. Just leave it here and forget about it
+vim.api.nvim_create_autocmd({ "UIEnter", "BufReadPost", "BufNewFile" }, {
   group = vim.api.nvim_create_augroup("NvFilePost", { clear = true }),
   callback = function(args)
     local file = vim.api.nvim_buf_get_name(args.buf)
-    local buftype = vim.api.nvim_buf_get_option(args.buf, "buftype")
+    local buftype = vim.bo[args.buf].buftype
 
     if not vim.g.ui_entered and args.event == "UIEnter" then
       vim.g.ui_entered = true
@@ -21,7 +20,7 @@ autocmd({ "UIEnter", "BufReadPost", "BufNewFile" }, {
         if vim.g.editorconfig then
           require("editorconfig").config(args.buf)
         end
-      end, 0)
+      end)
     end
   end,
 })

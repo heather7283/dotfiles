@@ -1,7 +1,5 @@
-require("mason-lspconfig").setup({
-  ensure_installed = {
-  }
-})
+require("mason").setup()
+require("mason-lspconfig").setup()
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
@@ -53,10 +51,11 @@ local handlers = {
     })
   end,
 }
+require("mason-lspconfig").setup_handlers(handlers)
 
 -- use system clangd
 local clangd_path = vim.fn.exepath("clangd");
-if (clangd_path) then
+if clangd_path then
   require("lspconfig").clangd.setup({
     cmd = {
       clangd_path,
@@ -69,5 +68,5 @@ if (clangd_path) then
   })
 end
 
-require("mason-lspconfig").setup_handlers(handlers)
+vim.keymap.set('n', 'K', vim.lsp.buf.hover)
 

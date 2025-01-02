@@ -33,37 +33,36 @@ map({ "n", "v" }, "k", "gk", "Move up", { expr = true, noremap = false })
 
 local is_man_pager = vim.tbl_contains(vim.v.argv, 'Man!')
 if is_man_pager then
-    local man = require("man_history")
+  local man = require("man_history")
 
-    vim.keymap.set('n', 'M', function()
-        man.open_page_under_cursor()
-    end)
+  vim.keymap.set('n', 'M', function()
+    man.open_page_under_cursor()
+  end)
 
-    -- Backward navigation (Shift+H)
-    vim.keymap.set('n', 'H', function()
-        man.prev()
-    end)
+  -- Backward navigation (Shift+H)
+  vim.keymap.set('n', 'H', function()
+    man.prev()
+  end)
 
-    -- Forward navigation (Shift+L)
-    vim.keymap.set('n', 'L', function()
-        man.next()
-    end)
+  -- Forward navigation (Shift+L)
+  vim.keymap.set('n', 'L', function()
+      man.next()
+  end)
 
-    vim.api.nvim_create_autocmd("FileType", {
-        pattern = "man",
-        once = true,
-        callback = function()
-            local bufnr = vim.api.nvim_get_current_buf()
-            local man_page = vim.fn.expand("%:t")
-            if man_page ~= "" then
-                man.push({name = man_page, index = 1})
-            end
-        end,
-    })
+  vim.api.nvim_create_autocmd("FileType", {
+    pattern = "man",
+    once = true,
+    callback = function()
+      local man_page = vim.fn.expand("%:t")
+      if man_page ~= "" then
+        man.push({name = man_page, index = 1})
+      end
+    end,
+  })
 
-    vim.keymap.set('n', 'B', function()
-        man.print_history()
-    end)
+  vim.keymap.set('n', 'B', function()
+    man.print_history()
+  end)
 end
 
 vim.keymap.set('n', '<leader>tw', function()
@@ -72,21 +71,3 @@ vim.keymap.set('n', '<leader>tw', function()
     vim.fn.setpos('.', cursor_pos)
 end, { desc = 'Trim trailing whitespace' })
 
-
-
-
-
-vim.keymap.set('n', '<leader>p', function()
-    local current, total = get_pattern_position()
-    vim.notify(string.format("Match %d of %d", current, total))
-end, { noremap = true, silent = true })
-
-vim.keymap.set('n', '<leader>j', function()
-    local pattern = vim.fn.input("Pattern: ")
-    local n = tonumber(vim.fn.input("Occurrence number: "))
-    if jump_to_nth_pattern(pattern, n) then
-        vim.notify("Jumped to match " .. n)
-    else
-        vim.notify("Match not found", vim.log.levels.WARN)
-    end
-end, { noremap = true, silent = true })

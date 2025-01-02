@@ -42,7 +42,6 @@ local options = {
   },
 
   sources = cmp.config.sources({
-    { name = "vimtex" },
     { name = "luasnip" },
     { name = "nvim_lsp" },
     { name = "buffer" },
@@ -50,6 +49,12 @@ local options = {
     { name = "path" },
   }),
 }
+cmp.setup(options)
 
-return options
+-- insert () after selection functions in completion menu
+local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+cmp.event:on(
+  "confirm_done",
+  cmp_autopairs.on_confirm_done()
+)
 
