@@ -37,7 +37,10 @@ fzf \
   --bind 'ctrl-y:execute-silent(echo {2..} | wl-copy -t "text/plain;charset=utf-8")' \
   --no-hscroll
 )"
-rm "${temp_file}"
+
+# killing sqlite3 before its output is fully read leaves -shm and -wal files in /tmp,
+# use * expansion here to delete them as well
+rm "${temp_file:?}"*
 
 [ -z "$result" ] && exit
 IFS="$newline"
