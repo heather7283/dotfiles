@@ -35,3 +35,19 @@ vim.api.nvim_create_autocmd({"BufWinEnter", "InsertLeave"}, {
     end
   end
 })
+
+-- for .h files, sets the filetype to "cpp" if .cpp files are found, otherwise sets it to "c"
+vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
+  pattern = "*.h",
+  callback = function()
+    local dir = vim.fn.expand("%:p:h")
+    local has_cpp = vim.fn.glob(dir .. "/*.cpp") ~= ""
+
+    if has_cpp then
+      vim.bo.filetype = "cpp"
+    else
+      vim.bo.filetype = "c"
+    end
+  end
+})
+
