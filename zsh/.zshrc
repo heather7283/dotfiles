@@ -406,7 +406,7 @@ chpwd_functions+=(ls_after_cd)
 
 # Wrapper for lf that allows to cd into last selected directory
 lf() {
-  export lf_cd_file="/tmp/lfcd.$$"
+  export lf_cd_file="${TMPDIR:-/tmp}/lfcd.$$"
 
   lf_path="$(which -p lf)"
   "$lf_path" "$@"
