@@ -12,6 +12,7 @@ level1=(
   "[m]PRIS control"$'\t'"~/.config/scripts/mpris-control/player-control.sh"
   "[a]udio control"$'\t'"pulsemixer"
   "[q]alculate"$'\t'"tmux new-session qalc"
+  "Toggle screen [R]ecording"$'\t'"hyprctl dispatch exec ~/.config/scripts/gpu-screen-recorder/rec-toggle.sh"
 )
 
 change_script="$(cat<<'EOF'
