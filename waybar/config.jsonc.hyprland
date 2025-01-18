@@ -9,6 +9,7 @@
     "clock"
   ],
   "modules-right": [
+    "custom/gpu-screen-recorder",
     "hyprland/language",
     "pulseaudio",
     "bluetooth",
@@ -106,5 +107,13 @@
   },
   "hyprland/submap": {
     "format": "{}"
-  }
+  },
+  "custom/gpu-screen-recorder": {
+    "format": "{}",
+    "exec": "~/.config/scripts/gpu-screen-recorder/rec-format.sh",
+    "interval": "once",
+    "signal": 8,
+    "on-click": "~/.config/scripts/gpu-screen-recorder/rec-toggle.sh",
+    "on-click-right": "~/.config/scripts/gpu-screen-recorder/rec-toggle.sh replay",
+  },
 }

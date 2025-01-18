@@ -1,4 +1,4 @@
-/* -----------------------------------------------------------------------------
+/* ----------------------------------------------------------------------------
  * Base styles
  * -------------------------------------------------------------------------- */
 
@@ -26,7 +26,7 @@
 #battery,
 #clock,
 #cpu,
-#custom-keyboard-layout,
+#custom-gpu-screen-recorder,
 #memory,
 #mode,
 #network,
@@ -109,3 +109,19 @@ button:hover {
   border-color: #A7C080;
   background-color: #475258;
 }
+
+#custom-gpu-screen-recorder.active {
+  /*font-size: 22px;*/
+  color: #E67E80;
+}
+
+#custom-gpu-screen-recorder.active-replay {
+  /*font-size: 22px;*/
+  color: #DBBC7F;
+}
+
+#custom-gpu-screen-recorder.inactive {
+  /*font-size: 22px;*/
+  color: #D3C6AA;
+}
+
