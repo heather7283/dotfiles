@@ -478,7 +478,7 @@ running_in_hyprland() {
 }
 
 foot_active_window() {
-    hyprctl activewindow | grep -qe 'initialClass: foot$'
+    hyprctl activewindow | grep -qe 'initialClass: foot-tmux$'
 }
 # ========== Functions ==========
 

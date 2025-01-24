@@ -44,6 +44,9 @@ notify_job_finish() {
         fi
     done
 
+    printf '\n󱑎 Finished in %s with exit code %d\n' \
+        "$(format_seconds "$elapsed_time")" "$LAST_JOB_EXIT_STATUS"
+
     running_in_hyprland && foot_active_window && tmux_pane_visible && return
 
     if running_in_hyprland; then
@@ -54,7 +57,4 @@ notify_job_finish() {
                 "$(format_seconds "$elapsed_time")" \
                 "$LAST_JOB_EXIT_STATUS")"
     fi
-
-    printf '\n󱑎 Finished in %s with exit code %d\n' \
-        "$(format_seconds "$elapsed_time")" "$LAST_JOB_EXIT_STATUS"
 }
