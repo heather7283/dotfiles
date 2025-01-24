@@ -42,7 +42,7 @@ success=0
 if [[ "$mime" =~ ^image/.*$ ]]; then
   cclip get "$id" | chafa_wrapper && success=1
 # hex colors
-elif [[ "$preview" =~ ^(#|0x)?[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$ ]]; then
+elif [[ "$preview" =~ ^(#|0x)?[0-9a-fA-F]{6}([0-9a-fA-F]{2})?[[:space:]]*$ ]]; then
   item="${preview#\#}"
   item="${item#0x}"
   r="$((16#${item:0:2}))"
