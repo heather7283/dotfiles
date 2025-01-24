@@ -26,4 +26,6 @@ local options = {
   end
 }
 
-return options
+require("everforest").setup(options)
+require("everforest").load()
+

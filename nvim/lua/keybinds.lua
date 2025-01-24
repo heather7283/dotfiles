@@ -71,3 +71,11 @@ vim.keymap.set('n', '<leader>tw', function()
     vim.fn.setpos('.', cursor_pos)
 end, { desc = 'Trim trailing whitespace' })
 
+vim.keymap.set('n', '<leader>nd', vim.diagnostic.goto_next, { desc = 'Next Diagnostic' })
+vim.keymap.set('n', '<leader>Nd', vim.diagnostic.goto_next, { desc = 'Previous Diagnostic' })
+
+vim.keymap.set('c', '<C-j>', '<Down>')
+vim.keymap.set('c', '<C-k>', '<Up>')
+vim.keymap.set('c', '<C-h>', '<Left>')
+vim.keymap.set('c', '<C-l>', '<Right>')
+

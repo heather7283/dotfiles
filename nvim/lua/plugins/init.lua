@@ -98,7 +98,40 @@ local plugins = {
     end
   },
 
-  -- statusline
+  {
+    'nvim-telescope/telescope.nvim', branch = '0.1.x',
+    event = "VeryLazy",
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      require("plugins.telescope")
+    end
+  },
+
+  {
+    'rhysd/clever-f.vim',
+    event = "VeryLazy",
+    config = function()
+      require("plugins.clever-f")
+    end
+  },
+
+  {
+    "lukas-reineke/indent-blankline.nvim",
+    event = "VeryLazy",
+    main = "ibl",
+    opts = {
+      indent = {
+        char = "▏",
+        smart_indent_cap = true
+      },
+      scope = {
+        char = "▎",
+        show_start = false,
+        show_end = false
+      }
+    },
+  },
+
   {
     "nvim-lualine/lualine.nvim",
     lazy = false,
@@ -115,8 +148,7 @@ local plugins = {
     lazy = false,
     priority = 9999,
     config = function()
-      require("everforest").setup(require("plugins.everforest"))
-      require("everforest").load()
+      require("plugins.everforest")
     end,
   }
 }
