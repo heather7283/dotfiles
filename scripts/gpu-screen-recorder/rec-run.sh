@@ -24,6 +24,8 @@ on_trap() {
 }
 trap on_trap INT TERM HUP TERM
 
+. ~/.config/scripts/gpu-screen-recorder/config.sh || die "Unable to read config"
+
 # Recording mode can be passed as argv[1]
 if [ -z "$1" ]; then
     mode='regular'
@@ -66,14 +68,14 @@ case "$mode" in
         timestamp="$(date -Is)"
         timestamp="${timestamp%%+*}"
         [ -z "$timestamp" ] && die 'Unable to get timestamp (how???)'
-        filename="${rec_dir_videos}/${timestamp}.mp4"
+        filename="${rec_dir_videos}/${timestamp}.${FORMAT:-mp4}"
 
         flock --no-fork --nonblock --conflict-exit-code 101 "$rec_dir" \
-            gpu-screen-recorder -w portal -f 60 -a 'default_output|default_input' -o "$filename" &
+            gpu-screen-recorder -w portal -f "${FPS:-60}" -a 'default_output|default_input' -o "$filename" &
         ;;
     (replay)
         flock --no-fork --nonblock --conflict-exit-code 101 "$rec_dir" \
-            gpu-screen-recorder -w portal -f 60 -r 30 -sc ~/.config/scripts/gpu-screen-recorder/on-save-replay.sh -c mp4 -a 'default_output|default_input' -o "$rec_dir_replays" &
+            gpu-screen-recorder -w portal -f "${FPS:-60}" -r "${REPLAY_BUFFER:-60}" -sc ~/.config/scripts/gpu-screen-recorder/on-save-replay.sh -c ${FORMAT:-mp4} -a 'default_output|default_input' -o "$rec_dir_replays" &
         ;;
     (*)
         die "Invalid mode: ${mode}"
