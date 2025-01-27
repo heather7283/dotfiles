@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+if [ "$1" = '-u' ]; then
+  livedir="${XDG_RUNTIME_DIR}/s6/live"
+  shift
+else
+  livedir=/run/s6-rc/
+fi
+
+svname="$1"
+if [ -n "$svname" ]; then
+  s6-rc -l "$livedir" start "$svname"
+fi
+

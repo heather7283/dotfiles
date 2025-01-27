@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+set -e
+
+die() { printf '%s\n' "$1"; exit 1; }
+
+if [ "$1" = "-u" ]; then
+    scandir="${XDG_RUNTIME_DIR}/s6/service/"
+    logdir=~/s6/log/
+    shift 1
+else
+    scandir=/run/service/
+    logdir=/var/log/s6/
+fi
+
+service="$1"
+[ -z "$service" ] && die "no service specified"
+logfile="${logdir}"/"${service}"/current
+
+seconds_to_delta() {
+  s="$1"
+  printf '%dh %02dm %02ds' "$(( s / 3600 ))" "$(( s % 3600 / 60 ))" "$(( s % 60 ))"
+}
+
+main() {
+  IFS=' ' read -r up wantedup normallyup ready paused pid pgid exitcode signal signum updownsince readysince updownfor readyfor < <(s6-svstat -o up,wantedup,normallyup,ready,paused,pid,pgid,exitcode,signal,signum,updownsince,readysince,updownfor,readyfor "${scandir}"/"${service}")
+  [ -e "${scandir}"/"${service}"/data/description ] && description="$(cat "${scandir}"/"${service}"/data/description)"
+
+  #printf '\033[1mService:\t%s - %s\033[0m\n' "$service" "${description:-no description}"
+  printf '\033[1mService:\t%s\033[0m\n' "$service"
+
+  printf 'Status:\t\t'
+  [ "$up" = 'true' ] && printf '\033[1;32mup\033[0m ' || printf '\033[1;31mdown\033[0m '
+  [ "$ready" = 'true' ] && printf '(ready), ' || printf '(not ready), '
+  printf 'wanted up: '
+  [ "$wantedup" = 'true' ] && printf 'yes, ' || printf 'no, '
+  printf 'normally up: '
+  [ "$normallyup" = 'true' ] && printf 'yes' || printf 'no'
+  printf '\n'
+
+  if [ ! "$pid" = -1 ]; then
+    printf 'PID/PGID:\t%s/%s (%s)\n' "$pid" "$pgid" "$(ps -o args --no-headers "$pid")"
+  fi
+  if [ ! "$exitcode" = -1 ]; then
+    printf 'Exitcode:\t%s\n' "$exitcode"
+  fi
+  if [ ! "$signal" = 'NA' ]; then
+    printf 'Signal:\t\t%s(%s)\n' "$signal" "$signum"
+  fi
+
+  [ "$up" = 'true' ] && printf 'Up ' || printf 'Down '
+  printf 'since:\t%s (%s ago)\n' \
+    "$(s6-tai64nlocal <<<"$updownsince")" "$(seconds_to_delta "$updownfor")"
+  printf 'Ready since:\t%s (%s ago)\n' \
+    "$(s6-tai64nlocal <<<"$readysince")" "$(seconds_to_delta "$readyfor")"
+
+  if [ ! "$pid" = -1 ]; then
+    printf '\n'
+    pstree -pT -H "$pid" "$pid"
+  fi
+
+  nlines=10
+  printf '\n'
+  if [ -f "$logfile" ]; then
+    printf '\033[1mLast %s lines from %s:\033[0m\n' "$nlines" "$logfile"
+    tail -n"$nlines" "$logfile" | s6-tai64nlocal
+  else
+    printf '\033[1mFile %s does not exist\033[0m\n' "$logfile"
+  fi
+}
+
+main "$@" | less --quit-if-one-screen --chop-long-lines --RAW-CONTROL-CHARS --no-init
+

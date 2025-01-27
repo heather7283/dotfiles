@@ -1,0 +1,26 @@
+#compdef svrestart
+
+_svrestart() {
+    local curcontext="$curcontext" state line
+    typeset -A opt_args
+
+    _arguments -s \
+        '-u[use user service directory]' \
+        '*: :->services'
+
+    case $state in
+        services)
+            if (( ${+opt_args[-u]} )); then
+                local xdg_dir="${XDG_RUNTIME_DIR:-/tmp/${UID}-runtime-dir}"
+                dirs=( ${$(print -l "${xdg_dir}"/s6/live/servicedirs/*(-/)):t} )
+                _describe 'services' dirs
+            else
+                dirs=( ${$(print -l /run/s6-rc/servicedirs/*(-/)):t} )
+                _describe 'services' dirs
+            fi
+            ;;
+    esac
+}
+
+_svrestart "$@"
+

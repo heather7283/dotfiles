@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [ "$1" = "-u" ]; then
+    logdir=~/s6/log/
+    shift 1
+else
+    logdir=/var/log/s6/
+fi
+
+service="$1"
+if [ -z "$service" ]; then
+  cat "${logdir}"/*/current | s6-tai64nlocal | sort | less -S
+else
+  s6-tai64nlocal <"${logdir}"/"${service}"/current | less -S
+fi
+
