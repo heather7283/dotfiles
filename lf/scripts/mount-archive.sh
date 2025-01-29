@@ -44,10 +44,10 @@ on_cd_hook="$(
 cat <<EOF
 if [[ ! "\${PWD}" =~ ^${mountpoint} ]]; then \
     if [ "\${PWD}" = "${mountpoint_dirname}" ]; then \
-        lf -remote "send \${id} select ${archive}"; \
+        lf -remote "send ${id} select '${archive}'"; \
     fi; \
     umount "${mountpoint}" && rmdir "${mountpoint}"; \
-    lf -remote "send \${id} cmd on-cd"; \
+    lf -remote "send ${id} cmd on-cd"; \
 fi
 EOF
 )"
