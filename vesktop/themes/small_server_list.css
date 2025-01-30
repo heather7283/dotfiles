@@ -1,9 +1,9 @@
 /* small server list */
-.guilds_a4d4d9 {
+.guilds_c48ade {
     width: 0px!important;
     padding-left: var(--guild-mini)!important;
 }
-.guilds_a4d4d9:hover {
+.guilds_c48ade:hover {
     width: var(--guild-max)!important;
     padding-left: initial!important;
 }

@@ -1,9 +1,9 @@
 /* small member list */
-.container_cbd271 {
+.container_c8ffbb {
     width: 0px!important;
     padding-left: var(--members-min)!important;
 }
-.container_cbd271:hover {
+.container_c8ffbb:hover {
     width: var(--members-max)!important;
     padding-left: initial!important;
 }

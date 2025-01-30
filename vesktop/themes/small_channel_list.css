@@ -1,10 +1,10 @@
 /* small channel list */
-.sidebar_a4d4d9 {
-    width: 0px!important;
+.sidebar_c48ade {
+    flex: 0;
     padding-left: var(--channel-mini)!important;
 }
-.sidebar_a4d4d9:hover {
-    width: var(--channel-max)!important;
+.sidebar_c48ade:hover {
+    flex: 0 0 auto;
     padding-left: initial!important;
 }
 /* edit it */
