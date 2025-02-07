@@ -58,6 +58,17 @@ prompt_newline='
 '
 prompt_multiline=1
 
+zstyle ':vcs_info:*' actionformats '%b | %a'
+zstyle ':vcs_info:*' formats '%b'
+zstyle ':vcs_info:*' enable git
+autoload -Uz vcs_info
+prompt_component_git() {
+    vcs_info
+    if [ -n "${vcs_info_msg_0_}" ]; then
+        printf '󰊢 %s' "${vcs_info_msg_0_}"
+    fi
+}
+
 prompt_component_shlvl() {
     if [ "$SHLVL" -gt 1 ]; then
         printf ' shlvl %s' "${SHLVL}"
@@ -99,7 +110,7 @@ prompt_component_ssh() {
 }
 
 typeset -a prompt_components
-prompt_components=(userhostname exitcode ssh venv lf shlvl)
+prompt_components=(userhostname exitcode git ssh venv lf shlvl)
 prompt_components_opening='['
 prompt_components_closing=']'
 prompt_components_separator='-'
