@@ -1,0 +1,10 @@
+git clone --depth 1 'https://github.com/fdw/rofimoji'
+cd rofimoji
+python3 -m venv venv
+source venv/bin/activate
+pip install aiofiles aiohttp bs4 lxml
+cd src/extractors
+for f in *.py; do sed -i -Ee 's/^from \./from /' "$f"; done
+python3 ./__main__.py
+cd ../picker/data
+cat emojis_*.csv | sed -Ee 's/<\/?small>//g' >emoji-list.txt
