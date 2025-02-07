@@ -92,7 +92,7 @@ audio_preview() {
 }
 
 archive_preview() {
-  bsdtar -tf "$filename" && success="yes"
+  bsdtar -tf "$filename" 2>&1 && success="yes" || needs_newline_before_fallback="y"
 }
 
 json_preview() {
@@ -115,6 +115,7 @@ text_preview() {
 }
 
 fallback_preview() {
+  [ -n "$needs_newline_before_fallback" ] && printf '\n'
   file --brief "$filename" | fold -s -w "$size_x"
   printf '\n%s\n' "$mime_description"
 }
