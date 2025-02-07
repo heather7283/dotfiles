@@ -16,7 +16,7 @@ case "$extension" in
   djvu|pdf)
       exec zathura "$filename";;
   docx)
-      exec ~/LibreOffice-still.standard-x86_64.AppImage "$(realpath "$filename")";;
+      exec libreoffice "$(realpath "$filename")";;
 esac
 
 # match based on mime type
