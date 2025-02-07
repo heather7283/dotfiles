@@ -2,7 +2,7 @@
 
 filepath="$1"
 
-window_title="$(hyprctl activewindow | awk '/\s+title:/ { print $2 }' | sed -Ee 's/[[:space:]]+//g')"
+window_title="$(hyprctl activewindow -j | jq -r '.title' | sed -Ee 's/[[:space:]]+/_/g')"
 [ -z "$window_title" ] && window_title='unknown_title'
 
 ext="${filepath##*.}"
