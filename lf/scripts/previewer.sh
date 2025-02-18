@@ -37,7 +37,8 @@ image_preview() {
     if chafa_wrapper "$filename"; then
       success="yes"
       no_cache=1
-      tput cuf "$pos_x"
+      # horizontal absolute cursor movement to column pos_x + 1
+      printf '\033[%dG' "$((pos_x + 1))"
     fi
     # display additional info at the bottom
     magick identify -ping \
@@ -61,7 +62,7 @@ video_preview() {
   then
     success="yes"
     no_cache=1
-    tput cuf "$pos_x"
+    printf '\033[%dG' "$((pos_x + 1))"
   fi
 
   # display additional info at the bottom
