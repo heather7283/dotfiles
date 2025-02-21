@@ -1,0 +1,10 @@
+#compdef run-wine-game
+
+_run-wine-game() {
+  local -a dirs
+  dirs=( ${$(print -l ~/games/*(-/)):t} )
+  _describe 'game directories' dirs
+}
+
+_run-wine-game "$@"
+
