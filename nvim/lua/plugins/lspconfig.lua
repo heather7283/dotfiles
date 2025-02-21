@@ -62,7 +62,7 @@ if clangd_path then
       "--background-index",
       "--all-scopes-completion",
       "--completion-style=detailed",
-      "--header-insertion-decorators"
+      "--header-insertion=never",
     },
     capabilities = capabilities
   })
