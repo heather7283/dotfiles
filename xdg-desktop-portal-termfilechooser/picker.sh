@@ -1,4 +1,4 @@
-#!/bin/s
+#!/bin/sh
 
 # $1 - File descriptor. Your script should write paths, each ending with newline, to this fd.
 # $2 - Request type. 0 is SaveFile, 1 is SaveFiles, 2 is OpenFile
