@@ -1,0 +1,11 @@
+:root {
+    --text: 211,198,170;
+    --text-normal:        rgb(var(--text));
+	--interactive-normal: rgb(var(--text));
+	--interactive-active: rgb(var(--text));
+	--header-primary:     rgb(var(--text));
+	--header-secondary:   rgb(var(--text));
+	--channels-default:   rgb(var(--text));
+	--channel-icon:       rgb(var(--text));
+}
+

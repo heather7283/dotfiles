@@ -6,10 +6,11 @@
     "themeLinks": [],
     "enabledThemes": [
         "sharp_corners.css",
-        "color_scheme.css",
         "small_server_list.css",
         "small_member_list.css",
-        "no_animations.css"
+        "no_animations.css",
+        "custom_font.css",
+        "colors.css"
     ],
     "enableReactDevtools": false,
     "frameless": true,
@@ -108,7 +109,8 @@
             "enabled": true
         },
         "ClientTheme": {
-            "enabled": false
+            "enabled": true,
+            "color": "232a2e"
         },
         "ColorSighted": {
             "enabled": false
@@ -137,8 +139,9 @@
             "enabled": false
         },
         "Experiments": {
-            "enabled": false,
-            "enableIsStaff": false
+            "enabled": true,
+            "enableIsStaff": false,
+            "toolbarDevMenu": true
         },
         "F8Break": {
             "enabled": false
@@ -182,9 +185,6 @@
             "enabled": true
         },
         "GreetStickerPicker": {
-            "enabled": false
-        },
-        "HideAttachments": {
             "enabled": false
         },
         "iLoveSpam": {
@@ -256,7 +256,8 @@
         },
         "NoBlockedMessages": {
             "enabled": true,
-            "ignoreBlockedMessages": false
+            "ignoreMessages": false,
+            "applyToIgnoredUsers": true
         },
         "NoDevtoolsWarning": {
             "enabled": false
@@ -664,6 +665,15 @@
         },
         "FixImagesQuality": {
             "enabled": false
+        },
+        "HideMedia": {
+            "enabled": false
+        },
+        "FullUserInChatbox": {
+            "enabled": false
+        },
+        "IrcColors": {
+            "enabled": false
         }
     },
     "notifications": {
@@ -676,6 +686,6 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1735154540657
+        "settingsSyncVersion": 1738907594899
     }
 }
