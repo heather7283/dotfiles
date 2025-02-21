@@ -12,9 +12,9 @@ title="$4"
 
 hyprctl dispatch closewindow address:"$addr"
 
-# prevent killing foot server
+# blacklist
 case "$initial_class" in
-*foot*)
+*foot*|xdg-desktop-portal*)
     exit;;
 esac
 
