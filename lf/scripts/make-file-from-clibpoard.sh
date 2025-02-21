@@ -16,6 +16,8 @@ if [ -z "$name" ]; then
 elif [ -e "$name" ]; then
   die "$name already exists"
 else
-  wl-paste >"$name" && :reload && :select "$(realpath "$name")"
+  # tee is needed because wl-paste is retarded and will refuse to paste if
+  # it detects "incorrect mime type" or whatever bullshit
+  wl-paste | tee "$name" >/dev/null && :reload && :select "$(realpath "$name")"
 fi
 

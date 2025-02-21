@@ -6,7 +6,7 @@ export _script_name="paste-link"
 source ~/.config/lf/scripts/common-defs.sh
   
 # busybox ln doesn't support -t and -r flags
-if detect_busybox; then
+if detect_busybox ln; then
   die "busybox ln won't work, do it manually"
 fi
 

@@ -6,7 +6,7 @@ export _script_name="paste"
 source ~/.config/lf/scripts/common-defs.sh
 
 # don't use --backup option with busybox coreutils
-if detect_busybox; then
+if detect_busybox cp || detect_busybox mv; then
   if ask_warn "--backup not supported, possible overwrite; continue?" "Y"; then
     backup_arg=''
   else

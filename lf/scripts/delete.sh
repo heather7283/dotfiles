@@ -22,7 +22,7 @@ if echo "$fx" | grep -qvEe "^${HOME}.*$"; then
 else
   use_trash=1
   # don't use --backup option with busybox coreutils
-  if detect_busybox; then
+  if detect_busybox mv; then
     if ask_warn '--backup not supported, possible overwrite; continue?' 'Y'; then :; else
       die "abort"
     fi

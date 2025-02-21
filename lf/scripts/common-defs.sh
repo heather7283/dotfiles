@@ -20,6 +20,13 @@ die() {
   exit 1
 }
 
+detect_busybox() {
+  # $1 - program to check
+  [ -z "$1" ] && die "detect_busybox: argument expected"
+  "$1" 2>&1 | grep -qe '^BusyBox'
+  return $?
+}
+
 # check if lf data dir exists
 if [ -n "$LF_DATA_HOME" ]; then
   # FIXME: not POSIX
@@ -102,17 +109,39 @@ if [ -z "$TMUX" ]; then
   }
 
   read_line() {
+    # this shit is so cursed
     # $1 - prompt
     # $2 - initial string
-    # FIXME: $2 is ignored
-    _prompt="[${_script_name}] ${1}"
-    printf '%s' "$_prompt" >&2
+    #_prompt="[${_script_name}] (this line will be ignored) ${1}"
+    _initial_string="$2"
 
-    read -r _ans
+    detect_busybox flock && die "you need flock from util-linux for this!"
 
-    _exitcode=$?
+    _tmpfile="$(mktmpfile "read_line")"
+    if [ -z "$_tmpfile" ]; then die "unable to create temp file"; fi
+    _lockfile="$(mktmpfile "read_line")"
+    if [ -z "$_lockfile" ]; then die "unable to create lock file"; fi
+
+    #echo "$_prompt" >"$_tmpfile"
+    echo "$_initial_string" >>"$_tmpfile"
+
+    if [ "$EDITOR" = nvim ]; then
+      cmd="flock -o ${_lockfile} nvim -c 'nnoremap <ESC> :q!<CR>' -c 'nnoremap <CR> :wq<CR>' '${_tmpfile}'"
+    else
+      cmd="flock -o ${_lockfile} ${EDITOR:-vi} '${_tmpfile}'"
+    fi
+    # hopefully this won't explode
+    lf -remote "send ${_lf_client_id} \$${cmd}"
+
+    sleep 0.5
+    _ans="$(flock -o "${_lockfile}" cat "${_tmpfile}")"
+    _exitcode="$?"
+
+    rm "${_tmpfile}"
+    rm "${_lockfile}"
+
     printf '%s' "$_ans"
-    return $_exitcode
+    return "$_exitcode"
   }
 else
   ask() {
@@ -168,11 +197,6 @@ else
     return $_exitcode
   }
 fi
-
-detect_busybox() {
-  mv 2>&1 | grep -qe 'BusyBox'
-  return $?
-}
 
 stderr_wrapper() {
   if [ -z "$1" ]; then die "no command provided for stderr wrapper"; fi
