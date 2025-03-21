@@ -359,6 +359,8 @@ alias ffprobe='ffprobe -hide_banner'
 alias ffplay='ffplay -hide_banner'
 alias chafa='chafa --passthrough none'
 alias torrent='transmission-cli'
+alias wlp='wl-paste'
+alias wlc='wl-copy'
 
 alias ULTRAKILL='kill -KILL'
 alias ULTRAPKILL='pkill -KILL'
