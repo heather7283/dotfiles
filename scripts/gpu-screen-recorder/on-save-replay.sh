@@ -11,8 +11,14 @@ filepath_without_ext="${filepath%.*}"
 new_filepath="${filepath_without_ext}-${window_title}.${ext}"
 
 if mv "$filepath" "$new_filepath"; then
-    notify-send "Replay saved" "${new_filepath}"
+    res="$(notify-send -A 'default=Copy path' "Replay saved" "${new_filepath}")"
+    if [ "$res" = 'default' ]; then
+        wl-copy "$new_filepath"
+    fi
 else
-    notify-send "Replay saved" "${filepath}"
+    res="$(notify-send -A 'default=Copy path' "Replay saved" "${filepath}")"
+    if [ "$res" = 'default' ]; then
+        wl-copy "$filepath"
+    fi
 fi
 

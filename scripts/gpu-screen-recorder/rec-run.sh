@@ -101,7 +101,14 @@ if [ "$child_exitcode" = 101 ]; then
 elif [ "$child_exitcode" -gt 0 ]; then
     warn "Recorder exited non-zero (${child_exitcode})"
 else
-    notify-send 'Recorder exited' "Exit code 0"
+    if [ -n "$filename" ]; then
+        res="$(notify-send -A 'default=Copy path' 'Recorder exited' "${filename}")"
+        if [ "$res" = 'default' ]; then
+            wl-copy "$filename"
+        fi
+    else
+        notify-send 'Recorder exited' 'Exit code 0'
+    fi
 fi
 
 cleanup
