@@ -10,7 +10,8 @@
         "small_member_list.css",
         "no_animations.css",
         "custom_font.css",
-        "colors.css"
+        "colors.css",
+        "no_profile_themes.css"
     ],
     "enableReactDevtools": false,
     "frameless": true,
@@ -425,7 +426,11 @@
             "showChatBarButton": true,
             "service": "google",
             "receivedInput": "auto",
-            "receivedOutput": "en"
+            "receivedOutput": "en",
+            "deeplApiKey": "",
+            "showAutoTranslateTooltip": true,
+            "sentInput": "auto",
+            "sentOutput": "en"
         },
         "TypingIndicator": {
             "enabled": false
@@ -686,6 +691,7 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1738907594899
-    }
+        "settingsSyncVersion": 1742131418116
+    },
+    "eagerPatches": false
 }
