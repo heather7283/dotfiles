@@ -61,8 +61,6 @@ unset NAME
 # zsh refuses to cooperate with me and I can't get OSC 133 to work no matter what.
 local prompt_fake_space_seq='%F{black}ꙋ%f'
 
-prompt_newline='
-'
 prompt_multiline=1
 
 zstyle ':vcs_info:*' actionformats '%b | %a'
@@ -124,37 +122,33 @@ prompt_component_ssh() {
 
 typeset -a prompt_components
 prompt_components=(userhostname exitcode git distrobox ssh venv lf)
-prompt_components_opening='['
-prompt_components_closing=']'
-prompt_components_separator='-'
 
 update_prompt() {
-    PS1=""
+    local new_prompt
     if [ "$prompt_multiline" = 1 ]; then
+        new_prompt+="┌"
+
+        local i
         for ((i = 1; i <= ${#prompt_components}; i++)); do
-            local component="$prompt_components[i]"
-            local content="$(prompt_component_"${component}")"
+            local content="$(prompt_component_${prompt_components[i]})"
+
             [ -z "$content" ] && continue
-            content="${prompt_components_opening}${content}${prompt_components_closing}"
-            if [ ! "$i" = 1 ]; then
-                content="${prompt_components_separator}${content}"
-            fi
-            PS1="${PS1}${content}"
+            [ "$i" = 1 ] && content="[${content}]" || content="-[${content}]"
+
+            new_prompt+="${content}"
         done
-        unset i
-        if [ -n "$PS1" ]; then
-            PS1="┌${PS1}${prompt_newline}"
-        fi
-        PS1="${PS1}└[%24<…<%3~%<<]${prompt_fake_space_seq}%B%(#.#.$)%b "
+
+        new_prompt+=$'\n'"└[%24<…<%3~%<<]${prompt_fake_space_seq}%B%(#.#.$)%b "
     else
-        PS1="${PS1}%B%n@"                        # username@ (bold)
-                                                 # hostname (colored)
-        PS1="${PS1}${prompt_hostname_color_seq_start}%m${prompt_hostname_color_seq_end}"
-        PS1="${PS1}%b"                           # disable bold
-        PS1="${PS1} %1~${prompt_fake_space_seq}" # last component of pwd or ~ if in home
-        PS1="${PS1}%B%(#.#.$)%b"                 # or $ depending on user (bold)
-        PS1="${PS1} "                            # space at the end
+        # username@ (bold) hostname (colored)
+        new_prompt+="%B%n@${prompt_hostname_color_seq_start}%m${prompt_hostname_color_seq_end}%b"
+        # last component of pwd or ~ if in home
+        new_prompt=+" %1~${prompt_fake_space_seq}"
+        # # or $ depending on user (bold)
+        new_prompt+="%B%(#.#.$)%b "
     fi
+
+    PS1="$new_prompt"
 }
 update_prompt
 
