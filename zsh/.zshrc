@@ -69,6 +69,12 @@ prompt_component_git() {
     fi
 }
 
+prompt_component_distrobox() {
+    if [ -n "$CONTAINER_ID" ]; then
+        printf ' %s' "$CONTAINER_ID"
+    fi
+}
+
 prompt_component_shlvl() {
     if [ "$SHLVL" -gt 1 ]; then
         printf ' shlvl %s' "${SHLVL}"
@@ -110,7 +116,7 @@ prompt_component_ssh() {
 }
 
 typeset -a prompt_components
-prompt_components=(userhostname exitcode git ssh venv lf shlvl)
+prompt_components=(userhostname exitcode git distrobox ssh venv lf)
 prompt_components_opening='['
 prompt_components_closing=']'
 prompt_components_separator='-'
@@ -174,7 +180,8 @@ fi
 fpath=(~/.config/zsh/completions/ $fpath)
 # Load completions
 if [ ! -d ~/.cache/zsh/ ]; then mkdir -p ~/.cache/zsh/; fi
-autoload -Uz compinit && compinit -d ~/.cache/zsh/zcompdump
+compinit_dumpfile=~/.cache/zsh/zcompdump_"${CONTAINER_ID:-default}"
+autoload -Uz compinit && compinit -d "$compinit_dumpfile"
 zstyle ':completion:*' menu select
 
 if command -v fzf >/dev/null 2>&1 && \
