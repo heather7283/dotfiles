@@ -2,19 +2,26 @@
 # vi keybinds
 bindkey -v
 KEYTIMEOUT=10
+
 # match files beginning with a . without explicitly specifying the dot
 setopt globdots
+
 # history size
 HISTSIZE=2147483647
 SAVEHIST=2147483647
+
 # save each shell history into its own file (for funny statistics later)
-_history_dir=~/.local/share/zsh/history/
-if [ ! -d "$_history_dir" ]; then mkdir -p "$_history_dir"; fi
-HISTFILE="${_history_dir}/histfile-${$}-${RANDOM}-${RANDOM}"
+zsh_history_dir="${XDG_DATA_HOME:-${HOME}/.local/share}/zsh/history/"
+[ ! -d "$zsh_history_dir" ] && mkdir -p "$zsh_history_dir"
+HISTFILE="${zsh_history_dir}/histfile-${$}-${RANDOM}-${RANDOM}"
+
 # don't load unnecessary eye candy
-_load_bloat=0
-# I fucking hate lf bro
+zsh_load_bloat=0
+
+# lf config saves TERM value as OLDTERM because lf is reatrded
 [ -n "$OLDTERM" ] && export TERM="$OLDTERM"
+unset OLDTERM
+
 # autoload functions path
 fpath+=(~/.config/zsh/functions/)
 # ========== General options ==========
@@ -124,7 +131,7 @@ prompt_components_separator='-'
 update_prompt() {
     PS1=""
     if [ "$prompt_multiline" = 1 ]; then
-        for ((i = 1; i <= "${#prompt_components}"; i++)); do
+        for ((i = 1; i <= ${#prompt_components}; i++)); do
             local component="$prompt_components[i]"
             local content="$(prompt_component_"${component}")"
             [ -z "$content" ] && continue
@@ -152,120 +159,105 @@ update_prompt() {
 update_prompt
 
 case "$HOST" in
-  "FA506IH")
-    _load_bloat=1
+    (FA506IH) zsh_load_bloat=1;;
 esac
 # ========== Prompt ==========
 
 
 # ========== Plugins ==========
-_is_bloated() { [ ! "$_load_bloat" -eq 0 ]; }
-
 # Directory where plugins will be cloned
-if [ -n "$XDG_DATA_HOME" ]; then
-  _zsh_plugins_dir="$XDG_DATA_HOME/zsh/plugins/"
-else
-  _zsh_plugins_dir="$HOME/.local/share/zsh/plugins/"
+zsh_plugins_dir="${XDG_DATA_HOME:-${HOME}/.local/share}/zsh/plugins"
+
+if [ -d "$zsh_plugins_dir/zsh-completions/src" ]; then
+    fpath=("$zsh_plugins_dir/zsh-completions/src" $fpath)
 fi
 
-if [ -d "$_zsh_plugins_dir/zsh-completions/src" ]; then
-  fpath=("$_zsh_plugins_dir/zsh-completions/src" $fpath)
-fi
-
-if [ -d "$_zsh_plugins_dir/gentoo-zsh-completions/src" ]; then
-  fpath=("$_zsh_plugins_dir/gentoo-zsh-completions/src" $fpath)
+if [ -d "$zsh_plugins_dir/gentoo-zsh-completions/src" ]; then
+    fpath=("$zsh_plugins_dir/gentoo-zsh-completions/src" $fpath)
 fi
 
 # Additional completions
 fpath=(~/.config/zsh/completions/ $fpath)
+
 # Load completions
 if [ ! -d ~/.cache/zsh/ ]; then mkdir -p ~/.cache/zsh/; fi
-compinit_dumpfile=~/.cache/zsh/zcompdump_"${CONTAINER_ID:-default}"
+compinit_dumpfile="${XDG_CACHE_HOME:-${HOME}/.cache}/zsh/zcompdump_${CONTAINER_ID:-default}"
 autoload -Uz compinit && compinit -d "$compinit_dumpfile"
 zstyle ':completion:*' menu select
 
-if command -v fzf >/dev/null 2>&1 && \
-[ -f "$_zsh_plugins_dir/fzf-tab/fzf-tab.plugin.zsh" ]; then
-  source "$_zsh_plugins_dir/fzf-tab/fzf-tab.plugin.zsh"
-  zstyle ':fzf-tab:*' default-color ''
-  zstyle ':fzf-tab:*' use-fzf-default-opts yes
+if command -v fzf >/dev/null && [ -f "$zsh_plugins_dir/fzf-tab/fzf-tab.plugin.zsh" ]; then
+    source "${zsh_plugins_dir}/fzf-tab/fzf-tab.plugin.zsh"
+    zstyle ':fzf-tab:*' default-color ''
+    zstyle ':fzf-tab:*' use-fzf-default-opts yes
 fi
 
-if _is_bloated && \
-[ -f "$_zsh_plugins_dir/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]; then
-  source "$_zsh_plugins_dir/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
-  fast-theme ~/.config/zsh/fsh-theme.ini >/dev/null
-  # Prevents visual artifacts when pasting
-  zle_highlight+=('paste:none')
-fi
+if [ ! "$zsh_load_bloat" -eq 0 ]; then
+    if [ -f "$zsh_plugins_dir/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]; then
+        source "$zsh_plugins_dir/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+        fast-theme ~/.config/zsh/fsh-theme.ini >/dev/null
+        # Prevents visual artifacts when pasting
+        zle_highlight+=('paste:none')
+    fi
 
-if _is_bloated && \
-[ -f "$_zsh_plugins_dir/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
-  source "$_zsh_plugins_dir/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    if [ -f "$zsh_plugins_dir/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
+        source "$zsh_plugins_dir/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    fi
 fi
 
 zsh-plugins-install() {
-  command -v git 1>/dev/null 2>&1 || { echo "Install git first" && return 1 }
+    command -v git >/dev/null || { echo "Install git first" && return 1 }
 
-  # create plugins dir if doesn't exist
-  if [ ! -d "$_zsh_plugins_dir" ]; then
-    mkdir -pv "$_zsh_plugins_dir"
-  fi
+    # create plugins dir if doesn't exist
+    if [ ! -d "$zsh_plugins_dir" ]; then
+        mkdir -pv "$zsh_plugins_dir" || return 1
+    fi
 
-  if [ ! -d "${_zsh_plugins_dir}/fzf-tab/" ]; then
-    git clone --depth 1 \
-      'https://github.com/Aloxaf/fzf-tab' \
-      "${_zsh_plugins_dir}/fzf-tab"
-    sh -c "cd ${_zsh_plugins_dir}/fzf-tab && git apply \
-        <~/.config/zsh/patches/fzf-tab-remove-custom-colors.patch"
-  fi
-  if [ ! -d "${_zsh_plugins_dir}/zsh-autosuggestions/" ]; then
-    git clone --depth 1 \
-      'https://github.com/zsh-users/zsh-autosuggestions' \
-      "${_zsh_plugins_dir}/zsh-autosuggestions"
-  fi
-  if [ ! -d "${_zsh_plugins_dir}/fast-syntax-highlighting/" ]; then
-    git clone --depth 1 \
-      'https://github.com/zdharma-continuum/fast-syntax-highlighting' \
-      "${_zsh_plugins_dir}/fast-syntax-highlighting"
-    find "${_zsh_plugins_dir}/fast-syntax-highlighting/→chroma" -type f -delete
-  fi
-  if [ ! -d "${_zsh_plugins_dir}/zsh-completions/" ]; then
-    git clone --depth 1 \
-      'https://github.com/zsh-users/zsh-completions.git' \
-      "${_zsh_plugins_dir}/zsh-completions"
-  fi
-  if [ ! -d "${_zsh_plugins_dir}/gentoo-zsh-completions/" ]; then
-    git clone --depth 1 \
-      'https://github.com/gentoo/gentoo-zsh-completions.git' \
-      "${_zsh_plugins_dir}/gentoo-zsh-completions"
-  fi
+    [ ! -d "${zsh_plugins_dir}/fzf-tab" ] && (
+        cd "${zsh_plugins_dir}"
+        git clone --depth 1 'https://github.com/Aloxaf/fzf-tab'
+    )
+    [ ! -d "${zsh_plugins_dir}/zsh-autosuggestions" ] && (
+        cd "${zsh_plugins_dir}"
+        git clone --depth 1 'https://github.com/zsh-users/zsh-autosuggestions'
+    )
+    [ ! -d "${zsh_plugins_dir}/fast-syntax-highlighting" ] && (
+        cd "${zsh_plugins_dir}"
+        git clone --depth 1 'https://github.com/zdharma-continuum/fast-syntax-highlighting'
+        find fast-syntax-highlighting/→chroma -type f -delete
+    )
+    [ ! -d "${zsh_plugins_dir}/zsh-completions" ] && (
+        cd "${zsh_plugins_dir}"
+        git clone --depth 1 'https://github.com/zsh-users/zsh-completions'
+    )
+    [ ! -d "${zsh_plugins_dir}/gentoo-zsh-completions" ] && (
+        cd "${zsh_plugins_dir}"
+        git clone --depth 1 'https://github.com/gentoo/gentoo-zsh-completions'
+    )
 }
 
 zsh-plugins-clean() {
-  echo -n "Remove $_zsh_plugins_dir? [y/N] "
-  read -q confirm
-  if [ "$confirm" = "y" ]; then
-    rm -rfv "$_zsh_plugins_dir"
-  else
-    echo "Abort"
-  fi
-  unset confirm
+    echo -n "Remove ${zsh_plugins_dir}? [y/N] "
+    local confirm
+    if read -q confirm; then
+        rm -rfv "$zsh_plugins_dir"
+    else
+        echo "Abort"
+    fi
 }
 
 zsh-plugins-update() {
-  if [ -z "$(ls -A "$_zsh_plugins_dir")" ]; then
-    echo "no plugins in $_zsh_plugins_dir"
-    return
-  fi
+    if [ -z "$(ls -A "$zsh_plugins_dir")" ]; then
+        echo "no plugins in ${zsh_plugins_dir}"
+        return
+    fi
 
-  for _plugin_dir in "$_zsh_plugins_dir/"*; do
-    echo "Updating $_plugin_dir"
-    git -C "$_plugin_dir" stash
-    git -C "$_plugin_dir" pull
-    git -C "$_plugin_dir" stash pop
-  done
-  unset _plugin_dir
+    local plugin_dir
+    for plugin_dir in "${zsh_plugins_dir}/"*; do
+        echo "Updating ${_plugin_dir}"
+        git -C "$_plugin_dir" stash
+        git -C "$_plugin_dir" pull
+        git -C "$_plugin_dir" stash pop
+    done
 }
 # ========== Plugins ==========
 
@@ -273,31 +265,34 @@ zsh-plugins-update() {
 # ========== ZLE ==========
 # change cursor shape depending on mode
 set-cursor-shape() {
-  case "$1" in
-    block) echo -ne '\e[2 q';;
-    beam) echo -ne '\e[6 q';;
-  esac
+    case "$1" in
+        block) echo -ne '\e[2 q';;
+        beam) echo -ne '\e[6 q';;
+    esac
 }
+
 zle-keymap-select() {
-  case $KEYMAP in
-    vicmd) set-cursor-shape block;;
-    viins|main) set-cursor-shape beam;;
-  esac
+    case "$KEYMAP" in
+        vicmd) set-cursor-shape block;;
+        viins|main) set-cursor-shape beam;;
+    esac
 }
 zle -N zle-keymap-select
+
 zle-line-init() {
-  zle -K viins
-  set-cursor-shape beam
-  _ln_help_displayed=0
+    zle -K viins
+    set-cursor-shape beam
+    _ln_help_displayed=0
 }
 zle -N zle-line-init
+
 # start shell with beam cursor
 set-cursor-shape beam
 
 # search history with fzf on C-r
 fzf-history-search() {
-  item="$(fc -rl 0 -1 | fzf --with-nth 2.. --scheme=history)"
-  [ -n "$item" ] && zle vi-fetch-history -n "$item"
+    local item="$(fc -rl 0 -1 | fzf --with-nth 2.. --scheme=history)"
+    [ -n "$item" ] && zle vi-fetch-history -n "$item"
 }
 zle -N fzf-history-search
 bindkey -M viins '\C-r' fzf-history-search
@@ -305,8 +300,8 @@ bindkey -M vicmd '\C-r' fzf-history-search
 
 # paste selected file path into command line
 fzf-file-search() {
-  LBUFFER="${LBUFFER}$(find . -depth -maxdepth 6 2>/dev/null | fzf --height=~50% --layout=reverse)"
-  zle reset-prompt
+    LBUFFER="${LBUFFER}$(find . -maxdepth 6 2>/dev/null | fzf --height=~50% --layout=reverse)"
+    zle reset-prompt
 }
 zle -N fzf-file-search
 bindkey -M viins '\C-f' fzf-file-search
@@ -315,15 +310,15 @@ bindkey -M vicmd '\C-f' fzf-file-search
 # remind about ln syntax :xdd:
 _ln_help_displayed=0
 zle-line-pre-redraw() {
-  if [ "$BUFFER" = "ln" ] && [ "$_ln_help_displayed" = 0 ]; then
-    echo
-    echo "ln [OPTION]... [-T] TARGET LINK_NAME"
-    echo "ln [OPTION]... TARGET"
-    echo "ln [OPTION]... TARGET... DIRECTORY"
-    echo "ln [OPTION]... -t DIRECTORY TARGET..."
-    zle reset-prompt
-    _ln_help_displayed=1
-  fi
+    if [ "$BUFFER" = "ln" ] && [ "$_ln_help_displayed" = 0 ]; then
+        echo
+        echo "ln [OPTION]... [-T] TARGET LINK_NAME"
+        echo "ln [OPTION]... TARGET"
+        echo "ln [OPTION]... TARGET... DIRECTORY"
+        echo "ln [OPTION]... -t DIRECTORY TARGET..."
+        zle reset-prompt
+        _ln_help_displayed=1
+    fi
 }
 zle -N zle-line-pre-redraw
 
@@ -340,20 +335,20 @@ bindkey -M viins '^?' backward-delete-char
 
 # ========== Aliases ==========
 if command -v eza 1>/dev/null 2>&1; then
-  alias ll='eza \
-      --color=always \
-      --icons=always \
-      --long \
-      --no-quotes \
-      --group-directories-first \
-      --hyperlink'
-  alias tree='ll --tree'
+    alias ll='eza \
+        --color=always \
+        --icons=always \
+        --long \
+        --no-quotes \
+        --group-directories-first \
+        --group --smart-group'
+    alias tree='ll --tree'
 else
-  alias ll='ls -lhF --color=always'
-  alias tree='ll -R'
+    alias ll='ls -lhF --color=always'
+    alias tree='ll -R'
 fi
-command -v doas 1>/dev/null 2>&1 && alias sudo='doas'
-command -v bsdtar 1>/dev/null 2>&1 && alias tar='bsdtar'
+command -v doas >/dev/null && alias sudo='doas'
+command -v bsdtar >/dev/null && alias tar='bsdtar'
 alias grep='grep --color=auto'
 alias neofetch='fastfetch'
 alias hyprrun='hyprctl dispatch exec -- '
@@ -389,91 +384,69 @@ alias fzfgrep='FZF_DEFAULT_COMMAND=true fzf \
 # ========== Aliases ==========
 
 
-# ========== Envvars ==========
-command -v nvim 1>/dev/null 2>&1 && export MANPAGER='nvim -c ":set signcolumn=no" -c "Man!"'
-export MANOPT='-E\ ascii'
-export LESS='--use-color --RAW-CONTROL-CHARS --chop-long-lines --mouse'
-export BASH_ENV=~/.config/bash/non-interactive.sh
-export HOST="$HOST"
-export USER="$USER"
-export HOME="$HOME"
-
-typeset -U path
-path=(~/bin $path)
-# ========== Envvars ==========
-
-
 # ========== Functions ==========
+# distrobox convenience wrapper
+dbox() {
+    local subcmd="$1"
+    shift 1 || return 1
+    case "$subcmd" in
+        (e) distrobox-enter "$@" ;;
+        (c) distrobox-create "$@" ;;
+        (s) distrobox-stop "$@" ;;
+        (r) distrobox-rm "$@" ;;
+        (s) distrobox-stop "$@" ;;
+        (*) echo "unknown subcommand"; return 1;;
+    esac
+}
+
 # python venv management
 mkvenv() {
-  if [ ! -d ./venv ]; then
-    python -m venv venv || return
-    source venv/bin/activate || return
-    if [ -f requirements.txt ]; then
-      pip install -r requirements.txt
+    if [ ! -d ./venv ]; then
+        python -m venv venv || return
+        source venv/bin/activate || return
+        if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+        fi
+    else
+        echo -n "./venv exists, recreate? [y/N] "
+        if read -q; then
+            rm -rf ./venv && mkvenv;
+        fi
     fi
-  else
-    echo -n "./venv exists, recreate? [y/N] "
-    if read -q; then rm -rf ./venv && mkvenv; fi
-  fi
 }
 alias venv='source venv/bin/activate'
 alias unvenv='deactivate'
 
 # run ls after every cd
-ls_after_cd() { ll | awk "BEGIN { extra = 0 } NR < int($LINES / 2) - 1 { print } NR >= int($LINES / 2) - 1 { extra += 1 } END { if (extra > 0) { print extra \" more items...\" } }" }
+ls_after_cd() {
+    ll | awk "
+        BEGIN { extra = 0 }
+        NR < int(${LINES} / 2) - 1 { print }
+        NR >= int(${LINES} / 2) - 1 { extra += 1 }
+        END { if (extra > 0) { print extra \" more items...\" } }
+    "
+}
 chpwd_functions+=(ls_after_cd)
 
 # Wrapper for lf that allows to cd into last selected directory
 lf() {
-  export lf_cd_file="${TMPDIR:-/tmp}/lfcd.$$"
+    export lf_cd_file="${TMPDIR:-/tmp}/lfcd.$$"
 
-  lf_path="$(which -p lf)"
-  "$lf_path" "$@"
+    local lf_path="$(which -p lf)"
+    "$lf_path" "$@"
 
-  __dir="$(cat "$lf_cd_file" 2>/dev/null)"
-  if [ -n "$__dir" ]; then cd "$__dir"; fi
+    if [ -r "$lf_cd_file" ]; then
+        local dir="$(<"$lf_cd_file")"
+        rm "$lf_cd_file"
+        [ -n "$dir" ] && cd "$dir"
+    fi
 
-  unset __dir
-  rm "$lf_cd_file" 2>/dev/null
-  unset lf_cd_file
+    unset lf_cd_file
 }
 
 # Create a directory and cd into it
 mkcd() {
-	mkdir --verbose --parents "$1"
-	cd "$1"
-}
-
-# Extract zip archive into a subdirectory
-unzipd() {
-	mkdir "${1%.*}"
-	unzip -d "${1%.*}" "$1"
-}
-
-# Create a directory and all parents if they don't exist
-mkdirs() {
-  mkdir --verbose --parents "$1"
-}
-
-tor_activate() {
-  export all_proxy="socks5://127.0.0.1:9050"
-  RPROMPT="[tor proxy]"
-}
-
-tor_deactivate() {
-  unset all_proxy
-  unset RPROMPT
-}
-
-zapret_activate() {
-  export all_proxy="socks5://127.0.0.1:8081"
-  RPROMPT="[zapret proxy]"
-}
-
-zapret_deactivate() {
-  unset all_proxy
-  unset RPROMPT
+	mkdir -pv "$1" && cd "$1"
 }
 
 cppath() {
@@ -481,20 +454,21 @@ cppath() {
 }
 
 spek() {
-    ffmpeg -i "$1" -lavfi showspectrumpic=s=960x540 -f image2pipe -vcodec png - 2>/dev/null | chafa -f sixel
+    ffmpeg -i "$1" -lavfi showspectrumpic=s=960x540 -f image2pipe -vcodec png - 2>/dev/null |
+        chafa -f sixel
 }
 
 running_in_tmux() {
-    [ -n "$TMUX_PANE" ] && return 0 || return 1
+    [ -n "$TMUX_PANE" ]
 }
 
 tmux_pane_visible() {
     tmux list-windows -f '#{window_active}' -F '#{window_visible_layout}' | \
-        grep -qPe "(\d+x\d+),(\d+),(\d+),${TMUX_PANE#%}"
+        grep -qEe "([0-9]+x[0-9]+),([0-9]+),([0-9]+),${TMUX_PANE#%}"
 }
 
 running_in_hyprland() {
-    [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ] && return 0 || return 1
+    [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]
 }
 
 foot_active_window() {
