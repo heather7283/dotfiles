@@ -1,0 +1,24 @@
+/* credit to @catgirl.uwu and @d1bg */
+
+section[class^="panels_"] {
+  width: 100% !important;
+  bottom: 0px !important;
+  left: 0px!important;
+}
+
+/* rightclick menu */
+.separator_c1e9c4 {
+    margin: 0px;
+}
+/* make it darker */
+/*
+.menu_c1e9c4 {
+    background-color: #121214;
+}
+*/
+
+/* "You are viewing older messages", DONT SIT IN THE MIDDLE PLEASE */
+.jumpToPresentBar__0f481 {
+    left: 50%!important;
+}
+

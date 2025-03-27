@@ -1,15 +1,18 @@
-/* small member list */
-.container_c8ffbb {
-    width: 0px!important;
-    padding-left: var(--members-min)!important;
+/* credit to @d1bg */
+
+/* hide by default */
+.members_c8ffbb {
+    width: 20px !important;
+    padding-left: var(--member-mini) !important;
 }
-.container_c8ffbb:hover {
-    width: var(--members-max)!important;
-    padding-left: initial!important;
+
+.membersWrap_c8ffbb {
+    min-width: 0px !important;
 }
-/* edit it */
-:root {
-    --members-min: 24px;
-    --members-max: 240px; /* normal member list size */
+
+/* extend on hover */
+.members_c8ffbb:hover {
+    width: initial !important;
+    padding-left: initial !important;
 }
 

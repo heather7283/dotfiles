@@ -1,0 +1,26 @@
+/* @import url("https://minidiscordthemes.github.io/Squared/sq.min.css");
+/* See https://github.com/MiniDiscordThemes/Squared#customisation for customisation settings. */
+/*
+:root {
+    --squared-radius: 0;
+}
+*/
+
+* {
+  border-radius: 0 !important;
+}
+
+foreignObject {
+    mask: none;
+}
+rect {
+    mask: none;
+}
+
+svg[class^="cursorDefault_"] > rect {
+    x: 8;
+    y: 5;
+    height: 10px;
+    width: 10px;
+}
+

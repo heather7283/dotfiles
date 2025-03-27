@@ -5,13 +5,14 @@
     "useQuickCss": true,
     "themeLinks": [],
     "enabledThemes": [
-        "sharp_corners.css",
-        "small_server_list.css",
-        "small_member_list.css",
-        "no_animations.css",
         "custom_font.css",
-        "colors.css",
-        "no_profile_themes.css"
+        "no_top_bar.css",
+        "new_ui_is_shit.css",
+        "square.css",
+        "small_member_list.css",
+        "small_server_list.css",
+        "no_profile_themes.css",
+        "colors.css"
     ],
     "enableReactDevtools": false,
     "frameless": true,
@@ -691,7 +692,7 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1742131418116
+        "settingsSyncVersion": 1743078487083
     },
     "eagerPatches": false
 }

@@ -1,15 +1,13 @@
-/* small server list */
+/* credit to @d1bg */
+
+/* hide by default */
 .guilds_c48ade {
-    width: 0px!important;
-    padding-left: var(--guild-mini)!important;
+    width: 0px !important;
+    padding-left: 10px !important;
 }
+/* extend on hover */
 .guilds_c48ade:hover {
-    width: var(--guild-max)!important;
-    padding-left: initial!important;
-}
-/* edit it */
-:root {
-    --guild-mini: 24px;
-    --guild-max: 72px; /* normal server list size */ 
+    width: var(--guild-max) !important;
+    padding-left: initial !important;
 }
 

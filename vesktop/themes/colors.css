@@ -1,11 +1,14 @@
 :root {
     --text: 211,198,170;
-    --text-normal:        rgb(var(--text));
-	--interactive-normal: rgb(var(--text));
-	--interactive-active: rgb(var(--text));
-	--header-primary:     rgb(var(--text));
-	--header-secondary:   rgb(var(--text));
-	--channels-default:   rgb(var(--text));
-	--channel-icon:       rgb(var(--text));
+    --icon-primary:       rgb(var(--text))!important;
+    --icon-secondary:     rgb(var(--text))!important;
+    --text-primary:       rgb(var(--text))!important;
+    --text-normal:        rgb(var(--text))!important;
+	--interactive-normal: rgb(var(--text))!important;
+	--interactive-active: rgb(var(--text))!important;
+	--header-primary:     rgb(var(--text))!important;
+	--header-secondary:   rgb(var(--text))!important;
+	--channels-default:   rgb(var(--text))!important;
+	--channel-icon:       rgb(var(--text))!important;
 }
 

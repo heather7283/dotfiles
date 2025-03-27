@@ -1,0 +1,63 @@
+/* credit to @catgirl.uwu */
+
+/*
+new ui is shit
+*/
+.visual-refresh {
+  div[class^="subtitleContainer_"],
+  main[class^="container__"] section[class*="container__"] {
+    position-anchor: --vr-header-trailing;
+    background-color: rgba(0, 0, 0, .25);
+  }
+
+  div[class^="toolbar__"]>div[class^="search__"] {
+    padding-right: 50px;
+  }
+
+  div[class^="page_"] {
+    &:not(:has(> div[class^="chat_"])) {
+      anchor-name: --vr-header-snippet;
+    }
+
+    &>div[class^="chat_"] {
+      anchor-name: --vr-header-snippet;
+      border-top: none;
+    }
+  }
+
+  div[class^="base_"] {
+    grid-template-rows: auto;
+
+    &>div[class^="bar_"] {
+      position: absolute;
+      position-anchor: --vr-header-snippet;
+      top: 0;
+      right: anchor(right);
+      width: anchor-size(width);
+      padding: 0;
+
+      div[class^="title_"] {
+        display: none;
+      }
+    }
+
+    & div[class^="trailing_"] {
+      anchor-name: --vr-header-trailing;
+      border: none;
+      margin-top: 5px; /* inbox position */
+      height: 39px;
+      margin-right: 20px;
+      z-index: 10000;
+      /* hide help button */
+      > a[class^="anchor"] {
+        display: none;
+      }
+    }
+    /* fix discord icon glued to the window's border */
+    /* can't use generic selector because there's a more than 1 with just the id being different */
+    .tutorialContainer__1f388 {
+      padding-top: 15px;
+    }
+  }
+}
+
