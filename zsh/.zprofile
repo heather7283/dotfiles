@@ -17,6 +17,9 @@ export BASH_ENV=~/.config/bash/non-interactive.sh
 
 export CMAKE_EXPORT_COMPILE_COMMANDS=1
 
+# this looks stupid, do not remove. Without this /bin/sh doesn't pick up this variable
+export HOST="$HOST"
+
 # I'll put it here I guess
 typeset -U path
 path=(~/bin $path)
