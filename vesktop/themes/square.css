@@ -18,9 +18,14 @@ rect {
 }
 
 svg[class^="cursorDefault_"] > rect {
-    x: 8;
-    y: 5;
-    height: 10px;
-    width: 10px;
+    x: 8 !important;
+    y: 5 !important;
+    height: 10px !important;
+    width: 10px !important;
+}
+
+:root {
+  --radius-cm: 0;
+  --radius-sm: 0;
 }
 
