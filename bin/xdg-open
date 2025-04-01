@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 
-#echo "$(date '+%Y-%m-%d %H:%M:%S') xdg-open was called with arguments: $@" >> ~/xdg-open-log.txt
+echo "$(date '+%Y-%m-%d %H:%M:%S') xdg-open was called with arguments: $@" >> ~/xdg-open-log.txt
 
-doublefork() {
-    ( "$@" >/dev/null 2>&1 & )
+background() {
+    (
+        trap '' HUP
+        "$@" </dev/null >/dev/null 2>&1 &
+    )
 }
 
 [ -z "$1" ] && exit
@@ -15,42 +18,40 @@ urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
 query="${1#file://}"
 query="$(urldecode "$query")" # I hate you telegram desktop
 
-if [[ "$query" =~ ^(https?:\/\/)(.*)$ ]]; then
-  open-in-browser "$query"
-  exit
-fi
+case "$query" in
+    (https://*|http://*)
+        background browser "$query"
+        exit
+        ;;
+esac
 
 mime_type="$(file --brief --mime -- "$query")"
 case "$mime_type" in
-  inode/directory*)
-    doublefork foot tmux new-session -- lf "$query"
-    exit
-    ;;
-  image/*)
-    doublefork mvi "$query"
-    exit
-    ;;
-  video/*|audio/*)
-    doublefork mpv --audio-display=embedded-first --force-window=immediate "$query"
-    exit
-    ;;
-  application/pdf*)
-    doublefork zathura "$query"
-    exit
-    ;;
-  application/vnd.sqlite3*)
-    doublefork sqlitestudio "$query"
-    exit
-    ;;
+    (image/*)
+        background mvi "$query"
+        exit
+        ;;
+    (video/*|audio/*)
+        background mpv --audio-display=embedded-first --force-window=immediate "$query"
+        exit
+        ;;
+    (application/pdf*)
+        background zathura "$query"
+        exit
+        ;;
+    (application/vnd.sqlite3*)
+        background sqlitestudio "$query"
+        exit
+        ;;
 esac
 
 if echo "$mime_type" | grep -qPe '(.*)charset=(?!binary)'; then
-  doublefork foot -- nvim "$query"
-  exit
+    background foot nvim "$query"
+    exit
 fi
 
 if [ -z "$TMUX" ]; then
-    doublefork foot -- tmux new-session -- lf "$query"
+    background foot tmux new-session lf "$query"
 else
     notify-send "xdg-open error" "No app configured to open file type $mime_type"
 fi

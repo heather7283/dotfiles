@@ -1,5 +1,12 @@
 #!/bin/sh
 
+background() {
+    (
+        trap '' HUP
+        "$@" </dev/null >/dev/null 2>&1 &
+    )
+}
+
 if [ -z "$1" ]; then
   echo "you need to specify full path to desktop file or its name"
   exit 1
@@ -28,15 +35,15 @@ shift 1
 
 if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
   if [ "$is_term" = "true" ]; then
-    hyprctl dispatch exec -- foot -- $exec_line "$@" >/dev/null
+    background foot -- $exec_line "$@"
   else
-    hyprctl dispatch exec -- $exec_line "$@" >/dev/null
+    background $exec_line "$@"
   fi
 else
   if [ "$is_term" = "true" ]; then
-    swaymsg exec -- foot -- $exec_line "$@" >/dev/null
+    background foot -- $exec_line "$@"
   else
-    swaymsg exec -- $exec_line "$@" >/dev/null
+    background $exec_line "$@"
   fi
 fi
 

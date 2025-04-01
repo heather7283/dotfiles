@@ -1,5 +1,12 @@
 #!/bin/sh
 
+background() {
+    (
+        trap '' HUP
+        "$@" </dev/null >/dev/null 2>&1 &
+    )
+}
+
 tmpfile="$(mktemp)"
 printf "Search the Internet for...\n" >"$tmpfile"
 
@@ -12,7 +19,7 @@ query="$(sed -e '1d;/^$/d;s/ /+/g' "$tmpfile" | tr '\n' '+')"
 
 if [ -n "$query" ]; then
     engine='https://duckduckgo.com/?t=ffab&q='
-    open-in-browser "${engine}${query}"
+    background browser "${engine}${query}"
 fi
 
 rm "$tmpfile"

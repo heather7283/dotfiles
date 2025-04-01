@@ -1,5 +1,12 @@
 #!/bin/sh
 
+background() {
+    (
+        trap '' HUP
+        "$@" </dev/null >/dev/null 2>&1 &
+    )
+}
+
 tab='	'
 newline='
 '
@@ -33,7 +40,7 @@ fzf \
   --tac \
   --delimiter "$newline" \
   --scheme history \
-  --tiebreak begin,index \
+  --tiebreak index \
   --bind 'ctrl-y:execute-silent(echo {2..} | wl-copy -t "text/plain;charset=utf-8")' \
   --no-hscroll
 )"
@@ -47,5 +54,5 @@ IFS="$newline"
 set -- $result
 url="$2"
 
-open-in-browser "$url"
+background browser "$url"
 

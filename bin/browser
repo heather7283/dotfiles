@@ -1,0 +1,5 @@
+#!/bin/sh
+
+command -v firefox >/dev/null && exec firefox "$@"
+command -v firefox-bin >/dev/null && exec firefox-bin "$@"
+
