@@ -67,6 +67,6 @@ choose() {
         --reverse
 }
 
-script="$(choose level1)"
+script="$(choose)"
 eval "$script"
 
