@@ -643,6 +643,6 @@ bd              # BLK
 cd              # CHR
 su              # SETUID
 sg              # SETGID
-ex              # EXEC 
+ex              # EXEC
 fi             # FILE
 
