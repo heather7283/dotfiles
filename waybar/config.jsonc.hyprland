@@ -1,6 +1,6 @@
 {
   "layer": "top",
-  "height": 28,
+  "height": 30,
   "modules-left": [
     "hyprland/workspaces",
     "hyprland/submap"
@@ -106,7 +106,7 @@
     "sort-by-number": true
   },
   "hyprland/submap": {
-    "format": "{}"
+    "format": "submap: {}"
   },
   "custom/gpu-screen-recorder": {
     "format": "{}",
