@@ -55,7 +55,7 @@ require("mason-lspconfig").setup_handlers(handlers)
 
 -- use system clangd
 local clangd_path = vim.fn.exepath("clangd");
-if clangd_path then
+if clangd_path ~= "" then
   require("lspconfig").clangd.setup({
     cmd = {
       clangd_path,
@@ -69,4 +69,6 @@ if clangd_path then
 end
 
 vim.keymap.set('n', 'K', vim.lsp.buf.hover)
+
+vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename)
 
