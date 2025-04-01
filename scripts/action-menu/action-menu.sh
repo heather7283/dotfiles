@@ -1,21 +1,31 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-level1=(
-  "Internet [s]earch"$'\t'"~/.config/scripts/firefox-web-search.sh"
-  "[7]tv browser"$'\t'"~/.config/scripts/7tv-browser/7tv-browser.sh"
-  "[t]ranslator"$'\t'"~/.config/scripts/deeplx-translator/deeplx-translator.sh"
-  "[e]moji picker"$'\t'"~/.config/scripts/emoji-picker/picker.sh"
-  "[u]nicode picker"$'\t'"~/.config/scripts/unicode-picker/picker.sh"
-  "[b]rowser history"$'\t'"~/.config/scripts/firefox-history-fzf/firefox-history-fzf.sh"
-  "Application [r]unner"$'\t'"~/.config/scripts/drun-fzf/drun-fzf.sh"
-  "[c]lipboard history"$'\t'"~/.config/scripts/cclip-fzf/picker.sh"
-  "[m]PRIS control"$'\t'"~/.config/scripts/mpris-control/player-control.sh"
-  "[a]udio control"$'\t'"pulsemixer"
-  "[q]alculate"$'\t'"tmux new-session qalc"
-  "Toggle screen [R]ecording"$'\t'"hyprctl dispatch exec ~/.config/scripts/gpu-screen-recorder/rec-toggle.sh"
-)
+background() {
+    (
+        trap '' HUP
+        "$@" </dev/null >/dev/null 2>&1 &
+    )
+}
 
-change_script="$(cat<<'EOF'
+tab='	'
+newline='
+'
+
+items="\
+Internet [s]earch${tab}~/.config/scripts/firefox-web-search.sh
+[7]tv browser${tab}~/.config/scripts/7tv-browser/7tv-browser.sh
+[t]ranslator${tab}~/.config/scripts/deeplx-translator/deeplx-translator.sh
+[e]moji picker${tab}~/.config/scripts/emoji-picker/picker.sh
+[u]nicode picker${tab}~/.config/scripts/unicode-picker/picker.sh
+[b]rowser history${tab}~/.config/scripts/firefox-history-fzf/firefox-history-fzf.sh
+Application [r]unner${tab}~/.config/scripts/drun-fzf/drun-fzf.sh
+[c]lipboard history${tab}~/.config/scripts/cclip-fzf/picker.sh
+[m]PRIS control${tab}~/.config/scripts/mpris-control/player-control.sh
+[a]udio control${tab}pipemixer
+[q]alculate${tab}tmux new-session qalc
+Toggle screen [R]ecording${tab}background ~/.config/scripts/gpu-screen-recorder/rec-toggle.sh"
+
+change_script='
 query={q};
 
 if [ "${#query}" -gt 1 ]; then
@@ -31,35 +41,31 @@ if [ -n "$match" ]; then
   if [ "$plus_needed" = 1 ]; then echo -n "+"; fi;
   printf "deselect-all+pos(${line})+select+accept";
 fi
-EOF
-)"
+'
 
 choose() {
-  local -n arr="$1"
-
-  for elem in "${arr[@]}"; do
-    echo "$elem";
-  done | fzf \
-    --delimiter $'\t' \
-    --with-nth 1 \
-    --nth 1 \
-    --disabled \
-    --multi \
-    --sync \
-    --with-shell 'bash -c' \
-    --bind 'load:select-all' \
-    --bind "change:transform:${change_script}" \
-    --bind 'enter:deselect-all+select+accept' \
-    --bind 'double-click:deselect-all+select+accept' \
-    --preview 'cat ~/.config/scripts/action-menu/art.txt' \
-    --preview-window 'border-none' \
-    --no-info \
-    --no-scrollbar \
-    --prompt '? ' \
-    --marker=' ' \
-    --reverse
+    echo "$items" | fzf \
+        --delimiter "$tab" \
+        --with-nth 1 \
+        --nth 1 \
+        --accept-nth 2 \
+        --disabled \
+        --multi \
+        --sync \
+        --with-shell 'bash -c' \
+        --bind 'load:select-all' \
+        --bind "change:transform:${change_script}" \
+        --bind 'enter:deselect-all+select+accept' \
+        --bind 'double-click:deselect-all+select+accept' \
+        --preview 'cat ~/.config/scripts/action-menu/art.txt' \
+        --preview-window 'border-none' \
+        --no-info \
+        --no-scrollbar \
+        --prompt '? ' \
+        --marker=' ' \
+        --reverse
 }
 
-IFS=$'\t' read -r description script_path < <(choose level1)
-exec $script_path
+script="$(choose level1)"
+eval "$script"
 
