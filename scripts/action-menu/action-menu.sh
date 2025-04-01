@@ -23,7 +23,8 @@ Application [r]unner${tab}~/.config/scripts/drun-fzf/drun-fzf.sh
 [m]PRIS control${tab}~/.config/scripts/mpris-control/player-control.sh
 [a]udio control${tab}pipemixer
 [q]alculate${tab}tmux new-session qalc
-Toggle screen [R]ecording${tab}background ~/.config/scripts/gpu-screen-recorder/rec-toggle.sh"
+Toggle screen [R]ecording${tab}background ~/.config/scripts/gpu-screen-recorder/rec-toggle.sh
+Run a [g]ame${tab}~/.config/scripts/games-runner.sh"
 
 change_script='
 query={q};
