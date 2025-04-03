@@ -22,5 +22,5 @@ export HOST="$HOST"
 
 # I'll put it here I guess
 typeset -U path
-path=(~/bin $path)
+path=(~/bin ~/opt/bin $path)
 
