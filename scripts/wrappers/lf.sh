@@ -13,8 +13,8 @@ fi
 
 # host-specific configs
 if [ -f ~/.config/lf/hosts/"${HOST}" ]; then
-    set -- -config ~/.config/lf/hosts/"${HOST}" "$@"
+    exec "${real_exe}" -config ~/.config/lf/hosts/"${HOST}" "$@"
 else
-    set -- -config ~/.config/lf/lfrc "$@"
+    exec "${real_exe}" -config ~/.config/lf/lfrc "$@"
 fi
 
