@@ -5,7 +5,9 @@ fi
 
 # host-specific config
 if [ -f ~/.config/fzf/hosts/"${HOST}" ]; then
-    export FZF_DEFAULT_OPTS_FILE=~/.config/fzf/hosts/"${HOST}"
+    export FZF_DEFAULT_OPTS="$(cat ~/.config/fzf/hosts/"${HOST}" ~/.config/fzf/default)"
+else
+    export FZF_DEFAULT_OPTS="$(cat ~/.config/fzf/default)"
 fi
 
 # beam cursor to make it more intuitive that we're in "insert mode"

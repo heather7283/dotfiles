@@ -1,0 +1,12 @@
+--cycle
+--scroll-off=8
+--tabstop=4
+--preview-window=border-sharp
+--highlight-line
+--no-ansi
+--scrollbar=█
+--wrap-sign=
+--bind=ctrl-u:preview-half-page-up
+--bind=ctrl-d:preview-half-page-down
+--bind=ctrl-l:forward-char
+--bind=ctrl-h:backward-char
