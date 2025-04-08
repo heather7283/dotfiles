@@ -160,104 +160,6 @@ esac
 # ========== Prompt ==========
 
 
-# ========== Plugins ==========
-# Directory where plugins will be cloned
-zsh_plugins_dir="${XDG_DATA_HOME:-${HOME}/.local/share}/zsh/plugins"
-
-if [ -d "$zsh_plugins_dir/zsh-completions/src" ]; then
-    fpath=("$zsh_plugins_dir/zsh-completions/src" $fpath)
-fi
-
-if [ -d "$zsh_plugins_dir/gentoo-zsh-completions/src" ]; then
-    fpath=("$zsh_plugins_dir/gentoo-zsh-completions/src" $fpath)
-fi
-
-# Additional completions
-fpath=(~/.config/zsh/completions/ $fpath)
-
-# Load completions
-if [ ! -d ~/.cache/zsh/ ]; then mkdir -p ~/.cache/zsh/; fi
-compinit_dumpfile="${XDG_CACHE_HOME:-${HOME}/.cache}/zsh/zcompdump_${CONTAINER_ID:-default}"
-autoload -Uz compinit && compinit -d "$compinit_dumpfile"
-zstyle ':completion:*' menu select
-
-if command -v fzf >/dev/null && [ -f "$zsh_plugins_dir/fzf-tab/fzf-tab.plugin.zsh" ]; then
-    source "${zsh_plugins_dir}/fzf-tab/fzf-tab.plugin.zsh"
-    zstyle ':fzf-tab:*' default-color ''
-    zstyle ':fzf-tab:*' use-fzf-default-opts yes
-fi
-
-if [ ! "$zsh_load_bloat" -eq 0 ]; then
-    if [ -f "$zsh_plugins_dir/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]; then
-        source "$zsh_plugins_dir/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
-        fast-theme ~/.config/zsh/fsh-theme.ini >/dev/null
-        # Prevents visual artifacts when pasting
-        zle_highlight+=('paste:none')
-    fi
-
-    if [ -f "$zsh_plugins_dir/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
-        source "$zsh_plugins_dir/zsh-autosuggestions/zsh-autosuggestions.zsh"
-    fi
-fi
-
-zsh-plugins-install() {
-    command -v git >/dev/null || { echo "Install git first" && return 1 }
-
-    # create plugins dir if doesn't exist
-    if [ ! -d "$zsh_plugins_dir" ]; then
-        mkdir -pv "$zsh_plugins_dir" || return 1
-    fi
-
-    [ ! -d "${zsh_plugins_dir}/fzf-tab" ] && (
-        cd "${zsh_plugins_dir}"
-        git clone --depth 1 'https://github.com/Aloxaf/fzf-tab'
-    )
-    [ ! -d "${zsh_plugins_dir}/zsh-autosuggestions" ] && (
-        cd "${zsh_plugins_dir}"
-        git clone --depth 1 'https://github.com/zsh-users/zsh-autosuggestions'
-    )
-    [ ! -d "${zsh_plugins_dir}/fast-syntax-highlighting" ] && (
-        cd "${zsh_plugins_dir}"
-        git clone --depth 1 'https://github.com/zdharma-continuum/fast-syntax-highlighting'
-        find fast-syntax-highlighting/→chroma -type f -delete
-    )
-    [ ! -d "${zsh_plugins_dir}/zsh-completions" ] && (
-        cd "${zsh_plugins_dir}"
-        git clone --depth 1 'https://github.com/zsh-users/zsh-completions'
-    )
-    [ ! -d "${zsh_plugins_dir}/gentoo-zsh-completions" ] && (
-        cd "${zsh_plugins_dir}"
-        git clone --depth 1 'https://github.com/gentoo/gentoo-zsh-completions'
-    )
-}
-
-zsh-plugins-clean() {
-    echo -n "Remove ${zsh_plugins_dir}? [y/N] "
-    local confirm
-    if read -q confirm; then
-        rm -rfv "$zsh_plugins_dir"
-    else
-        echo "Abort"
-    fi
-}
-
-zsh-plugins-update() {
-    if [ -z "$(ls -A "$zsh_plugins_dir")" ]; then
-        echo "no plugins in ${zsh_plugins_dir}"
-        return
-    fi
-
-    local plugin_dir
-    for plugin_dir in "${zsh_plugins_dir}/"*; do
-        echo "Updating ${_plugin_dir}"
-        git -C "$_plugin_dir" stash
-        git -C "$_plugin_dir" pull
-        git -C "$_plugin_dir" stash pop
-    done
-}
-# ========== Plugins ==========
-
-
 # ========== ZLE ==========
 # change cursor shape depending on mode
 set-cursor-shape() {
@@ -496,6 +398,105 @@ precmd_functions=(save_job_exit_status $precmd_functions)
 autoload -U notify_job_finish
 precmd_functions+=(notify_job_finish update_prompt)
 # ========== Hooks ==========
+
+
+# ========== Plugins ==========
+# Directory where plugins will be cloned
+zsh_plugins_dir="${XDG_DATA_HOME:-${HOME}/.local/share}/zsh/plugins"
+
+zsh-plugins-install() {
+    command -v git >/dev/null || { echo "Install git first" && return 1 }
+
+    # create plugins dir if doesn't exist
+    if [ ! -d "$zsh_plugins_dir" ]; then
+        mkdir -pv "$zsh_plugins_dir" || return 1
+    fi
+
+    [ ! -d "${zsh_plugins_dir}/fzf-tab" ] && (
+        cd "${zsh_plugins_dir}"
+        git clone --depth 1 'https://github.com/Aloxaf/fzf-tab'
+    )
+    [ ! -d "${zsh_plugins_dir}/zsh-autosuggestions" ] && (
+        cd "${zsh_plugins_dir}"
+        git clone --depth 1 'https://github.com/zsh-users/zsh-autosuggestions'
+    )
+    [ ! -d "${zsh_plugins_dir}/zsh-syntax-highlighting" ] && (
+        cd "${zsh_plugins_dir}"
+        git clone --depth 1 'https://github.com/zsh-users/zsh-syntax-highlighting'
+        cd zsh-syntax-highlighting
+        git apply <~/.config/zsh/patches/zsh-syntax-highlighting-visual-mode-colors.patch
+    )
+    [ ! -d "${zsh_plugins_dir}/zsh-completions" ] && (
+        cd "${zsh_plugins_dir}"
+        git clone --depth 1 'https://github.com/zsh-users/zsh-completions'
+    )
+    [ ! -d "${zsh_plugins_dir}/gentoo-zsh-completions" ] && (
+        cd "${zsh_plugins_dir}"
+        git clone --depth 1 'https://github.com/gentoo/gentoo-zsh-completions'
+    )
+}
+
+zsh-plugins-clean() {
+    echo -n "Remove ${zsh_plugins_dir}? [y/N] "
+    local confirm
+    if read -q confirm; then
+        rm -rfv "$zsh_plugins_dir"
+    else
+        echo "Abort"
+    fi
+}
+
+zsh-plugins-update() {
+    if [ -z "$(ls -A "$zsh_plugins_dir")" ]; then
+        echo "no plugins in ${zsh_plugins_dir}"
+        return
+    fi
+
+    local plugin_dir
+    for plugin_dir in "${zsh_plugins_dir}/"*; do
+        echo "Updating ${_plugin_dir}"
+        git -C "$_plugin_dir" stash
+        git -C "$_plugin_dir" pull
+        git -C "$_plugin_dir" stash pop
+    done
+}
+
+# enable plugins...
+if [ -d "$zsh_plugins_dir/zsh-completions/src" ]; then
+    fpath=("$zsh_plugins_dir/zsh-completions/src" $fpath)
+fi
+
+if [ -d "$zsh_plugins_dir/gentoo-zsh-completions/src" ]; then
+    fpath=("$zsh_plugins_dir/gentoo-zsh-completions/src" $fpath)
+fi
+
+# Additional completions
+fpath=(~/.config/zsh/completions/ $fpath)
+
+# Load completions
+if [ ! -d ~/.cache/zsh/ ]; then mkdir -p ~/.cache/zsh/; fi
+compinit_dumpfile="${XDG_CACHE_HOME:-${HOME}/.cache}/zsh/zcompdump_${CONTAINER_ID:-default}"
+autoload -Uz compinit && compinit -d "$compinit_dumpfile"
+zstyle ':completion:*' menu select
+
+if command -v fzf >/dev/null && [ -f "$zsh_plugins_dir/fzf-tab/fzf-tab.plugin.zsh" ]; then
+    source "${zsh_plugins_dir}/fzf-tab/fzf-tab.plugin.zsh"
+    zstyle ':fzf-tab:*' default-color ''
+    zstyle ':fzf-tab:*' use-fzf-default-opts yes
+fi
+
+if [ ! "$zsh_load_bloat" -eq 0 ]; then
+    if [ -f "$zsh_plugins_dir/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
+        source "$zsh_plugins_dir/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    fi
+
+    if [ -f "$zsh_plugins_dir/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
+        source ~/.config/zsh/zsh-syntax-highlighting-theme.zsh
+        source "$zsh_plugins_dir/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+    fi
+fi
+# ========== Plugins ==========
+
 
 if [ -z "$WAYLAND_DISPLAY" ] && [[ "$TTY" = /dev/tty* ]]; then
     if pgrep Hyprland 2>&1 1>/dev/null; then

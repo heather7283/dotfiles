@@ -1,0 +1,50 @@
+diff --git a/zsh-syntax-highlighting.zsh b/zsh-syntax-highlighting.zsh
+index 4295c93..27fa75f 100644
+--- a/zsh-syntax-highlighting.zsh
++++ b/zsh-syntax-highlighting.zsh
+@@ -273,7 +273,35 @@ _zsh_highlight()
+         (( min = ${BUFFER[(Ib:min:)$needle]} ))
+         (( max = ${BUFFER[(ib:max:)$needle]} - 1 ))
+       fi
+-      _zsh_highlight_apply_zle_highlight region standout "$min" "$max"
++
++      local new_hl="${${zle_highlight[(r)region:*]-}#region:}"
++      if [ -z "$new_hl" ]; then
++        new_hl=standout
++      else
++        [ -z "$new_hl" ] || [ "$new_hl" = none ] && return
++      fi
++
++      local len="$#region_highlight"
++      local i
++      for ((i=1; i <= len; i++)); do
++        local hl="${region_highlight[$i]}"
++        local components=(${=hl})
++        integer old_min=${components[1]}
++        integer old_max=${components[2]}
++        local old_hl=${components[3]}
++
++        if [[ $min -ge $old_max ]] || [[ $max -le $old_min ]]; then
++          continue
++        elif [[ $min -ge $old_min ]] && [[ $max -le $old_max ]]; then
++          region_highlight+=("$min $max $old_hl,$new_hl, memo=zsh-syntax-highlighting")
++        elif [[ $min -lt $old_min ]] && [[ $max -gt $old_max ]]; then
++          region_highlight+=("$old_min $old_max $old_hl,$new_hl, memo=zsh-syntax-highlighting")
++        elif [[ $max -gt $old_max ]]; then
++          region_highlight+=("$min $old_max $old_hl,$new_hl, memo=zsh-syntax-highlighting")
++        elif [[ $min -lt $old_min ]]; then
++          region_highlight+=("$old_min $max $old_hl,$new_hl, memo=zsh-syntax-highlighting")
++        fi
++      done
+     }
+ 
+     # yank / paste (zsh-5.1.1 and newer)
+@@ -372,7 +400,7 @@ _zsh_highlight_add_highlight()
+   shift 2
+   for highlight; do
+     if (( $+ZSH_HIGHLIGHT_STYLES[$highlight] )); then
+-      region_highlight+=("$start $end $ZSH_HIGHLIGHT_STYLES[$highlight], memo=zsh-syntax-highlighting")
++      region_highlight+=("$start $end ${ZSH_HIGHLIGHT_STYLES[$highlight]:-none}, memo=zsh-syntax-highlighting")
+       break
+     fi
+   done
