@@ -20,6 +20,8 @@ export CMAKE_EXPORT_COMPILE_COMMANDS=1
 # this looks stupid, do not remove. Without this /bin/sh doesn't pick up this variable
 export HOST="$HOST"
 
+export WINEPREFIX=~/.local/share/wineprefix
+
 # I'll put it here I guess
 typeset -U path
 path=(~/bin ~/opt/bin $path)
