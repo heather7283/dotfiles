@@ -205,6 +205,17 @@ zle -N fzf-file-search
 bindkey -M viins '\C-f' fzf-file-search
 bindkey -M vicmd '\C-f' fzf-file-search
 
+# edit current buffer in an actual text editor
+edit-buffer-in-editor() {
+    local tmpfile="${TMPDIR:-/tmp}/zsh_${$}_tmpfile_${RANDOM}.zsh"
+    <<<"$BUFFER" >"$tmpfile" || return 1
+    "${EDITOR:?}" "$tmpfile" && BUFFER="$(<"$tmpfile")"
+    rm "$tmpfile"
+}
+zle -N edit-buffer-in-editor
+bindkey -M viins '\C-e' edit-buffer-in-editor
+bindkey -M vicmd '\C-e' edit-buffer-in-editor
+
 # remind about ln syntax :xdd:
 _ln_help_displayed=0
 zle-line-pre-redraw() {
