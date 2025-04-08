@@ -5,6 +5,8 @@ KEYTIMEOUT=10
 
 # match files beginning with a . without explicitly specifying the dot
 setopt globdots
+# allow comments in interactive shells
+setopt INTERACTIVE_COMMENTS
 
 # history size
 HISTSIZE=2147483647
