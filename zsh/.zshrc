@@ -268,7 +268,6 @@ alias gdb='gdb -q'
 alias ffmpeg='ffmpeg -hide_banner'
 alias ffprobe='ffprobe -hide_banner'
 alias ffplay='ffplay -hide_banner'
-alias chafa='chafa --passthrough none'
 alias torrent='transmission-cli'
 alias wlp='wl-paste'
 alias wlc='wl-copy'
@@ -294,6 +293,11 @@ alias fzfgrep='FZF_DEFAULT_COMMAND=true fzf \
 
 
 # ========== Functions ==========
+# for some reason making this an alias breaks chafa completion
+chafa() {
+    command chafa --passthrough=none "$@"
+}
+
 # distrobox convenience wrapper
 dbox() {
     local subcmd="$1"
