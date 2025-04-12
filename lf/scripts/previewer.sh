@@ -1,18 +1,12 @@
-#!/usr/bin/env bash
-
-set -o pipefail
+#!/bin/sh
 
 filename="$(realpath "$1")"
-size_x=$2
-size_y=$3
-pos_x=$4
-pos_y=$5
+size_x="$2"
+size_y="$3"
+pos_x="$4"
+pos_y="$5"
 
 no_cache=0
-#old_preview_file=/tmp/lfoldpreview.pid
-#old_preview_pid="$(cat "$old_preview_file")"
-#kill -KILL "$old_preview_pid" &
-#echo "$$" >"$old_preview_file"
 
 chafa_wrapper() {
   chafa \
@@ -28,11 +22,11 @@ chafa_wrapper() {
 
 image_preview() {
   bytes="$(stat -c '%s' "$filename")"
-  if [ "$bytes" -gt "$((1024 * 1024 * 10))" ]; then # 10 megs
-    printf "file too big: disabling image preview\n\n" | fold -w "$size_x"
+  if [ "$bytes" -gt 10485760 ]; then # 10 megs
+    printf "no image preview\nfile too big\n\n"
     magick identify -ping \
       -format '%m %wx%h, %[colorspace], %r' \
-      "${filename}[0]" 2>&1 | fold -w "$size_x" && success="yes"
+      "${filename}[0]" 2>&1 && success="yes"
   else
     if chafa_wrapper "$filename"; then
       success="yes"
@@ -48,31 +42,20 @@ image_preview() {
 }
 
 video_preview() {
-  IFS=',' read -r w h fps len codec < <(mediainfo --Inform="Video;%Width%,%Height%,%FrameRate%,%Duration%,%CodecID%" "$filename")
-  len="${len%.*}" # remove everything after dot
-  len="${len:-0}" # fallback
-  pos=2 # 2 means 1/2
-
-  if ffmpeg \
-    -ss "$((len / pos))ms" \
+  tmpfile="${TMPDIR:-/tmp}/lf_preview_ffmpeg_$$.txt"
+  if ffmpeg -hide_banner \
     -i "$filename" \
-    -vf "scale='min(640,iw)':'min(480,ih)':force_original_aspect_ratio=decrease" \
+    -vf 'scale=640:480:force_original_aspect_ratio=decrease' \
     -vframes 1 \
-    -f apng pipe:1 | chafa_wrapper;
+    -f image2pipe -vcodec png - 2>"$tmpfile" | chafa_wrapper
   then
     success="yes"
     no_cache=1
     printf '\033[%dG' "$((pos_x + 1))"
-  fi
 
-  # display additional info at the bottom
-  # covert seconds to hh:mm:ss
-  total_sec="$((len / 1000))"
-  sec="$((total_sec % 60))"
-  min="$(((total_sec / 60) % 60))"
-  hr="$((total_sec / 3600))"
-  time_string="$([ "$hr" -gt 0 ] && printf "%dh" "$hr")$([ "$min" -gt 0 ] && printf "%dm" "$min")${sec}s"
-  printf '%s, %dx%d, %s fps, %s' "$time_string" "$w" "$h" "$fps" "$codec" | head -c "$size_x"
+    awk -v len="$size_x" '/^  Duration:/ { gsub(/^  Duration: /, ""); gsub(/\..*$/, ""); dur=$0 } /^  Stream #0:0.+?: Video: / { gsub(/^.+?Video: /, ""); gsub(/ +?\([^)]*\)/, ""); gsub(/ +?\[[^]]*\]/, ""); out=dur ", " $0; print substr(out, 1, len); exit }' "$tmpfile"
+  fi
+  rm "$tmpfile" 2>/dev/null
 }
 
 pdf_preview() {
@@ -96,23 +79,10 @@ archive_preview() {
   bsdtar -tf "$filename" 2>&1 && success="yes" || needs_newline_before_fallback="y"
 }
 
-json_preview() {
-  #if command -v bat >/dev/null 2>&1; then
-  #  bat \
-  #    --wrap character \
-  #    --terminal-width "$size_x" \
-  #    --language json \
-  #    "$filename" && success="yes"
-  #else
-  #  jq --color-output '.' "$filename" && success="yes"
-  #fi
-  text_preview
-}
-
 text_preview() {
-    awk -v w="$size_x" -v h="$size_y" \
-        '{print substr($0, 0, w)} (NR >= h) {exit}' \
-        "$filename" && success="yes"
+  awk -v w="$size_x" -v h="$size_y" \
+    '{print substr($0, 0, w)} (NR >= h) {exit}' \
+    "$filename" && success="yes"
 }
 
 fallback_preview() {
@@ -123,7 +93,7 @@ fallback_preview() {
 
 extension="${filename##*.}"
 case "$extension" in
-  txt|cfg|conf|properties|log|ini|yaml|toml|py|c|cpp|h|hpp|rs|zig|js|ts|nix|json)
+  txt|cfg|conf|properties|log|ini|yaml|toml|py|c|cpp|h|hpp|rs|zig|js|ts|nix|json|sh)
     text_preview;;
   jxl|png|jpeg|jpg|webp|gif)
     image_preview;;
@@ -136,32 +106,31 @@ case "$extension" in
   tar|gz|xz|zst|bz2|zstd|tgz|txz|tzst|tzstd|tbz2|zip|rar|jar|rpm)
     archive_preview;;
 esac
+[ -n "$success" ] && exit
 
-if [ -z "$success" ]; then
-  mime_description=$(file --brief --mime -- "$filename")
-  case "$mime_description" in
-    image/*)
-      image_preview;;
-    video/*)
-      video_preview;;
-    application/pdf*)
-      pdf_preview;;
-    audio/*)
-      audio_preview;;
-    application/x-tar*|application/zstd*|application/gzip*|application/x-xz*|application/zip*|application/java-archive*|application/x-7z*|application/x-rar*|application/x-bzip2*)
-      archive_preview;;
-    application/json*)
-      json_preview;;
-  esac
-fi
+mime_description="$(file --brief --mime -- "$filename")"
+case "$mime_description" in
+  image/*)
+    image_preview;;
+  video/*)
+    video_preview;;
+  application/pdf*)
+    pdf_preview;;
+  audio/*)
+    audio_preview;;
+  application/x-tar*|application/zstd*|application/gzip*|application/x-xz*|application/zip*|application/java-archive*|application/x-7z*|application/x-rar*|application/x-bzip2*)
+    archive_preview;;
+  application/json*)
+    text_preview;;
+esac
+[ -n "$success" ] && exit
 
-if [ -z "$success" ] && [[ "$mime_description" =~ charset= ]] && [[ ! "$mime_description" =~ charset=binary ]]; then
-  text_preview
-fi
-
-if [ -z "$success" ]; then
-  fallback_preview
-fi
+case "$mime_description" in
+  *charset=binary)
+    fallback_preview;;
+  *charset=*)
+    text_preview;;
+esac
 
 #exit $no_cache
 exit 0 # if lf uses 500mb of ram uncomment line above
