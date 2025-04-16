@@ -153,7 +153,7 @@ update_prompt() {
         # username@ (bold) hostname (colored)
         new_prompt+="%B%n@${prompt_hostname_color_seq_start}%m${prompt_hostname_color_seq_end}%b"
         # last component of pwd or ~ if in home
-        new_prompt=+" %1~${prompt_fake_space_seq}"
+        new_prompt+=" %1~${prompt_fake_space_seq}"
         # # or $ depending on user (bold)
         new_prompt+="%B%(#.#.$)%b "
     fi
