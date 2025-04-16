@@ -111,8 +111,16 @@ prompt_component_venv() {
 }
 
 prompt_component_exitcode() {
-    if [ ! "$LAST_JOB_EXIT_STATUS" = 0 ]; then
-        printf '%%B%%F{red}✗ %s%%f%%b' "$LAST_JOB_EXIT_STATUS"
+    local signals=(HUP INT QUIT ILL TRAP ABRT BUS FPE KILL USR1 SEGV \
+                   USR2 PIPE ALRM TERM STKFLT CHLD CONT STOP TSTP TTIN \
+                   TTOU URG XCPU XFSZ VTALRM PROF WINCH POLL PWR SYS)
+
+    if [ "$last_cmd_exitcode" -gt 128 ] && [ "$last_cmd_exitcode" -le $((128 + $#signals)) ]; then
+        local sig_num="$((last_cmd_exitcode - 128))"
+        local sig="${signals[sig_num]}"
+        printf '%%B%%F{red}✗ %s(%d)%%f%%b' "$sig" "$sig_num"
+    elif [ "$last_cmd_exitcode" -gt 0 ]; then
+        printf '%%B%%F{red}✗ %d%%f%%b' "$last_cmd_exitcode"
     fi
 }
 
@@ -405,10 +413,10 @@ save_job_start_time() {
 }
 preexec_functions+=(save_job_start_time)
 
-save_job_exit_status() {
-    LAST_JOB_EXIT_STATUS="$?"
+save_cmd_exitcode() {
+    last_cmd_exitcode="$?"
 }
-precmd_functions=(save_job_exit_status $precmd_functions)
+precmd_functions=(save_cmd_exitcode $precmd_functions)
 
 autoload -U notify_job_finish
 precmd_functions+=(notify_job_finish update_prompt)
