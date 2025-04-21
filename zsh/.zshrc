@@ -379,21 +379,21 @@ spek() {
         chafa -f sixel
 }
 
-running_in_tmux() {
-    [ -n "$TMUX_PANE" ]
+format_seconds() {
+    integer seconds="$1"
+    printf '%02d:%02d:%02d\n' $((seconds / 3600)) $((seconds % 3600 / 60)) $((seconds % 60))
 }
 
 tmux_pane_visible() {
-    tmux list-windows -f '#{window_active}' -F '#{window_visible_layout}' | \
-        grep -qEe "([0-9]+x[0-9]+),([0-9]+),([0-9]+),${TMUX_PANE#%}"
+    # first one checks if pane is in the currently focused window
+    # second one checks if client is focused on the compositor level
+    [[ -n "$(tmux list-panes -f "#{==:#{pane_id},${TMUX_PANE:?}}")" ]] \
+        && [[ "$(tmux show-options -v @isclientfocused)" = 'true' ]]
 }
 
-running_in_hyprland() {
-    [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]
-}
-
-foot_active_window() {
-    hyprctl activewindow | grep -qe 'initialClass: foot-tmux$'
+tmux_pane_active() {
+    # pane is focused inside tmux AND tmux itself is focused on compositor level
+    [[ "$(tmux show-options -p -t "${TMUX_PANE:?}" -v @isactive)" = 'true' ]]
 }
 # ========== Functions ==========
 
@@ -408,17 +408,61 @@ reset_cursor() {
 }
 preexec_functions+=(reset_cursor)
 
-save_job_start_time() {
-    JOB_START_SECONDS="$SECONDS"
+save_cmd_start_time() {
+    last_cmd_start_time="$SECONDS"
 }
-preexec_functions+=(save_job_start_time)
+preexec_functions+=(save_cmd_start_time)
 
 save_cmd_exitcode() {
     last_cmd_exitcode="$?"
 }
 precmd_functions=(save_cmd_exitcode $precmd_functions)
 
-autoload -U notify_job_finish
+notify_job_finish() {
+    [[ -z "$last_cmd_start_time" ]] && return
+
+    local threshold=30 # seconds
+    local cmd_max_chars=32
+
+    local elapsed_time="$((SECONDS - last_cmd_start_time))"
+    unset last_cmd_start_time
+
+    [[ "$elapsed_time" -lt "$threshold" ]] && return
+
+    local last_cmd="$(fc -ln -1)"
+
+    local -a ignored_cmds=(nvim lf man mpv less 'git log')
+    for ignored_cmd in $ignored_cmds; do
+        if [[ "$last_cmd" =~ ^"$ignored_cmd".* ]]; then
+            return
+        fi
+    done
+
+    local time="$(format_seconds "$elapsed_time")"
+
+    printf '\n󱑎 Finished in %s with exit code %d\n' "$time" "$last_cmd_exitcode"
+
+    if tmux_pane_visible; then
+        return
+    fi
+
+    if [[ -n "$WAYLAND_DISPLAY" ]]; then
+        local trimmed_cmd="${last_cmd:0:$cmd_max_chars}"
+        if [[ ${#last_cmd} -gt $cmd_max_chars ]]; then
+            trimmed_cmd+="…"
+        fi
+
+        local loc
+        if [[ -n "$TMUX_PANE" ]]; then
+            loc="win $(tmux list-panes -a -f "#{==:#{pane_id},${TMUX_PANE}}" -F '#{window_index}')"
+        else
+            loc="tty ${TTY}"
+        fi
+
+        notify-send "zsh on ${loc}" \
+            "${trimmed_cmd}"$'\n'"took ${time}, rc ${last_cmd_exitcode}"
+    fi
+}
 precmd_functions+=(notify_job_finish update_prompt)
 # ========== Hooks ==========
 
