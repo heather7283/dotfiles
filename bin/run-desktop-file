@@ -1,10 +1,10 @@
 #!/bin/sh
 
 background() {
-    (
-        trap '' HUP
-        "$@" </dev/null >/dev/null 2>&1 &
-    )
+  (
+    trap '' HUP
+    "$@" </dev/null >/dev/null 2>&1 &
+  )
 }
 
 if [ -z "$1" ]; then
@@ -15,7 +15,8 @@ fi
 filename="$(realpath "$1")"
 if [ ! -f "$filename" ]; then
   # try to search for desktop file ourselves if provided path does not exist
-  filename="$(find ~/.local/share/applications/ /usr/share/applications/ -maxdepth 1 -type f -name "$1" -print -quit)"
+  filename="$(find ~/.local/share/applications/ /usr/share/applications/ \
+              -maxdepth 1 -type f -name "$1" -print -quit)"
   if [ -z "$filename" ]; then
     echo "$1 not found in ~/.local/share/applications/ /usr/share/applications/"
     exit 1
@@ -30,17 +31,9 @@ if [ -z "$exec_line" ]; then
   exit 1
 fi
 
-if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
-  if [ "$is_term" = "true" ]; then
-    background foot sh -c "$exec_line"
-  else
-    background sh -c "$exec_line"
-  fi
+if [ "$is_term" = "true" ]; then
+  background foot sh -c "$exec_line"
 else
-  if [ "$is_term" = "true" ]; then
-    background foot sh -c "$exec_line"
-  else
-    background sh -c "$exec_line"
-  fi
+  background sh -c "$exec_line"
 fi
 
