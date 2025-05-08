@@ -21,6 +21,7 @@ export CMAKE_EXPORT_COMPILE_COMMANDS=1
 export HOST="$HOST"
 
 export WINEPREFIX=~/.local/share/wineprefix
+export INPUTRC=~/.config/inputrc
 
 # I'll put it here I guess
 typeset -U path
