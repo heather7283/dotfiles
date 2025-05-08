@@ -10,14 +10,14 @@ ZSH_HIGHLIGHT_STYLES[global-alias]="$ugliest_color_combo"
 ZSH_HIGHLIGHT_STYLES[builtin]='fg=green'
 ZSH_HIGHLIGHT_STYLES[function]='fg=green'
 ZSH_HIGHLIGHT_STYLES[command]='fg=green'
-ZSH_HIGHLIGHT_STYLES[precommand]='fg=yellow'
+ZSH_HIGHLIGHT_STYLES[precommand]='fg=red'
 ZSH_HIGHLIGHT_STYLES[commandseparator]=''
 ZSH_HIGHLIGHT_STYLES[hashed-command]="$ugliest_color_combo"
 ZSH_HIGHLIGHT_STYLES[autodirectory]="$ugliest_color_combo"
 ZSH_HIGHLIGHT_STYLES[path]='underline'
 ZSH_HIGHLIGHT_STYLES[path_pathseparator]='underline'
-ZSH_HIGHLIGHT_STYLES[path_prefix]='underline'
-ZSH_HIGHLIGHT_STYLES[path_prefix_pathseparator]='underline'
+ZSH_HIGHLIGHT_STYLES[path_prefix]=''
+ZSH_HIGHLIGHT_STYLES[path_prefix_pathseparator]=''
 ZSH_HIGHLIGHT_STYLES[globbing]=''
 ZSH_HIGHLIGHT_STYLES[history-expansion]='fg=blue,bold'
 ZSH_HIGHLIGHT_STYLES[command-substitution]="$ugliest_color_combo"
@@ -49,7 +49,7 @@ ZSH_HIGHLIGHT_STYLES[redirection]='fg=yellow'
 ZSH_HIGHLIGHT_STYLES[comment]='fg=#828F86'
 ZSH_HIGHLIGHT_STYLES[named-fd]='fg=yellow'
 ZSH_HIGHLIGHT_STYLES[numeric-fd]='fg=yellow'
-ZSH_HIGHLIGHT_STYLES[arg0]="$ugliest_color_combo"
+ZSH_HIGHLIGHT_STYLES[arg0]='fg=red,bold'
 ZSH_HIGHLIGHT_STYLES[default]=''
 
 # background in visual mode (requires patched plugin)
