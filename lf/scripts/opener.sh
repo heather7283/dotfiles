@@ -17,6 +17,8 @@ case "$extension" in
       exec zathura "$filename";;
   docx)
       exec libreoffice "$(realpath "$filename")";;
+  html)
+      exec browser "$filename";;
 esac
 
 # match based on mime type
