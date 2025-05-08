@@ -24,6 +24,10 @@ zsh_load_bloat=0
 [ -n "$OLDTERM" ] && export TERM="$OLDTERM"
 unset OLDTERM
 
+# make this accessible to children
+export LINES
+export COLUMNS
+
 # autoload functions path
 fpath+=(~/.config/zsh/functions/)
 # ========== General options ==========
@@ -131,7 +135,7 @@ prompt_component_ssh() {
 }
 
 typeset -a prompt_components
-prompt_components=(userhostname exitcode git distrobox ssh venv lf)
+prompt_components=(userhostname exitcode git distrobox ssh venv lf shlvl)
 
 update_prompt() {
     local new_prompt
@@ -183,6 +187,7 @@ zle-keymap-select() {
         viins|main) set-cursor-shape beam;;
     esac
 }
+alias ensure-cursor-shape='zle-keymap-select'
 zle -N zle-keymap-select
 
 zle-line-init() {
@@ -197,6 +202,7 @@ set-cursor-shape beam
 
 # search history with fzf on C-r
 fzf-history-search() {
+    #fc -rl 0 -1 >/dev/null 2>&1 || return
     local item="$(fc -rl 0 -1 | fzf --with-nth 2.. --scheme=history)"
     [ -n "$item" ] && zle vi-fetch-history -n "$item"
 }
@@ -204,10 +210,49 @@ zle -N fzf-history-search
 bindkey -M viins '\C-r' fzf-history-search
 bindkey -M vicmd '\C-r' fzf-history-search
 
+# search global history with fzf on C-g
+fzf-global-history-search() {
+    local cmd="$(ls -tc "$zsh_history_dir" | sed "s|^|${zsh_history_dir}|" \
+                 | xargs cat | fzf --scheme=history)"
+    [ -n "$cmd" ] && BUFFER="$cmd"
+}
+zle -N fzf-global-history-search
+bindkey -M viins '\C-g' fzf-global-history-search
+bindkey -M vicmd '\C-g' fzf-global-history-search
+
 # paste selected file path into command line
 fzf-file-search() {
-    LBUFFER="${LBUFFER}$(find . -maxdepth 6 2>/dev/null | fzf --height=~50% --layout=reverse)"
+    local res
+    if [ "${BUFFER[$CURSOR]}" = ' ' ]; then
+        res="$(find "$PWD" -mindepth 1 -maxdepth 6 2>/dev/null \
+               | fzf --height=~50% --layout=reverse)"
+        if [ -n "$res" ]; then
+            LBUFFER="${LBUFFER}${(q)res}"
+        fi
+    else
+        local rwords=(${(z)RBUFFER})
+        local lwords=(${(z)LBUFFER})
+
+        local lword="${lwords[-1]}"
+        [ "${lword[1]}" = '~' ] && local tilde=yes
+        local lword="${(Q)lword/#\~/${HOME}}"
+        lword="${lword%/*}"
+
+        res="$(find ${lword:-${HOME}} -mindepth 1 -maxdepth 6 2>/dev/null \
+               | fzf --height=~50% --layout=reverse)"
+        if [ -n "$res" ]; then
+            res="${(q)res}"
+            [ -n "$tilde" ] && res="${res/#${~HOME}/~}"
+
+            rwords[1]=''
+            lwords[-1]="$res"
+            RBUFFER="${rwords[@]}"
+            LBUFFER="${lwords[@]}"
+        fi
+    fi
+
     zle reset-prompt
+    ensure-cursor-shape
 }
 zle -N fzf-file-search
 bindkey -M viins '\C-f' fzf-file-search
@@ -267,6 +312,7 @@ fi
 command -v doas >/dev/null && alias sudo='doas'
 command -v bsdtar >/dev/null && alias tar='bsdtar'
 alias grep='grep --color=auto'
+alias diff='diff --color=auto'
 alias neofetch='fastfetch'
 alias hyprrun='hyprctl dispatch exec -- '
 alias cal='cal --year --monday'
@@ -276,18 +322,23 @@ alias gdb='gdb -q'
 alias ffmpeg='ffmpeg -hide_banner'
 alias ffprobe='ffprobe -hide_banner'
 alias ffplay='ffplay -hide_banner'
+alias objdump='objdump --disassembler-color=terminal -Mintel'
 alias torrent='transmission-cli'
 alias wlp='wl-paste'
 alias wlc='wl-copy'
+alias gs='git status'
+alias gc='git commit'
+alias ga='git add'
+alias gl='git log'
+alias gd='git diff'
+alias gch='git checkout'
+alias py='python'
 
 alias ULTRAKILL='kill -KILL'
 alias ULTRAPKILL='pkill -KILL'
 alias ULTRAKILLALL='killall -KILL'
 
 alias apt='apt --no-install-recommends'
-alias fzfdiff='git status -s | \
-  fzf -m --preview "git diff --color=always -- {2..}" | \
-  sed "s/^.\{3\}//"'
 alias fzfgrep='FZF_DEFAULT_COMMAND=true fzf \
   --bind '\''change:reload(rg --files-with-matches --smart-case -e {q} || true)'\'' \
   --preview '\''rg \
@@ -304,6 +355,23 @@ alias fzfgrep='FZF_DEFAULT_COMMAND=true fzf \
 # for some reason making this an alias breaks chafa completion
 chafa() {
     command chafa --passthrough=none "$@"
+}
+
+# save piped contents to temporary file, print file path to stdout
+tmpfile() {
+    [ -n "$1" ] && local ext=".${1}"
+    local file="${TMPDIR:-/tmp}/zsh_${$}_tmpfile_${RANDOM}${ext}"
+    >"$file" && echo "$file"
+}
+
+# calculate the average of numbers from stdin (or args if provided)
+avg() {
+    if [ -z "$1" ]; then
+        awk '{ sum += $1; count++ } END { print sum / count }'
+    else
+        for n in "$@"; do echo "$n"; done \
+        | awk '{ sum += $1; count++ } END { print sum / count }'
+    fi
 }
 
 # distrobox convenience wrapper
@@ -401,6 +469,7 @@ tmux_pane_active() {
 # ========== Hooks ==========
 declare -aU precmd_functions
 declare -aU preexec_functions
+declare -aU zshexit_functions
 
 # set beam cursor for each new prompt
 reset_cursor() {
@@ -464,6 +533,14 @@ notify_job_finish() {
     fi
 }
 precmd_functions+=(notify_job_finish update_prompt)
+
+# see tmpfile function
+cleanup_tmp_files() {
+    emulate -L zsh
+    setopt NULL_GLOB
+    rm "${TMPDIR:-/tmp}/zsh_${$}_tmpfile_"* 2>/dev/null
+}
+zshexit_functions+=(cleanup_tmp_files)
 # ========== Hooks ==========
 
 
