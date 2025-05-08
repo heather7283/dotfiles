@@ -1,0 +1,32 @@
+#!/bin/sh
+
+fzf_preview="$(cat <<'EOF'
+action="$1"
+file="$2"
+
+root="$(git rev-parse --show-toplevel)"
+file="${root}/${file}"
+
+if [ -d "$file" ]; then
+    ls -lhFa --color=always "$file"
+else
+    case "$action" in
+        (DIFF) git diff --color=always -- "$file" ;;
+        (STAGED) git diff --color=always --staged -- "$file" ;;
+        (CAT) cat -- "$file" ;;
+    esac
+fi
+EOF
+)"
+
+if [ $((LINES * 4)) -le $((COLUMNS)) ]; then
+    preview_pos='right'
+else
+    preview_pos='top'
+fi
+
+git status --porcelain=v1 \
+| awk -e '/^ M/ {p="DIFF"} /^M / {p="STAGED"} /^\?\?/ {p="CAT"} {printf "%s\t%s\n", p, $2}' \
+| fzf --with-nth 2 --accept-nth 2 \
+    --preview "sh -c '${fzf_preview}' sh {1} {2..}" --preview-window "$preview_pos"
+
