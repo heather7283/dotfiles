@@ -1,2 +1,3 @@
 [options]
 background=#232A2E
+upscaling_method=nearest_neighbour
