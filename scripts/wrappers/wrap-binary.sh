@@ -21,7 +21,7 @@ real_exe="$(command -v "$binary_name")" || die "failed to find real ${binary_nam
 PATH="$old_path"
 
 wrapper_script="${wrappers_dir}/${binary_name}.sh"
-[ -r "$wrapper_script" ] && . "$wrapper_script"
+[ -r "$wrapper_script" ] && . "$wrapper_script" || die "${wrapper_script} does not exist"
 
 exec "${real_exe}" "$@"
 
