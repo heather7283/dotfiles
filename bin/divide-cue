@@ -1,0 +1,107 @@
+#!/usr/bin/env python3
+# Cuts a single audio file into multiple ones according to .cue file
+# Just point it to the dir with the .cue:
+# $ divide-cue somedir/
+import sys
+import os
+import shlex
+import subprocess
+from mutagen.flac import FLAC
+from multiprocessing import Pool
+
+dir = sys.argv[1]
+if not os.path.isdir(dir):
+    print(f"{dir} is not a directory", file=sys.stderr)
+    exit(1)
+os.chdir(dir)
+
+cue_filepath = None
+for f in os.listdir():
+    if f.endswith(".cue"):
+        cue_filepath = f
+        break
+if cue_filepath is None:
+    print(f".cue not found", file=sys.stderr)
+    exit(1)
+
+with open(cue_filepath, "r") as cue_file:
+    content = map(lambda s: s.strip(), cue_file.readlines())
+
+tracks = {}
+album_data = {
+    "genre": "",
+    "date": "",
+    "performer": "",
+    "title": ""
+}
+
+parsing_file = None
+parsing_track = None
+for line in content:
+    if parsing_file is None:
+        match shlex.split(line):
+            case ["REM", "GENRE", genre]:
+                album_data["genre"] = genre.strip('"')
+            case ["REM", "DATE", date]:
+                album_data["date"] = date.strip('"')
+            case ["PERFORMER", performer]:
+                album_data["performer"] = performer.strip('"')
+            case ["TITLE", title]:
+                album_data["title"] = title.strip('"')
+            case ["FILE", filename, "WAVE"]:
+                tracks[filename.strip('"')] = {}
+                parsing_file = filename.strip('"')
+    if parsing_file is not None:
+        match shlex.split(line):
+            case ["TRACK", track_n, "AUDIO"]:
+                parsing_track = int(track_n)
+                tracks[parsing_file][parsing_track] = {}
+            case ["TITLE", title]:
+                tracks[parsing_file][parsing_track]["title"] = title.strip('"')
+            case ["PERFORMER", performer]:
+                tracks[parsing_file][parsing_track]["performer"] = performer.strip('"')
+            case ["INDEX", index, timestamp]:
+                tracks[parsing_file][parsing_track]["start"] = {}
+                tracks[parsing_file][parsing_track]["start"]["min"] = int(timestamp.split(":")[0])
+                tracks[parsing_file][parsing_track]["start"]["sec"] = int(timestamp.split(":")[1])
+                tracks[parsing_file][parsing_track]["start"]["fra"] = int(timestamp.split(":")[2])
+
+for file, file_data in tracks.items():
+    for track, track_data in file_data.items():
+        start_ms = track_data["start"]["min"] * 60 * 1000 + \
+            track_data["start"]["sec"] * 1000 + \
+            int(track_data["start"]["fra"] * 1000 / 75)
+
+        next_track_data = file_data.get(track + 1, None)
+        if next_track_data is not None:
+            stop_ms = next_track_data["start"]["min"] * 60 * 1000 + \
+                next_track_data["start"]["sec"] * 1000 + \
+                int(next_track_data["start"]["fra"] * 1000 / 75)
+
+        out_file_name = f"{str(track).rjust(2, '0')}. {track_data['title'].replace("/", "-")}.flac"
+
+        subprocess.run(["ffmpeg",
+                        "-hide_banner",
+                        "-y",
+                        "-i", file,
+                        "-ss", f"{start_ms}ms",
+                        *(["-to", f"{stop_ms}ms"] if next_track_data is not None else []),
+                        "-c:a", "flac",
+                        "-compression_level", "12",
+                        out_file_name])
+
+        out_file = FLAC(out_file_name)
+        out_file.delete()
+        out_file["track"] = str(track)
+        out_file["title"] = track_data["title"]
+        out_file["artist"] = track_data.get("performer", album_data.get("performer", ""))
+        out_file["album"] = album_data["title"]
+        out_file["year"] = album_data["date"]
+        out_file["genre"] = album_data["genre"]
+        out_file.pprint()
+        out_file.save(deleteid3=True)
+
+
+print(album_data)
+print(tracks)
+

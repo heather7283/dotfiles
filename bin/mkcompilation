@@ -1,0 +1,65 @@
+#!/usr/bin/env python
+# Cut video file and glue fragments together
+# Lets say you have a foo.mp4.
+# Create a file foo.txt:
+#   01:00 02:00
+#   03:00 04:00
+#   05:00 05:30
+# Then run the script and feed it the file:
+# $ mkcompilation foo.mp4 out.mp4 <foo.txt
+import subprocess
+import os
+import sys
+
+def die(msg: str):
+    print(msg, file=sys.stderr)
+    exit(1)
+
+in_filename = sys.argv[1]
+if not os.path.isfile(in_filename):
+    die(f"{in_filename} is not a file")
+out_filename = sys.argv[2]
+parts_filename = f"{in_filename}.parts"
+
+# read segments from stdin
+segments = []
+for line in sys.stdin:
+    seg_start, seg_end = line.split()[:2]
+    segments.append((seg_start, seg_end))
+
+with open(parts_filename, "w") as parts_file:
+    parts_file.write("")
+
+for i, (start, stop) in enumerate(segments):
+    part_out_filename = f"{in_filename}.part{i}"
+    ffmpeg_command = [
+        "/usr/bin/ffmpeg", "-hide_banner",
+        "-y",
+        "-i", in_filename,
+        "-ss", start, "-to", stop,
+        "-c:v", "copy", "-c:a", "copy",
+        "-f", "matroska",
+        part_out_filename
+    ]
+    subprocess.run(ffmpeg_command)
+
+    with open(parts_filename, "a") as parts_file:
+        parts_file.write(f"file '{part_out_filename}'\n")
+
+ffmpeg_command = [
+    "/usr/bin/ffmpeg", "-hide_banner",
+    "-y",
+    "-safe", "0",
+    "-f", "concat",
+    "-i", parts_filename,
+    "-c", "copy",
+    out_filename
+]
+subprocess.run(ffmpeg_command)
+
+with open(parts_filename, "r") as parts_file:
+    for line in parts_file.readlines():
+        filename = line.split()[1].strip("'")
+        os.remove(filename.strip())
+os.remove(parts_filename)
+

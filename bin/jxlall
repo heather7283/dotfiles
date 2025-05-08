@@ -1,0 +1,69 @@
+#!/usr/bin/env python3
+import argparse
+import os
+import multiprocessing
+import subprocess
+import fnmatch
+
+parser = argparse.ArgumentParser(
+    prog="jxlall",
+    description="jxl everything"
+)
+parser.add_argument("directory")
+parser.add_argument("-d", "--distance",
+                    action="store",
+                    type=float,
+                    default=0)
+parser.add_argument("-e", "--effort",
+                    action="store",
+                    type=int,
+                    default=10)
+parser.add_argument("-j", "--jobs",
+                    action="store",
+                    type=int,
+                    default=6)
+parser.add_argument("-p", "--pattern",
+                    action="store",
+                    type=str,
+                    default="*")
+parser.add_argument("--no-delete",
+                    action="store_true")
+args = parser.parse_args()
+
+extensions = ["jpeg", "jpg", "png"]
+
+def find_images(directory):
+    for dirpath, dirnames, filenames in os.walk(directory):
+        for filename in filenames:
+            if filename.split(".")[-1].lower() in extensions and \
+                            fnmatch.fnmatch(filename, args.pattern):
+                yield os.path.join(dirpath, filename)
+
+
+def strip_ext(filename):
+    return ".".join(filename.split(".")[:-1]) if "." in filename else filename
+
+
+def convert_and_delete(image_path):
+    command = ["cjxl", "--quiet",
+               "-d", str(args.distance),
+               "-e", str(args.effort),
+               image_path, strip_ext(image_path) + ".jxl"]
+    print(f"jxlall: {' '.join(command)}")
+    retcode = subprocess.run(command).returncode
+    if retcode != 0:
+        return False
+
+    if not args.no_delete:
+        print(f"jxlall: deleting {image_path}")
+        os.remove(image_path)
+    return True
+
+
+with multiprocessing.Pool(args.jobs) as pool:
+    result = pool.map(convert_and_delete, find_images(args.directory))
+
+print("jxlall: done")
+print(f"jxlall: {result.count(True)} successes")
+print(f"jxlall: {result.count(False)} failures")
+
