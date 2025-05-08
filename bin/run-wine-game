@@ -1,0 +1,102 @@
+#!/bin/sh
+
+die() {
+    printf '\033[31;1mERROR: %s\n' "$1"
+    exit 1
+}
+
+games_basedir=~/games/
+
+[ -z "$1" ] && die "no game name supplied"
+game_name="$1"
+
+shift 1
+
+game_wineprefix="${games_basedir}/${game_name}"
+game_wineprefix="$(realpath "$game_wineprefix")"
+[ ! -d "$game_wineprefix" ] && die "${game_wineprefix} is not a directory"
+
+config_file_template="$(cat <<'EOF'
+# use this file for customisation (/bin/sh compatible script)
+#game_exe=/path/to/game.exe
+#wine_exe=/path/to/wine/exe
+#enable_mangohud=yes|dlsym
+#allow_internet=yes # disabled by default
+EOF
+)"
+config_file="${game_wineprefix}/run-wine-game.conf"
+if [ -f "${config_file}" ]; then
+    source "${config_file}"
+else
+    printf '' >"${config_file}"
+fi
+
+if [ -z "$game_exe" ]; then
+    game_exe="${game_wineprefix}/drive_c/RUNME.exe"
+    game_exe="$(realpath "$game_exe")"
+fi
+[ ! -f "$game_exe" ] && die "${game_exe} does not exist"
+
+if [ -z "$wine_exe" ]; then
+    wine_exe="$(which wine)"
+    wine_exe="$(realpath "$wine_exe")"
+fi
+[ ! -e "$wine_exe" ] && die "wine not found"
+
+if [ "$enable_mangohud" = "dlsym" ]; then
+    mangohud_arg="mangohud --dlsym"
+elif [ -n "$enable_mangohud" ]; then
+    mangohud_arg="mangohud"
+fi
+
+if [ -n "$allow_internet" ]; then
+    allow_internet_arg='--share-net'
+fi
+
+export WINEPREFIX="${game_wineprefix}"
+
+export WINEESYNC=1
+export STAGING_SHARED_MEMORY=1
+export DXVK_ASYNC=1
+
+printf '\033[1m%s\033[0m: %s\n' game_wineprefix "$game_wineprefix"
+printf '\033[1m%s\033[0m: %s\n' game_exe "$game_exe"
+printf '\033[1m%s\033[0m: %s\n' wine_exe "$wine_exe"
+
+cd "$(dirname "$game_exe")" || die "cd failed"
+
+if [ -n "$disable_bwrap" ]; then
+    $mangohud_arg "$wine_exe" "$game_exe"
+else
+    echo bwrap cmdline: \
+    bwrap \
+        --unshare-all \
+        $allow_internet_arg \
+        --dev-bind / / \
+        --ro-bind ~ ~ \
+        --bind ~/.cache ~/.cache \
+        --bind "$game_wineprefix" "$game_wineprefix" \
+        --bind /tmp/ /tmp \
+        --die-with-parent \
+        -- \
+        $mangohud_arg \
+        "$wine_exe" \
+        "$game_exe" $extra_game_args "$@"
+
+    bwrap \
+        --unshare-all \
+        $allow_internet_arg \
+        --dev-bind / / \
+        --ro-bind ~ ~ \
+        --bind ~/.cache ~/.cache \
+        --bind "$game_wineprefix" "$game_wineprefix" \
+        --bind /tmp /tmp \
+        --die-with-parent \
+        -- \
+        $mangohud_arg \
+        "$wine_exe" \
+        "$game_exe" $extra_game_args "$@"
+fi
+
+wineserver -k
+
