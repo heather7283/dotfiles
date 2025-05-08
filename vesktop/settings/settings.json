@@ -391,7 +391,7 @@
             "enabled": false
         },
         "SilentTyping": {
-            "enabled": false
+            "enabled": true
         },
         "SortFriendRequests": {
             "enabled": false
@@ -679,6 +679,9 @@
         },
         "IrcColors": {
             "enabled": false
+        },
+        "DisableDeepLinks": {
+            "enabled": true
         }
     },
     "notifications": {
@@ -691,7 +694,7 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1743080400203
+        "settingsSyncVersion": 1744104940241
     },
     "eagerPatches": false
 }
