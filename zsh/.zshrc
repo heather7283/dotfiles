@@ -569,6 +569,7 @@ zsh-plugins-install() {
         git clone --depth 1 'https://github.com/zsh-users/zsh-syntax-highlighting'
         cd zsh-syntax-highlighting
         git apply <~/.config/zsh/patches/zsh-syntax-highlighting-visual-mode-colors.patch
+        git apply <~/.config/zsh/patches/zsh-syntax-highlighting-add-yestty-precommand.patch
     )
     [ ! -d "${zsh_plugins_dir}/zsh-completions" ] && (
         cd "${zsh_plugins_dir}"

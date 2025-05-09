@@ -18,19 +18,12 @@ case "$preview" in
         ;;
     (image/*)
         background sh -c ' \
-            tmp_file="/tmp/imv_stdin_$$"; \
-            cclip get "$1" >"$tmp_file"; \
-            mvi --wayland-app-id=FLOATME --force-window=immediate --autofit=50% "${tmp_file}"; \
-            rm "${tmp_file}"; \
+            cclip get "$1" \
+            | mvi --wayland-app-id=FLOATME --force-window=immediate --autofit=50% -; \
         ' 'sh' "$id"
         ;;
     (*)
-        background sh -c ' \
-            tmp_file="/tmp/nvim_stdin_$$"; \
-            cclip get "$1" >"$tmp_file"; \
-            foot --title foot-float nvim ${tmp_file}; rm ${tmp_file}; \
-            rm "${tmp_file}"; \
-        ' 'sh' "$id"
+        exec sh -c 'cclip get "$1" | nvim ${tmp_file}' 'sh' "$id"
         ;;
 esac
 
