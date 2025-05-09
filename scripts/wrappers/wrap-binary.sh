@@ -16,7 +16,7 @@ binary_path="${0%/*}"
 [ -n "${binary_path##/*}" ] && die "${binary_path} is not an absolute path"
 
 old_path="$PATH"
-PATH="$(echo "$PATH" | sed -e "s|${binary_path}||g;s|^:||g;s|:\$||g;s|::||g")"
+PATH="$(echo "$PATH" | sed -e "s|${binary_path}||g;s|^:||;s|:\$||;s|::|:|g")"
 real_exe="$(command -v "$binary_name")" || die "failed to find real ${binary_name} binary"
 PATH="$old_path"
 
