@@ -20,7 +20,7 @@ case "$preview" in
         background sh -c ' \
             tmp_file="/tmp/imv_stdin_$$"; \
             cclip get "$1" >"$tmp_file"; \
-            imv -w FLOATME "${tmp_file}"; \
+            mvi --wayland-app-id=FLOATME --force-window=immediate --autofit=50% "${tmp_file}"; \
             rm "${tmp_file}"; \
         ' 'sh' "$id"
         ;;
