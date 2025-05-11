@@ -4,7 +4,7 @@
 # It will only work when it's called from PATH lookup
 
 die() {
-    printf '\033[1;31m%s\033[m\n' "$1"
+    printf '\033[1;31m%s wrapper: %s\033[m\n' "$0" "$1"
     exit 1
 }
 

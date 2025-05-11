@@ -644,15 +644,15 @@ fi
 
 
 if [ -z "$WAYLAND_DISPLAY" ] && [[ "$TTY" = /dev/tty* ]]; then
-    if pgrep Hyprland 2>&1 1>/dev/null; then
+    if pgrep Hyprland >/dev/null 2>&1 || pgrep hyprland >/dev/null 2>&1; then
         # FUCK YOU VAXRY
         printf '\033[1m!!!!!!!!!! WARNING !!!!!!!!!!\033[0m\n'
-        printf '\033[1mDONT SWITCH BACK TO HYPRLAND, THIS WILL FREEZE WHOLE SYSTEM\033[0m\n'
+        printf '\033[1mDONT SWITCH BACK TO HYPRLAND, THIS WILL FREEZE THE WHOLE SYSTEM\033[0m\n'
         printf '\033[1mEXECUTE \033[0mpkill Hyprland\033[1m AFTER YOU ARE DONE HERE\033[0m\n'
         printf '\033[1m!!!!!!!!!! WARNING !!!!!!!!!!\033[0m\n'
     else
         if read -q '?Launch Hyprland? [y/N] '; then
-            exec start-hyprland
+            exec hyprland
         fi
     fi
 fi
