@@ -23,7 +23,7 @@ case "$preview" in
         ' 'sh' "$id"
         ;;
     (*)
-        exec sh -c 'cclip get "$1" | nvim ${tmp_file}' 'sh' "$id"
+        exec sh -c 'cclip get "$1" | nvim' 'sh' "$id"
         ;;
 esac
 
