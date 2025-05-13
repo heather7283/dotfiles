@@ -152,14 +152,14 @@ update_prompt() {
             new_prompt+="${content}"
         done
 
-        new_prompt+=$'\n'"└[%24<…<%3~%<<]${prompt_fake_space_seq}%B%(#.#.$)%b "
+        new_prompt+=$'\n'"└[%24<…<%3~%<<] %B%(#.#.$)%b${prompt_fake_space_seq}"
     else
         # username@ (bold) hostname (colored)
         new_prompt+="%B%n@${prompt_hostname_color_seq_start}%m${prompt_hostname_color_seq_end}%b"
         # last component of pwd or ~ if in home
-        new_prompt+=" %1~${prompt_fake_space_seq}"
+        new_prompt+=" %1~ "
         # # or $ depending on user (bold)
-        new_prompt+="%B%(#.#.$)%b "
+        new_prompt+="%B%(#.#.$)%b${prompt_fake_space_seq}"
     fi
 
     PS1="$new_prompt"
