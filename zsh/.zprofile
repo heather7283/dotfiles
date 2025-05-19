@@ -12,6 +12,8 @@ export LESS='--use-color --RAW-CONTROL-CHARS --chop-long-lines --mouse'
 
 export MANOPT='-E\ ascii' # this forces man to only display ASCII (removes weird unicode quotes)
 command -v nvim >/dev/null && export MANPAGER='nvim -c ":set signcolumn=no" -c "Man!"'
+# prefer sections 2 and 3 over 1 (I don't care about stat command, I care about stat syscall)
+export MANSECT='2:3:1:1p:8:3p:4:5:6:7:9:0p:tcl:n:l:p:o:1x:2x:3x:4x:5x:6x:7x:8x'
 
 export BASH_ENV=~/.config/bash/non-interactive.sh
 
