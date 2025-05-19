@@ -7,5 +7,5 @@ if [ -n "$HOME" ] && [[ "$PATH" == *"${HOME}/bin"* ]]; then
     PATH="${PATH%:}"
 fi
 
-export PATH="${HOME}/bin:${PATH}"
+export PATH="${HOME}/bin:${HOME}/opt/bin:${PATH}"
 
