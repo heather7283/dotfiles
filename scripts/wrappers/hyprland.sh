@@ -26,10 +26,6 @@ export HYPRLAND_NO_SD_VARS=true
 if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
     exec "${real_exe}" --config ~/.config/hypr/nested.conf "$@"
 else
-    if pgrep Hyprland || pgrep hyprland; then
-        die "another instance of hyprland is already running!"
-    else
-        exec "${real_exe}"
-    fi
+    exec "${real_exe}"
 fi
 
