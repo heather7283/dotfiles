@@ -7,11 +7,11 @@
     "enabledThemes": [
         "custom_font.css",
         "no_top_bar.css",
-        "new_ui_is_shit.css",
         "square.css",
         "small_server_list.css",
-        "no_profile_themes.css",
-        "small_member_list.css"
+        "small_member_list.css",
+        "new_ui_is_shit.css",
+        "no_profile_themes.css"
     ],
     "enableReactDevtools": false,
     "frameless": true,
@@ -391,7 +391,9 @@
             "enabled": false
         },
         "SilentTyping": {
-            "enabled": true
+            "enabled": true,
+            "isEnabled": true,
+            "showIcon": false
         },
         "SortFriendRequests": {
             "enabled": false
@@ -694,7 +696,7 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1744104940241
+        "settingsSyncVersion": 1747423580732
     },
     "eagerPatches": false
 }
