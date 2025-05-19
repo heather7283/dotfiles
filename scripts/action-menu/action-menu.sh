@@ -59,7 +59,6 @@ choose() {
         --bind 'enter:deselect-all+select+accept' \
         --bind 'double-click:deselect-all+select+accept' \
         --preview 'cat ~/.config/scripts/action-menu/art.txt' \
-        --preview-window 'border-none' \
         --no-info \
         --no-scrollbar \
         --prompt '? ' \
