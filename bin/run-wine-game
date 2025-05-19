@@ -26,7 +26,7 @@ EOF
 )"
 config_file="${game_wineprefix}/run-wine-game.conf"
 if [ -f "${config_file}" ]; then
-    source "${config_file}"
+    . "${config_file}"
 else
     printf '' >"${config_file}"
 fi
