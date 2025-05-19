@@ -8,5 +8,6 @@
 --color=pointer:#A7C080
 --color=scrollbar:#7A8478
 --color=preview-label:#859289
+--ellipsis=…
 --bind=ctrl-y:execute-silent:"wl-copy -t 'text/plain;charset=utf-8' {}"
 --bind=resize:refresh-preview
