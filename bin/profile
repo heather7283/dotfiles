@@ -1,46 +1,51 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 command="$1"
 
 print_usage () {
-	echo "Usage:"
-	echo "  set [profile]   set power profile"
-	echo "  get             get active power profile"
-	echo ""
-	echo "Available profiles: $(cat /sys/firmware/acpi/platform_profile_choices)"
+    echo "Usage:"
+    echo "  set [profile]   set power profile"
+    echo "  get             get active power profile"
+    echo ""
+    echo "Available profiles: $(cat /sys/firmware/acpi/platform_profile_choices)"
 }
 
 case "$command" in
-	"get" | '') # Getting active power profiles
-		cat /sys/firmware/acpi/platform_profile
-    cat /sys/devices/platform/asus-nb-wmi/throttle_thermal_policy
-    cat /sys/devices/platform/asus-nb-wmi/fan_boost_mode
-    exit;;
-	
-  "set")      # Setting power profile
-		profile="$2";;
-
-  *)          # `profile performance` (without set) is also valid
-    profile="$command";;
+    (get|'')
+        cat /sys/firmware/acpi/platform_profile
+        cat /sys/devices/platform/asus-nb-wmi/throttle_thermal_policy
+        cat /sys/devices/platform/asus-nb-wmi/fan_boost_mode
+        exit
+        ;;
+    (set)
+        profile="$2"
+        ;;
+    (*)
+        profile="$command"
+        ;;
 esac
 
 case "$profile" in
-	"powersave" | "quiet" | "low" | "1")
-		echo quiet > /sys/firmware/acpi/platform_profile
-    echo 2     > /sys/devices/platform/asus-nb-wmi/throttle_thermal_policy
-    echo 2     > /sys/devices/platform/asus-nb-wmi/fan_boost_mode
-    ;;
-	"balanced" | "normal" | "mid" | "2")
-		echo balanced > /sys/firmware/acpi/platform_profile
-    echo 0        > /sys/devices/platform/asus-nb-wmi/throttle_thermal_policy
-    echo 0        > /sys/devices/platform/asus-nb-wmi/fan_boost_mode
-    ;;
-	"performance" | "perf" | "high" | "3")
-		echo performance > /sys/firmware/acpi/platform_profile
-    echo 1           > /sys/devices/platform/asus-nb-wmi/throttle_thermal_policy
-    echo 1           > /sys/devices/platform/asus-nb-wmi/fan_boost_mode
-    ;;
-	*)
-		print_usage;;
+    (powersave|quiet|low|1)
+        echo quiet > /sys/firmware/acpi/platform_profile
+        echo 2     > /sys/devices/platform/asus-nb-wmi/throttle_thermal_policy
+        echo 2     > /sys/devices/platform/asus-nb-wmi/fan_boost_mode
+        cpupower frequency-set --governor powersave
+        ;;
+    (balanced|normal|mid|2)
+        echo balanced > /sys/firmware/acpi/platform_profile
+        echo 0        > /sys/devices/platform/asus-nb-wmi/throttle_thermal_policy
+        echo 0        > /sys/devices/platform/asus-nb-wmi/fan_boost_mode
+        cpupower frequency-set --governor schedutil
+        ;;
+    (performance|perf|high|3)
+        echo performance > /sys/firmware/acpi/platform_profile
+        echo 1           > /sys/devices/platform/asus-nb-wmi/throttle_thermal_policy
+        echo 1           > /sys/devices/platform/asus-nb-wmi/fan_boost_mode
+        cpupower frequency-set --governor performance
+        ;;
+    (*)
+        print_usage
+        ;;
 esac
 
