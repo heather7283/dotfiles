@@ -16,6 +16,7 @@ chafa_wrapper() {
     --colors full \
     --optimize 9 \
     --animate off \
+    --dither none \
     --size "${size_x}x$((size_y - 2))" \
     "$@"
 }

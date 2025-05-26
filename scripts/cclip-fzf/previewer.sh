@@ -13,6 +13,7 @@ chafa_wrapper() {
         --align center \
         --scale max \
         --optimize 9 \
+        --dither none \
         --view-size "${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}"
 }
 

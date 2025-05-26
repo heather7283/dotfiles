@@ -22,7 +22,7 @@ clear() {
 }
 
 do_chafa() {
-    chafa -f sixels -O 9 --view-size "${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}" "$@"
+    chafa -f sixels --dither none -O 9 --view-size "${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}" "$@"
 }
 
 [ -z "${SEVENTV_BROWSER_TMPDIR}" ] && die "7TV_BROWSER_TMPDIR is unset"
