@@ -1,5 +1,16 @@
 #!/bin/sh
 
-command -v firefox >/dev/null && exec firefox "$@"
-command -v firefox-bin >/dev/null && exec firefox-bin "$@"
+background() (
+    trap '' HUP
+    "$@" </dev/null >/dev/null 2>&1 &
+)
+
+if command -v firefox >/dev/null; then
+    background firefox "$@"
+elif command -v firefox-bin >/dev/null; then
+    background firefox-bin "$@"
+else
+    echo "No browser found"
+    exit 1
+fi
 
