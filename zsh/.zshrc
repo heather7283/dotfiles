@@ -352,7 +352,50 @@ alias yp='cppath'
 # ========== Functions ==========
 # for some reason making this an alias breaks chafa completion
 chafa() {
-    command chafa --passthrough=none "$@"
+    command chafa \
+        --passthrough=none \
+        --dither=none \
+        --format=sixels \
+        --view-size "$((COLUMNS - 1))x$((LINES - 1))" "$@"
+}
+
+go() {
+    case "$1" in
+    (help|doc)
+        command go "$@" 2>&1 \
+        | nvim -c 'nnoremap q :q!<CR>' -c 'set signcolumn=no' -c 'set nonumber'
+        ;;
+    (*)
+        command go "$@"
+        ;;
+    esac
+}
+
+lsfd() {
+    if [[ "$1" =~ '^[0-9]+$' ]]; then
+        ll /proc/"$1"/fd
+    else
+        for pid in $(pidof "$1"); do
+            ll /proc/"$pid"/fd
+        done
+    fi
+}
+
+background() (
+    trap '' HUP
+    "$@" </dev/null >/dev/null 2>&1 &
+)
+
+fzfgrep() {
+    FZF_DEFAULT_COMMAND=true fzf \
+        --bind 'change:reload(rg --files-with-matches --smart-case -e {q} || true)' \
+        --preview 'rg \
+            --pretty \
+            --context "$((FZF_PREVIEW_LINES / 4))" \
+            --smart-case \
+            -e {q} {} 2>/dev/null' \
+        --preview-window up \
+        --disabled
 }
 
 # save piped contents to temporary file, print file path to stdout
