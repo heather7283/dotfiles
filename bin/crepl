@@ -1,0 +1,30 @@
+#!/bin/sh
+
+cleanup() {
+    rm -f /tmp/crepl_"$$"*
+    exit 0
+}
+trap cleanup EXIT INT QUIT TERM HUP
+
+prog="$(cat <<'EOF'
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+int main (int argc, char **argv) {
+
+}
+EOF
+)"
+
+while :; do
+    printf '%s' "$prog" >/tmp/crepl_"$$".c
+    nvim /tmp/crepl_"$$".c
+    prog="$(cat /tmp/crepl_"$$".c)"
+
+    gcc /tmp/crepl_"$$".c -o /tmp/crepl_"$$" && /tmp/crepl_"$$"
+
+    printf 'Press Enter to try again or Ctrl+C to abort'
+    read -r dummy
+done
+
