@@ -220,6 +220,16 @@ zle -N fzf-global-history-search
 bindkey -M viins '\C-g' fzf-global-history-search
 bindkey -M vicmd '\C-g' fzf-global-history-search
 
+clipboard-paste-but-better() {
+    local paste="$(wl-paste -t 'text/plain;charset=utf-8' || tmux show-buffer)"
+    local oldcursor="$CURSOR"
+    BUFFER="${LBUFFER}${paste}${RBUFFER}"
+    CURSOR="$(("$oldcursor" + "${#paste}"))"
+}
+zle -N clipboard-paste-but-better
+bindkey -M viins '\C-p' clipboard-paste-but-better
+bindkey -M vicmd '\C-p' clipboard-paste-but-better
+
 # paste selected file path into command line
 fzf-file-search() {
     local res
