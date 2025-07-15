@@ -20,7 +20,7 @@ config_file_template="$(cat <<'EOF'
 # use this file for customisation (/bin/sh compatible script)
 #game_exe=/path/to/game.exe
 #wine_exe=/path/to/wine/exe
-#enable_mangohud=yes|dlsym
+#enable_mangohud=no|dlsym # enabled by default
 #allow_internet=yes # disabled by default
 EOF
 )"
@@ -45,7 +45,9 @@ fi
 
 if [ "$enable_mangohud" = "dlsym" ]; then
     mangohud_arg="mangohud --dlsym"
-elif [ -n "$enable_mangohud" ]; then
+elif [ "$enable_mangohud" = "no" ]; then
+    mangohud_arg=""
+else
     mangohud_arg="mangohud"
 fi
 
