@@ -4,9 +4,9 @@ ugliest_color_combo='fg=#5D4E00,bg=#9B00C8'
 typeset -A ZSH_HIGHLIGHT_STYLES
 ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=red,bold'
 ZSH_HIGHLIGHT_STYLES[reserved-word]='fg=red'
-ZSH_HIGHLIGHT_STYLES[alias]='fg=green'
+ZSH_HIGHLIGHT_STYLES[alias]='fg=green,underline'
 ZSH_HIGHLIGHT_STYLES[suffix-alias]="$ugliest_color_combo"
-ZSH_HIGHLIGHT_STYLES[global-alias]="$ugliest_color_combo"
+ZSH_HIGHLIGHT_STYLES[global-alias]="fg=green,underline"
 ZSH_HIGHLIGHT_STYLES[builtin]='fg=green'
 ZSH_HIGHLIGHT_STYLES[function]='fg=green'
 ZSH_HIGHLIGHT_STYLES[command]='fg=green'
@@ -54,3 +54,4 @@ ZSH_HIGHLIGHT_STYLES[default]=''
 
 # background in visual mode (requires patched plugin)
 zle_highlight+=('region:bg=#543A48')
+
