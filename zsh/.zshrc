@@ -296,7 +296,7 @@ bindkey -M viins '^?' backward-delete-char
 
 
 # ========== Aliases ==========
-if command -v eza 1>/dev/null 2>&1; then
+if command -v eza >/dev/null 2>&1; then
     alias ll='eza \
         --color=always \
         --icons=always \
@@ -307,17 +307,14 @@ if command -v eza 1>/dev/null 2>&1; then
     alias tree='ll --tree'
 else
     alias ll='ls -lhF --color=always'
-    alias tree='ll -R'
 fi
 command -v doas >/dev/null && alias sudo='doas'
 command -v bsdtar >/dev/null && alias tar='bsdtar'
 alias grep='grep --color=auto'
 alias diff='diff --color=auto'
 alias neofetch='fastfetch'
-alias hyprrun='hyprctl dispatch exec -- '
 alias cal='cal --year --monday'
 alias nyx='nyx --config ~/.config/nyxrc'
-alias e='exec'
 alias gdb='gdb -q'
 alias ffmpeg='ffmpeg -hide_banner'
 alias ffprobe='ffprobe -hide_banner'
@@ -326,28 +323,29 @@ alias objdump='objdump --disassembler-color=terminal -Mintel'
 alias torrent='transmission-cli'
 alias wlp='wl-paste'
 alias wlc='wl-copy'
+alias py='python'
+alias py3='python3'
+alias apt='apt --no-install-recommends'
+alias diffcat='sed -e "s/^\(\-.*\)/[31m\1[0m/;s/^\(\+.*\)/[32m\1[0m/"'
+alias e='exec'
+alias yestty='yestty -a '
+
 alias gs='git status'
 alias gc='git commit'
 alias ga='git add'
+alias gb='git bisect'
 alias gl='git log'
 alias gd='git diff'
 alias gch='git checkout'
-alias py='python'
+alias gsh='git show'
+alias gpull='git pull'
+alias gpush='git push'
+alias gf='git fetch'
+alias gm='git merge'
+alias gr='git rebase'
 
-alias ULTRAKILL='kill -KILL'
-alias ULTRAPKILL='pkill -KILL'
-alias ULTRAKILLALL='killall -KILL'
-
-alias apt='apt --no-install-recommends'
-alias fzfgrep='FZF_DEFAULT_COMMAND=true fzf \
-  --bind '\''change:reload(rg --files-with-matches --smart-case -e {q} || true)'\'' \
-  --preview '\''rg \
-    --pretty \
-    --context "$((FZF_PREVIEW_LINES / 4))" \
-    --smart-case \
-    -e {q} {} 2>/dev/null'\'' \
-  --preview-window up \
-  --disabled'
+alias rp='realpath'
+alias yp='cppath'
 # ========== Aliases ==========
 
 
