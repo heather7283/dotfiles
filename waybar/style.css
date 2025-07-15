@@ -24,7 +24,6 @@
 /* Each module */
 #submap,
 #battery,
-#clock,
 #cpu,
 #custom-gpu-screen-recorder,
 #memory,
@@ -35,6 +34,7 @@
 #tray,
 #language,
 #bluetooth {
+  padding-top: 2px;
   padding-left: 0px;
   padding-right: 0px;
   margin-left: 12px;
