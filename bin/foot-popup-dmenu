@@ -1,0 +1,4 @@
+#!/bin/sh
+
+foot-popup -- sh -c 'exec fzf "$@" 0<&4 1>&5' 'sh' "$@" 4<&0 5>&1
+
