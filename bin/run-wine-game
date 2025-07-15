@@ -28,7 +28,7 @@ config_file="${game_wineprefix}/run-wine-game.conf"
 if [ -f "${config_file}" ]; then
     . "${config_file}"
 else
-    printf '' >"${config_file}"
+    echo "$config_file_template" >"${config_file}"
 fi
 
 if [ -z "$game_exe" ]; then
