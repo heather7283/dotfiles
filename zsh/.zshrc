@@ -193,7 +193,7 @@ zle -N zle-keymap-select
 zle-line-init() {
     zle -K viins
     set-cursor-shape beam
-    _ln_help_displayed=0
+    ln_help_displayed=0
 }
 zle -N zle-line-init
 
@@ -270,16 +270,16 @@ bindkey -M viins '\C-e' edit-buffer-in-editor
 bindkey -M vicmd '\C-e' edit-buffer-in-editor
 
 # remind about ln syntax :xdd:
-_ln_help_displayed=0
+ln_help_displayed=0
 zle-line-pre-redraw() {
-    if [ "$BUFFER" = "ln" ] && [ "$_ln_help_displayed" = 0 ]; then
+    if [ "$BUFFER" = "ln" ] && [ "$ln_help_displayed" = 0 ]; then
         echo
         echo "ln [OPTION]... [-T] TARGET LINK_NAME"
         echo "ln [OPTION]... TARGET"
         echo "ln [OPTION]... TARGET... DIRECTORY"
         echo "ln [OPTION]... -t DIRECTORY TARGET..."
         zle reset-prompt
-        _ln_help_displayed=1
+        ln_help_displayed=1
     fi
 }
 zle -N zle-line-pre-redraw
