@@ -193,6 +193,7 @@ map Q quit-cd
 
 map gt goto-symlink-target
 map g/ :cd /
+map gb &lf -remote "send ${id} cd ${OLDPWD}"
 
 map f fzf-jump
 map F fzf-rg-jump
