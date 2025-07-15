@@ -202,6 +202,7 @@ map <c-r> fzf-history
 
 map a %~/.config/lf/scripts/mount-archive.sh
 
+map e $[ -f "$f" ] && exec "${EDITOR:-vi}" "$f"
 map E sudoedit
 
 map . :set hidden!
