@@ -650,10 +650,10 @@ zsh-plugins-update() {
 
     local plugin_dir
     for plugin_dir in "${zsh_plugins_dir}/"*; do
-        echo "Updating ${_plugin_dir}"
-        git -C "$_plugin_dir" stash
-        git -C "$_plugin_dir" pull
-        git -C "$_plugin_dir" stash pop
+        echo "Updating ${plugin_dir}"
+        git -C "$plugin_dir" stash
+        git -C "$plugin_dir" pull
+        git -C "$plugin_dir" stash pop
     done
 }
 
