@@ -13,7 +13,7 @@
         "new_ui_is_shit.css",
         "no_profile_themes.css"
     ],
-    "enableReactDevtools": false,
+    "enableReactDevtools": true,
     "frameless": true,
     "transparent": false,
     "winCtrlQ": false,
@@ -134,9 +134,6 @@
             "enabled": false
         },
         "Decor": {
-            "enabled": false
-        },
-        "EmoteCloner": {
             "enabled": false
         },
         "Experiments": {
@@ -385,7 +382,8 @@
             "enabled": true,
             "mode": "nick-user",
             "displayNames": false,
-            "inReplies": false
+            "inReplies": false,
+            "friendNicknames": "dms"
         },
         "SilentMessageToggle": {
             "enabled": false
@@ -684,6 +682,15 @@
         },
         "DisableDeepLinks": {
             "enabled": true
+        },
+        "ExpressionCloner": {
+            "enabled": false
+        },
+        "CopyStickerLinks": {
+            "enabled": false
+        },
+        "ImageFilename": {
+            "enabled": false
         }
     },
     "notifications": {
@@ -696,7 +703,7 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1747423580732
+        "settingsSyncVersion": 1758974806984
     },
     "eagerPatches": false
 }
