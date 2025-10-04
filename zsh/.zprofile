@@ -49,6 +49,7 @@ export ANDROID_USER_HOME=~/.local/share/android
 export _JAVA_OPTIONS=-Djava.util.prefs.userRoot=/home/heather/.config/java
 export WINEPREFIX=~/.local/share/wineprefix
 export INPUTRC=~/.config/inputrc
+export RLWRAP_HOME=~/.cache/rlwrap
 
 # I'll put it here I guess
 typeset -U path
