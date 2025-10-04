@@ -32,6 +32,8 @@ case "$mime_description" in
     exec mpv --no-video "$filename" ;;
   application/vnd.openxmlformats-officedocument.wordprocessingml.document*)
     exec libreoffice "$(realpath "$filename")" ;;
+  application/pdf*)
+    exec zathura "$filename" ;;
 esac
 
 if [[ "$mime_description" =~ charset= ]] && [[ ! "$mime_description" =~ charset=binary ]]; then

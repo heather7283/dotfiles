@@ -81,9 +81,10 @@ archive_preview() {
 }
 
 text_preview() {
-  awk -v w="$size_x" -v h="$size_y" \
-    '{print substr($0, 0, w)} (NR >= h) {exit}' \
-    "$filename" && success="yes"
+  #awk -v w="$size_x" -v h="$size_y" \
+  #  '{print substr($0, 0, w)} (NR >= h) {exit}' \
+  #  "$filename" && success="yes"
+  cat "$filename" && success="yes"
 }
 
 fallback_preview() {

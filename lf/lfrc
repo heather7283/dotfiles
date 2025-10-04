@@ -87,7 +87,8 @@ cmd goto-symlink-target &{{
 cmd fzf-jump ${{
   [ -n "$OLDTERM" ] && export TERM="$OLDTERM"
   # dont make -maxdepth too big uwu
-  res="$(find . -xdev -depth -maxdepth 6 2>/dev/null | fzf --reverse --no-clear --scheme=path)"
+  res="$(find . -xdev -maxdepth 6 2>/dev/null \
+         | fzf --reverse --no-clear --scheme=history)"
   if [ -z "$res" ]; then exit; fi
 
   if [ -d "$res" ]; then
