@@ -68,14 +68,33 @@ case "$mode" in
         timestamp="$(date -Is)"
         timestamp="${timestamp%%+*}"
         [ -z "$timestamp" ] && die 'Unable to get timestamp (how???)'
-        filename="${rec_dir_videos}/${timestamp}.${FORMAT:-mp4}"
+        filename="${rec_dir_videos}/${timestamp}.${FORMAT:-mkv}"
 
         flock --no-fork --nonblock --conflict-exit-code 101 "$rec_dir" \
-            gpu-screen-recorder -w portal -f "${FPS:-60}" -a 'default_output|default_input' -o "$filename" &
+            gpu-screen-recorder \
+                -w portal \
+                -k "${CODEC:-hevc}" \
+                -ac "${ACODEC:-opus}" \
+                -f "${FPS:-60}" \
+                -tune quality \
+                -a 'default_output' \
+                -a 'default_input' \
+                -o "$filename" &
         ;;
     (replay)
         flock --no-fork --nonblock --conflict-exit-code 101 "$rec_dir" \
-            gpu-screen-recorder -w portal -f "${FPS:-60}" -r "${REPLAY_BUFFER:-60}" -sc ~/.config/scripts/gpu-screen-recorder/on-save-replay.sh -c ${FORMAT:-mp4} -a 'default_output|default_input' -o "$rec_dir_replays" &
+            gpu-screen-recorder \
+                -w portal \
+                -k "${CODEC:-hevc}" \
+                -ac "${ACODEC:-opus}" \
+                -f "${FPS:-60}" \
+                -tune quality \
+                -r "${REPLAY_BUFFER:-60}" \
+                -sc ~/.config/scripts/gpu-screen-recorder/on-save-replay.sh \
+                -c ${FORMAT:-mkv} \
+                -a 'default_output' \
+                -a 'default_input' \
+                -o "$rec_dir_replays" &
         ;;
     (*)
         die "Invalid mode: ${mode}"
