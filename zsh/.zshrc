@@ -213,7 +213,7 @@ bindkey -M vicmd '\C-r' fzf-history-search
 # search global history with fzf on C-g
 fzf-global-history-search() {
     local cmd="$(ls -tc "$zsh_history_dir" | sed "s|^|${zsh_history_dir}|" \
-                 | xargs cat | fzf --scheme=history)"
+                 | xargs cat 2>/dev/null | fzf --scheme=history)"
     [ -n "$cmd" ] && BUFFER="$cmd"
 }
 zle -N fzf-global-history-search
