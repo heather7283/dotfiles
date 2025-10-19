@@ -1,11 +1,9 @@
 #!/bin/sh
 
-background() {
-    (
-        trap '' HUP
-        "$@" </dev/null >/dev/null 2>&1 &
-    )
-}
+background() (
+    trap '' HUP
+    "$@" </dev/null >/dev/null 2>&1 &
+)
 
 tab='	'
 newline='
@@ -30,6 +28,9 @@ ORDER BY
 result="$(
 sqlite3 \
   -separator "$tab" \
+  -readonly \
+  -noheader \
+  -tabs \
   "$temp_file" \
   "$query" | \
 awk \
