@@ -14,7 +14,7 @@ hyprctl dispatch closewindow address:"$addr"
 
 # blacklist
 case "$initial_class" in
-*foot*|xdg-desktop-portal*)
+*foot*|xdg-desktop-portal*|ssedit)
     exit;;
 esac
 
