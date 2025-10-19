@@ -65,6 +65,14 @@ printf '\033[1m%s\033[0m: %s\n' game_wineprefix "$game_wineprefix"
 printf '\033[1m%s\033[0m: %s\n' game_exe "$game_exe"
 printf '\033[1m%s\033[0m: %s\n' wine_exe "$wine_exe"
 
+playtime_file="${game_wineprefix}/run-wine-game.playtime"
+if [ -f "$playtime_file" ]; then
+    playtime="$(cat playtime_file)"
+else
+    playtime=0
+fi
+session_start_time="$(date '+%s')"
+
 cd "$(dirname "$game_exe")" || die "cd failed"
 
 if [ -n "$disable_bwrap" ]; then
@@ -99,6 +107,10 @@ else
         "$wine_exe" \
         "$game_exe" $extra_game_args "$@"
 fi
+
+session_end_time="$(date '+%s')"
+new_playtime="$(( playtime + session_end_time - session_start_time ))"
+printf '%d' "$new_playtime" >"$playtime_file"
 
 wineserver -k
 
