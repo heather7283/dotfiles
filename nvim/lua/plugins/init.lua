@@ -19,19 +19,8 @@ local plugins = {
     "mason-lspconfig.nvim",
     event = "VeryLazy",
     dependencies = {
-      {
-        "neovim/nvim-lspconfig",
-        config = function()
-          -- no-op intentionally
-        end
-      },
-      {
-        "williamboman/mason.nvim",
-        cmd = { "Mason", "MasonInstall", "MasonInstallAll", "MasonUpdate" },
-        config = function()
-          -- no-op intentionally
-        end
-      },
+      { "williamboman/mason.nvim", opts = {} },
+      { "neovim/nvim-lspconfig", },
     },
     config = function()
       require("plugins.lspconfig")

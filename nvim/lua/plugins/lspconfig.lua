@@ -4,11 +4,16 @@ require("mason-lspconfig").setup()
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
+local config_and_enable = function(name, settings)
+  vim.lsp.config(name, settings)
+  vim.lsp.enable(name, true)
+end
+
 vim.lsp.config("*", {
   capabilities = capabilities
 })
 
-vim.lsp.config("lua_ls", {
+config_and_enable("lua_ls", {
   settings = {
     Lua = {
       diagnostics = {
@@ -29,7 +34,7 @@ vim.lsp.config("lua_ls", {
   }
 })
 
-vim.lsp.config("basedpyright", {
+config_and_enable("basedpyright", {
   settings = {
     basedpyright = {
       analysis = {
@@ -37,13 +42,15 @@ vim.lsp.config("basedpyright", {
       }
     }
   },
-  root_dir = function(filename, _) return vim.fn.matchstr(filename, ".*/") end
+  root_dir = function(filename, on_dir)
+    on_dir(vim.fn.matchstr(filename, ".*/"))
+  end
 })
 
 -- use system clangd
 local clangd_path = vim.fn.exepath("clangd");
 if clangd_path ~= "" then
-  vim.lsp.config("clangd", {
+  config_and_enable("clangd", {
     cmd = {
       clangd_path,
       "--background-index",
