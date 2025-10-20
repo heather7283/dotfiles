@@ -51,3 +51,12 @@ vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
   end
 })
 
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "html", "xml", "lua", "css", },
+  callback = function()
+    vim.bo.tabstop = 2      -- Set tab width to 2 spaces
+    vim.bo.shiftwidth = 2   -- Set indentation width to 2 spaces
+    vim.bo.expandtab = true -- Convert tabs to spaces
+  end
+})
+
