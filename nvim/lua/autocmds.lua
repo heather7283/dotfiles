@@ -51,24 +51,3 @@ vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
   end
 })
 
--- for .h files, automatically insert include guard in empty file
-vim.api.nvim_create_autocmd({"BufNewFile", "BufRead"}, {
-  pattern = {"*.h"},
-  callback = function()
-    -- Check if file is empty
-    local first_line = vim.api.nvim_buf_get_lines(0, 0, 1, false)[1]
-    if first_line == nil or first_line == "" then
-      local filename = vim.fn.expand("%:t:r"):upper()
-      local guard = string.format([[
-#ifndef %s_H
-#define %s_H
-
-
-
-#endif /* #ifndef %s_H */]], filename, filename, filename)
-      vim.api.nvim_buf_set_lines(0, 0, 0, false, vim.split(guard, "\n"))
-      vim.api.nvim_win_set_cursor(0, {4, 0})
-    end
-  end
-})
-
