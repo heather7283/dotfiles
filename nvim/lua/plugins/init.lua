@@ -81,9 +81,12 @@ local plugins = {
   -- treesitter
   {
     "nvim-treesitter/nvim-treesitter",
+    -- fuckers rewrote the entire thing on main branch and broke everything
+    branch = "master",
+    tag = "v0.10.0",
+    pin = true,
     build = ":TSUpdate",
-    event = { "VeryLazy", "BufNewFile" },
-    cmd = { "TSInstall", "TSBufEnable", "TSBufDisable", "TSModuleInfo" },
+    lazy = false,
     config = function()
       require("plugins.treesitter")
     end
