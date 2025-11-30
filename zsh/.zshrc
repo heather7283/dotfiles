@@ -35,29 +35,27 @@ fpath+=(~/.config/zsh/functions/)
 
 # ========== Prompt ==========
 # try to set color based on current distro if available
-source <(grep -e '^ANSI_COLOR=' -e '^NAME=' /etc/os-release 2>/dev/null)
-if [ "$NAME" = "Gentoo" ]; then
+while IFS='=' read -r k v; do typeset "OS_RELEASE_${k}=${(Q)v}"; done </etc/os-release
+if [ "$OS_RELEASE_ID" = 'gentoo' ]; then
     # for some reason gentoo's ANSI_COLOR is green lmao wtf
     prompt_hostname_color_seq_start='%F{magenta}'
     prompt_hostname_color_seq_end='%f'
-elif [[ "$NAME" =~ ^Debian.* ]]; then
+elif [[ "$OS_RELEASE_ID" =~ 'debian' ]]; then
     prompt_hostname_color_seq_start='%F{red}'
     prompt_hostname_color_seq_end='%f'
-elif [ -n "$ANSI_COLOR" ]; then
-    prompt_hostname_color_seq_start='%{'"$(printf "\033[${ANSI_COLOR}m")"'%}'
-    prompt_hostname_color_seq_end='%{'"$(printf "\033[0m")"'%}'
-elif [ "$NAME" = "Alpine Linux" ]; then
+elif [ "$OS_RELEASE_ID" = 'alpine' ]; then
     prompt_hostname_color_seq_start='%F{blue}'
     prompt_hostname_color_seq_end='%f'
 elif [ -n "$TERMUX_VERSION" ]; then
     prompt_hostname_color_seq_start='%F{green}'
     prompt_hostname_color_seq_end='%f'
+elif [ -n "$OS_RELEASE_ANSI_COLOR" ]; then
+    prompt_hostname_color_seq_start="%{\e[${OS_RELEASE_ANSI_COLOR#0;}m%}"
+    prompt_hostname_color_seq_end="%{\e[m%}"
 else
     prompt_hostname_color_seq_start=''
     prompt_hostname_color_seq_end=''
 fi
-unset ANSI_COLOR
-unset NAME
 
 # ꙋ aka CYRILLIC SMALL LETTER MONOGRAPH UK (U+A64B) plays an important role here.
 # It's rendered black so it effectively serves as a space, but since
