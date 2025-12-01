@@ -493,8 +493,17 @@ cppath() {
 }
 
 spek() {
-    ffmpeg -i "$1" -lavfi showspectrumpic=s=960x540 -f image2pipe -vcodec png - 2>/dev/null |
-        chafa -f sixel
+    typeset -a cmd=(
+        ffmpeg -loglevel error
+        -i "$1"
+        -lavfi showspectrumpic=s=960x540
+        -f image2pipe -vcodec png -
+    )
+    if [[ -t 1 ]]; then
+        "${cmd[@]}" | chafa -f sixel
+    else
+        "${cmd[@]}"
+    fi
 }
 
 format_seconds() {
