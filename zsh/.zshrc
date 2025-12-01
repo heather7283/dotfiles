@@ -50,8 +50,8 @@ elif [ -n "$TERMUX_VERSION" ]; then
     prompt_hostname_color_seq_start='%F{green}'
     prompt_hostname_color_seq_end='%f'
 elif [ -n "$OS_RELEASE_ANSI_COLOR" ]; then
-    prompt_hostname_color_seq_start="%{\e[${OS_RELEASE_ANSI_COLOR#0;}m%}"
-    prompt_hostname_color_seq_end="%{\e[m%}"
+    prompt_hostname_color_seq_start='%{'"$(printf "\e[${OS_RELEASE_ANSI_COLOR#0;}m")"'%}'
+    prompt_hostname_color_seq_end='%{'"$(printf "\e[m")"'%}'
 else
     prompt_hostname_color_seq_start=''
     prompt_hostname_color_seq_end=''
