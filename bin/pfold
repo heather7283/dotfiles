@@ -1,0 +1,21 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use utf8;
+use open ':std', ':encoding(UTF-8)';
+
+my $width = shift // 80;  # Get width from first argument or default to 80
+
+while (<>) {
+    chomp;
+    while (length($_) > $width) {
+        my $pos = rindex(substr($_, 0, $width + 1), ' ');
+        $pos = $width if $pos < 0;
+        print substr($_, 0, $pos), "\n";
+        $_ = substr($_, $pos + 1);
+        $_ =~ s/^\s+//;
+    }
+    print $_, "\n" if length($_);
+}
+

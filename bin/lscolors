@@ -1,0 +1,21 @@
+#!/usr/bin/env -S awk -f
+
+BEGIN {
+    for (i = 30; i <= 37; i++) {
+        printf "\033[%dm  %d \033[m", i, i
+    }
+    printf "\n"
+    for (i = 40; i <= 47; i++) {
+        printf "\033[%dm  %d \033[m", i, i
+    }
+    printf "\n"
+    for (i = 90; i <= 97; i++) {
+        printf "\033[%dm  %d \033[m", i, i
+    }
+    printf "\n"
+    for (i = 100; i <= 107; i++) {
+        printf "\033[%dm %d \033[m", i, i
+    }
+    printf "\n"
+}
+

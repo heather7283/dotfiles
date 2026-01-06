@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 if [ "$1" = '-u' ]; then
   livedir="${XDG_RUNTIME_DIR}/s6/live"
@@ -7,8 +7,7 @@ else
   livedir=/run/s6-rc/
 fi
 
-svname="$1"
-if [ -n "$svname" ]; then
-  s6-rc -l "$livedir" stop "$svname" && s6-rc -l "$livedir" start "$svname"
+if [ -n "$1" ]; then
+  s6-rc -l "$livedir" stop "$@" && s6-rc -l "$livedir" start "$@"
 fi
 

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+cleanup() {
+    kill "$xwayland_pid"
+    kill $(jobs -p)
+}
+trap cleanup INT QUIT TERM EXIT
+
+max_display="$(find /tmp/ -maxdepth 1 -printf '%f\n' | grep -oPe '(?<=\.X)[0-9]+(?=-lock)' | sort -r | head -n 1)"
+display="$((max_display + 1))"
+
+export DISPLAY=":${display}"
+
+Xwayland "$DISPLAY" &
+xwayland_pid="$!"
+sleep 0.5
+openbox &
+sleep 0.5
+
+"$@"
+
+cleanup
+

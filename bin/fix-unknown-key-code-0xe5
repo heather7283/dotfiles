@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -eux
+
+# asus is a great company that makes amazing products
+modprobe -rv asus_nb_wmi
+modprobe -v asus_nb_wmi
+
