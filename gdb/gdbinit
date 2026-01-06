@@ -1,0 +1,71 @@
+set pagination off
+set debuginfod enabled off
+
+set history save on
+set history remove-duplicates 1
+set history filename ~/.local/share/gdb/history
+
+add-auto-load-safe-path /usr/lib/go/src/runtime/runtime-gdb.py
+
+macro define offsetof(t, f) &((t *) 0)->f
+
+python
+class PrintList(gdb.Command):
+    """Iterate over a circular doubly-linked list and print elements.
+
+    Usage: print_list HEAD TYPE MEMBER
+
+    HEAD: pointer to struct list (e.g. my_list)
+    TYPE: type of the struct containing the list node (e.g. struct my_struct)
+    MEMBER: name of the struct list member in TYPE (e.g. node)
+    """
+
+    def __init__(self):
+        super(PrintList, self).__init__("print_list", gdb.COMMAND_USER)
+
+    def invoke(self, arg, from_tty):
+        args = gdb.string_to_argv(arg)
+        if len(args) != 3:
+            print("Usage: print_list HEAD TYPE MEMBER")
+            return
+
+        head_expr, type_name, member = args
+
+        head = gdb.parse_and_eval(head_expr)
+        head = head.cast(gdb.lookup_type("struct list").pointer())
+        curr = head["next"]
+
+        type_ = gdb.lookup_type(type_name)
+        member_offset = gdb.parse_and_eval(f"offsetof({type_name}, {member})")
+
+        print(f"Iterating list starting at {head_expr}:")
+
+        while curr != head:
+            container_addr = curr.cast(gdb.lookup_type("char").pointer()) - int(member_offset)
+            container = container_addr.cast(type_.pointer())
+            print(container.dereference())
+
+            curr = curr["next"]
+
+PrintList()
+end
+
+python
+class LoopCommand(gdb.Command):
+    def __init__(self):
+        super(LoopCommand, self).__init__("loop", gdb.COMMAND_USER)
+
+    def invoke(self, arg, from_tty):
+        args = gdb.string_to_argv(arg)
+        if len(args) < 2:
+            print("Usage: loop N COMMAND")
+            return
+
+        n = int(args[0])
+        cmd = args[1]
+        for i in range(n):
+            gdb.execute(cmd.replace("$i", str(i)))
+
+LoopCommand()
+end
+
