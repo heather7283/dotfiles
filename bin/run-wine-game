@@ -1,54 +1,55 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 die() {
     printf '\033[31;1mERROR: %s\n' "$1"
     exit 1
 }
 
-games_basedir=~/games/
+print_and_run() {
+    printf "\033[1mrunning command:\033[m "
+    echo "$@"
+    "$@"
+}
 
 [ -z "$1" ] && die "no game name supplied"
 game_name="$1"
-
 shift 1
 
+games_basedir=~/games/
 game_wineprefix="${games_basedir}/${game_name}"
 game_wineprefix="$(realpath "$game_wineprefix")"
 [ ! -d "$game_wineprefix" ] && die "${game_wineprefix} is not a directory"
 
 config_file_template="$(cat <<'EOF'
-# use this file for customisation (/bin/sh compatible script)
+# use this file for customisation (bash compatible script)
 #game_exe=/path/to/game.exe
 #wine_exe=/path/to/wine/exe
 #enable_mangohud=no|dlsym # enabled by default
 #allow_internet=yes # disabled by default
+#custom_bwrap_args=(--skibidi)
 EOF
 )"
 config_file="${game_wineprefix}/run-wine-game.conf"
 if [ -f "${config_file}" ]; then
     . "${config_file}"
 else
-    echo "$config_file_template" >"${config_file}"
+    echo "$config_file_template" >"$config_file"
 fi
 
 if [ -z "$game_exe" ]; then
-    game_exe="${game_wineprefix}/drive_c/RUNME.exe"
-    game_exe="$(realpath "$game_exe")"
+    game_exe="$(realpath "${game_wineprefix}/drive_c/RUNME.exe")"
 fi
-[ ! -f "$game_exe" ] && die "${game_exe} does not exist"
 
 if [ -z "$wine_exe" ]; then
-    wine_exe="$(which wine)"
-    wine_exe="$(realpath "$wine_exe")"
+    wine_exe="$(command -v wine)" || die "wine not found"
 fi
-[ ! -e "$wine_exe" ] && die "wine not found"
 
 if [ "$enable_mangohud" = "dlsym" ]; then
-    mangohud_arg="mangohud --dlsym"
+    mangohud_arg=(mangohud --dlsym)
 elif [ "$enable_mangohud" = "no" ]; then
-    mangohud_arg=""
+    mangohud_arg=()
 else
-    mangohud_arg="mangohud"
+    mangohud_arg=(mangohud)
 fi
 
 if [ -n "$allow_internet" ]; then
@@ -61,55 +62,39 @@ export WINEESYNC=1
 export STAGING_SHARED_MEMORY=1
 export DXVK_ASYNC=1
 
-printf '\033[1m%s\033[0m: %s\n' game_wineprefix "$game_wineprefix"
-printf '\033[1m%s\033[0m: %s\n' game_exe "$game_exe"
-printf '\033[1m%s\033[0m: %s\n' wine_exe "$wine_exe"
-
 playtime_file="${game_wineprefix}/run-wine-game.playtime"
 if [ -f "$playtime_file" ]; then
-    playtime="$(cat playtime_file)"
+    playtime="$(cat "$playtime_file")"
 else
     playtime=0
 fi
 session_start_time="$(date '+%s')"
 
-cd "$(dirname "$game_exe")" || die "cd failed"
+cd "$game_wineprefix" || die "cd failed"
 
 if [ -n "$disable_bwrap" ]; then
-    $mangohud_arg "$wine_exe" "$game_exe"
+    print_and_run $mangohud_arg "$wine_exe" "$game_exe"
 else
-    echo bwrap cmdline: \
-    bwrap \
-        --unshare-all \
-        $allow_internet_arg \
-        --dev-bind / / \
-        --ro-bind ~ ~ \
-        --bind ~/.cache ~/.cache \
-        --bind "$game_wineprefix" "$game_wineprefix" \
-        --bind /tmp/ /tmp \
-        --die-with-parent \
-        -- \
-        $mangohud_arg \
-        "$wine_exe" \
-        "$game_exe" $extra_game_args "$@"
-
-    bwrap \
-        --unshare-all \
-        $allow_internet_arg \
-        --dev-bind / / \
-        --ro-bind ~ ~ \
-        --bind ~/.cache ~/.cache \
-        --bind "$game_wineprefix" "$game_wineprefix" \
-        --bind /tmp /tmp \
-        --die-with-parent \
-        -- \
-        $mangohud_arg \
-        "$wine_exe" \
-        "$game_exe" $extra_game_args "$@"
+    print_and_run \
+        bwrap \
+            --unshare-all \
+            $allow_internet_arg \
+            --ro-bind / / \
+            --dev-bind /dev /dev \
+            --bind ~/.cache ~/.cache \
+            --bind "$game_wineprefix" "$game_wineprefix" \
+            --bind /tmp /tmp \
+            --die-with-parent \
+            --chdir "${game_exe%/*}" \
+            "${custom_bwrap_args[@]}" \
+            -- \
+            "${mangohud_arg[@]}" \
+            "$wine_exe" \
+            "$game_exe" "${custom_game_args[@]}" "$@"
 fi
 
 session_end_time="$(date '+%s')"
-new_playtime="$(( playtime + session_end_time - session_start_time ))"
+new_playtime="$((playtime + session_end_time - session_start_time))"
 printf '%d' "$new_playtime" >"$playtime_file"
 
 wineserver -k
