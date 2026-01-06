@@ -26,6 +26,6 @@ export HYPRLAND_NO_SD_VARS=true
 if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
     exec "${real_exe}" --config ~/.config/hypr/nested.conf "$@"
 else
-    exec "${real_exe}"
+    exec "${real_exe}" "$@"
 fi
 
