@@ -18,7 +18,7 @@
   "hyprland/window": {
     "max-length": 30
   },
-  "hyprland/language": {
+  "sway/language": {
     "format-en": "En",
     "format-ru": "Ru"
   },

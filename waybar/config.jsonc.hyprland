@@ -33,7 +33,7 @@
     "format": "{format_source} 󰕾 {volume}%",
     "format-bluetooth": "{format_source} 󰂰 {volume}%",
     "format-muted": "{format_source} 󰸈",
-    "on-click": "foot-popup pulsemixer",
+    "on-click": "foot-popup pipemixer",
     "max-volume": 150,
     "scroll-step": 1
   },
@@ -43,6 +43,7 @@
     "format-off": "",
     "format-on": "󰂯",
     "format-connected": "󰂱 {device_alias}",
+    "format-connected-battery": "󰂱 {device_alias} {device_battery_percentage}",
     "max-length": 16
   },
   "network": {
