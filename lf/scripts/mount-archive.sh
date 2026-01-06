@@ -21,20 +21,10 @@ if [ -z "$mountpoint" ]; then die "couldn't create mountpoint"; fi
 
 mountpoint_dirname="${mountpoint%/*}"
 
-if [ ! -d ~/.cache/ratarmount/ ]; then
-  mkdir -p ~/.cache/ratarmount/ || die "couldn't create cache dir";
-fi
-
-# NOTE: read-only mount
-# surely recursive mount won't cause problems :clueless:
-stderr_wrapper ratarmount \
-  --recursive \
-  --lazy \
-  --parallelization "$(( $(nproc) / 2))" \
-  --index-folders ~/.cache/ratarmount/ \
-  -o 'ro' \
-  "$archive" \
-  "$mountpoint" || die "unable to mount archive"
+# runs out of RAM when mounting large archives without nocache
+stderr_wrapper fuse-archive \
+    -o nocache \
+    "$archive" "$mountpoint" || die "unable to mount archive"
 
 lf -remote "send $id cd $mountpoint"
 
