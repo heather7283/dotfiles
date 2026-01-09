@@ -1,3 +1,6 @@
+# since .zshenv disables global rcs, source /etc/profile manually here
+[ -r /etc/profile ] && . /etc/profile
+
 ## Environment variables
 if command -v nvim >/dev/null 2>&1; then
     export EDITOR='nvim'
