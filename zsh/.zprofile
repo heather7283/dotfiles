@@ -10,14 +10,17 @@ else
     export EDITOR='vi'
 fi
 
-command -v less >/dev/null && export PAGER='less'
-export LESS='--use-color --RAW-CONTROL-CHARS --chop-long-lines --mouse'
+command -v less >/dev/null && {
+    export PAGER='less'
+    export LESS='--use-color --RAW-CONTROL-CHARS --chop-long-lines --mouse'
+}
 
 # this forces man to only display ASCII (removes weird unicode quotes) and dont break words
-export MANOPT='-Eascii --no-hyphenation'
-command -v nvim >/dev/null && export MANPAGER='nvim -c ":set signcolumn=no" -c "Man!"'
+export MANOPT='-Eutf8 --nh --nj'
 # prefer sections 2 and 3 over 1 (I don't care about stat command, I care about stat syscall)
 export MANSECT='2:3:1:1p:8:3p:4:5:6:7:9:0p:n:l:p:o:1x:2x:3x:4x:5x:6x:7x:8x:tcl'
+# use custom man pager script
+export MANPAGER=~/.config/scripts/manpager.sh
 
 export BASH_ENV=~/.config/bash/non-interactive.sh
 
