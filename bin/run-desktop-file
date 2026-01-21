@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 background() {
   (
@@ -12,13 +12,24 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
+dirs=()
+
+add_dir() {
+    if [ -d "$1" ]; then
+        dirs+=("$1")
+    fi
+}
+
+add_dir ~/.local/share/flatpak/exports/share
+add_dir ~/.local/share/applications
+add_dir /usr/share/applications
+
 filename="$(realpath "$1")"
 if [ ! -f "$filename" ]; then
   # try to search for desktop file ourselves if provided path does not exist
-  filename="$(find ~/.local/share/applications/ /usr/share/applications/ \
-              -maxdepth 1 -type f -name "$1" -print -quit)"
+  filename="$(find "${dirs[@]}" -maxdepth 1 -type f -name "$1" -print -quit)"
   if [ -z "$filename" ]; then
-    echo "$1 not found in ~/.local/share/applications/ /usr/share/applications/"
+    echo "$1 not found in ${dirs[*]}"
     exit 1
   fi
 fi

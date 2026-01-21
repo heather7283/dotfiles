@@ -11,12 +11,18 @@ import sys
 #     }
 # }
 
-directory = os.path.expanduser("~/.local/share/applications/")
-filenames = list(map(lambda fname: os.path.join(directory, fname), \
-                     os.listdir(directory)))
-directory = "/usr/share/applications/"
-filenames.extend(list(map(lambda fname: os.path.join(directory, fname), \
-                          os.listdir(directory))))
+filenames = []
+
+def add_dir(dir):
+    dir = os.path.expanduser(dir)
+    if os.path.isdir(dir):
+        filenames.extend(map(lambda f: os.path.join(dir, f),
+                             filter(lambda f: f.endswith(".desktop"),
+                                    os.listdir(dir))))
+
+add_dir("~/.local/share/flatpak/exports/share/applications")
+add_dir("~/.local/share/applications/")
+add_dir("/usr/share/applications/")
 
 names = []
 entries = {}
