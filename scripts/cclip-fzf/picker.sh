@@ -26,6 +26,5 @@ fzf \
   --bind "ctrl-t:execute(~/.config/scripts/cclip-fzf/tag.sh {1})+reload(${list_cmd})" \
   --bind "ctrl-space:become(${become_cmd})" \
   --bind "ctrl-r:reload(${list_cmd})" \
-  --bind "enter:become(cclip get {1} | wl-copy -t {2}; sleep 0.05)"
-  # DO NOT REMOVE sleep 0.05 EVERYTHING BREAKS WITHOUT IT
+  --bind "enter:become(cclip copy {1})"
 
