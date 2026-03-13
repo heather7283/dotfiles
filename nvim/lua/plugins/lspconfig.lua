@@ -13,39 +13,48 @@ vim.lsp.config("*", {
   capabilities = capabilities
 })
 
-config_and_enable("lua_ls", {
-  settings = {
-    Lua = {
-      diagnostics = {
-        globals = { "vim" },
-      },
-      runtime = {
-        version = 'LuaJIT'
-      },
-      workspace = {
-        checkThirdParty=false,
-        library = {
-          vim.fn.expand("$VIMRUNTIME/lua"),
-          vim.fn.expand("$VIMRUNTIME/lua/vim/lsp"),
-          vim.fn.stdpath("data") .. "/lazy/lazy.nvim/lua/lazy",
-        }
-      }
-    }
-  }
-})
-
 config_and_enable("basedpyright", {
   settings = {
     basedpyright = {
       analysis = {
-        typeCheckingMode = "basic"
+        typeCheckingMode = "off" -- this language is not real anyway
       }
     }
   },
-  root_dir = function(filename, on_dir)
-    on_dir(vim.fn.matchstr(filename, ".*/"))
-  end
+  root_markers = { 'venv', '.git' },
 })
+
+local lua_ls_path = vim.fn.exepath("lua-language-server");
+if lua_ls_path ~= "" then
+  config_and_enable("lua_ls", {
+    cmd = { lua_ls_path },
+    settings = {
+      Lua = {
+        diagnostics = {
+          globals = { "vim" },
+        },
+        runtime = {
+          version = 'LuaJIT'
+        },
+        workspace = {
+          checkThirdParty=false,
+          library = {
+            vim.fn.expand("$VIMRUNTIME/lua"),
+            vim.fn.expand("$VIMRUNTIME/lua/vim/lsp"),
+            vim.fn.stdpath("data") .. "/lazy/lazy.nvim/lua/lazy",
+          }
+        }
+      }
+    }
+  })
+end
+
+local gopls_path = vim.fn.exepath("gopls");
+if gopls_path ~= "" then
+  config_and_enable("gopls", {
+    cmd = { gopls_path }
+  })
+end
 
 -- use system clangd
 local clangd_path = vim.fn.exepath("clangd");
