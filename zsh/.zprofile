@@ -22,40 +22,14 @@ export MANSECT='2:3:1:1p:8:3p:4:5:6:7:9:0p:n:l:p:o:1x:2x:3x:4x:5x:6x:7x:8x:tcl'
 # use custom man pager script
 export MANPAGER=~/.config/scripts/manpager.sh
 
-export BASH_ENV=~/.config/bash/non-interactive.sh
-
 # this looks stupid, do not remove. Without this /bin/sh doesn't pick up this variable
 export HOST="$HOST"
 
-# XDG user dirs
-export XDG_CONFIG_HOME=~/.config/
-export XDG_DATA_HOME=~/.local/share/
-export XDG_STATE_HOME=~/.local/state/
-export XDG_CACHE_HOME=~/.cache/
-
-# cmake is retarded
-export CMAKE_EXPORT_COMPILE_COMMANDS=1
-# Nvidia cache directory (prevent creating ~/.nv)
-export __GL_SHADER_DISK_CACHE_PATH=~/.cache/nv/
-export CUDA_CACHE_PATH=~/.cache/nv/
-# npm cache directory
-export npm_config_cache=~/.cache/npm
-# pnpm store
-export PNPM_HOME=~/.cache/pnpm
-# move .cargo out of ~
-export CARGO_HOME=~/.cache/cargo
-# move go out of ~
-export GOPATH=~/.cache/go
-# move .gnupg out of ~
-export GNUPGHOME=~/.local/share/gnupg
-# why am I even writing those comments
-export PYTHON_HISTORY=~/.cache/python_history
-export TEXMFVAR=~/.cache/texlive/texmf-var
-export ANDROID_USER_HOME=~/.local/share/android
-export _JAVA_OPTIONS=-Djava.util.prefs.userRoot=/home/heather/.config/java
-export WINEPREFIX=~/.local/share/wineprefix
-export INPUTRC=~/.config/inputrc
-export RLWRAP_HOME=~/.cache/rlwrap
+if [[ ! -v PARSED_CONFIG_ENVIRONMENT_D ]]; then
+    set -a
+    . ~/.config/environment.d/*.conf
+    set +a
+fi
 
 # I'll put it here I guess
 typeset -U path
