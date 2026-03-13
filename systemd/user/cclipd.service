@@ -1,0 +1,11 @@
+[Unit]
+Description=Clipboard manager for wayland
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=cclipd -s 2 -c 10000 -t image/png -t image/* -t text/plain;charset=utf-8 -t text/* -t * -P 512
+
+[Install]
+WantedBy=graphical-session.target
+

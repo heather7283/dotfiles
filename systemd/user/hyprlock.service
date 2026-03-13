@@ -1,0 +1,13 @@
+[Unit]
+Description=Hyprland's screen locking utility
+Before=sleep.target
+
+[Service]
+Type=simple
+ExecCondition=/usr/bin/systemctl --user --quiet is-active graphical-session.target
+ExecStart=/usr/bin/hyprlock
+ExecStartPost=sleep 0.5
+
+[Install]
+RequiredBy=sleep.target
+

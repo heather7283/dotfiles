@@ -1,0 +1,11 @@
+[Unit]
+Description=Desktop notifications for platform profile change
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/bin/sh -c 'f=/sys/firmware/acpi/platform_profile; notify() { notify-send "platform profile changed" "$(cat "$f")"; }; inotifywait -mqe modify "$f" | while read _; do notify; done'
+
+[Install]
+WantedBy=graphical-session.target
+

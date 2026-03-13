@@ -1,0 +1,10 @@
+[Unit]
+Description=User systemd services for graphical session
+BindsTo=graphical-session.target
+
+Wants=xdg-desktop-portal-hyprland.service
+Wants=xdg-desktop-portal-termfilechooser.service
+Wants=xdg-desktop-portal.service
+Wants=xdg-permission-store.service
+Wants=xdg-document-portal.service
+

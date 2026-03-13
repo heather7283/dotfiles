@@ -1,0 +1,12 @@
+[Unit]
+Description=Waybar service
+PartOf=graphical-session.target
+
+[Service]
+Type=dbus
+BusName=fr.arouillard.waybar
+ExecStart=waybar
+
+[Install]
+WantedBy=graphical-session.target
+
