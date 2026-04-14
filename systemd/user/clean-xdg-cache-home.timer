@@ -1,0 +1,10 @@
+[Unit]
+Description=Weekly cleanup of XDG_CACHE_HOME
+
+[Timer]
+OnCalendar=weekly
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+

@@ -1,0 +1,7 @@
+[Unit]
+Description=Clean old files in XDG_CACHE_HOME
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh ${XDG_CONFIG_HOME}/scripts/clean-xdg-cache-home.sh
+
