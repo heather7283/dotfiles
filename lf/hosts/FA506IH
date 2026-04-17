@@ -15,7 +15,6 @@ set truncatechar "…"
 
 # Host-specific, no need for this bloat on remote machines
 set icons
-set sixel
 set mouse
 
 # Now, source main config file

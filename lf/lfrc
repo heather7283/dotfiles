@@ -50,6 +50,7 @@ cmd make-file-from-clibpoard %exec ~/.config/lf/scripts/make-file-from-clibpoard
 
 cmd del %exec ~/.config/lf/scripts/delete.sh
 cmd rename %exec ~/.config/lf/scripts/rename.sh
+cmd clone %exec ~/.config/lf/scripts/clone.sh
 cmd paste %exec ~/.config/lf/scripts/paste.sh
 
 cmd paste-hardlink %exec ~/.config/lf/scripts/paste-link.sh hard
@@ -58,7 +59,6 @@ cmd paste-symlink-relative %exec ~/.config/lf/scripts/paste-link.sh symbolic rel
 
 cmd chmod %chmod +x "$f"
 cmd du %du -hs . 2>/dev/null
-cmd clone %cp -a "${f}" "${f}.copy"
 
 cmd quit-wrapped :{{
   cd ~

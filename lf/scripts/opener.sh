@@ -15,8 +15,8 @@ case "$extension" in
       exec mpv "$filename" ;;
   djvu|pdf)
       exec zathura "$filename" ;;
-  docx|odt)
-      exec libreoffice "$(realpath "$filename")" ;;
+  docx|odt|ppt|pptx)
+      exec libreoffice-bin "$(realpath "$filename")" ;;
   html)
       exec browser "$filename" ;;
 esac
@@ -30,8 +30,8 @@ case "$mime_description" in
     exec mpv --force-window=immediate "$filename" ;;
   audio/*)
     exec mpv --no-video "$filename" ;;
-  application/vnd.openxmlformats-officedocument.wordprocessingml.document*)
-    exec libreoffice "$(realpath "$filename")" ;;
+  application/vnd.openxmlformats-officedocument.*)
+    exec libreoffice-bin "$(realpath "$filename")" ;;
   application/pdf*)
     exec zathura "$filename" ;;
 esac
