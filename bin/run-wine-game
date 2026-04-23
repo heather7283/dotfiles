@@ -81,6 +81,7 @@ else
             $allow_internet_arg \
             --ro-bind / / \
             --dev-bind /dev /dev \
+            --proc /proc \
             --bind ~/.cache ~/.cache \
             --bind "$game_wineprefix" "$game_wineprefix" \
             --bind /tmp /tmp \
