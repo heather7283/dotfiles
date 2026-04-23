@@ -1,4 +1,4 @@
 #!/bin/sh
 
-foot-popup -- sh -c 'exec fzf "$@" 0<&4 1>&5' 'sh' "$@" 4<&0 5>&1
+foot-popup -- sh -c 'FZF_DEFAULT_COMMAND=false exec fzf "$@" 0<&4 1>&5' 'sh' "$@" 4<&0 5>&1
 
