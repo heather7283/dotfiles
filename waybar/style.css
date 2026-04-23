@@ -47,7 +47,7 @@
  * -------------------------------------------------------------------------- */
 
 #clock {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: bold;
   /*margin-right: 20px;
   margin-left: 12px;*/
@@ -85,9 +85,9 @@ button:hover {
 
 #workspaces button {
   color: #D3C6AA;
-  /*border-bottom: 2px solid transparent;*/
+  border-bottom: 2px solid transparent;
   /*To compensate for the top border and still have vertical centering*/
-  /*padding-top: 2px;*/
+  padding-top: 2px;
   padding-left: 0px;
   padding-right: 0px;
   margin-left: 0px;
@@ -97,17 +97,19 @@ button:hover {
 
 #workspaces button:hover {
   background: rgba(0, 0, 0, 0.2);
-  /*border-color: #aaaaaa;*/
-}
-
-#workspaces button.focused {
-  border-color: #A7C080;
-  background-color: #475258;
 }
 
 #workspaces button.active {
   border-color: #A7C080;
   background-color: #475258;
+}
+
+#workspaces button.urgent {
+  border-color: #E67E80;
+}
+
+#workspaces button.empty {
+  color: #859289;
 }
 
 #custom-gpu-screen-recorder.active {

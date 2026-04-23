@@ -9,6 +9,7 @@
     "clock"
   ],
   "modules-right": [
+    "custom/gpu-screen-recorder",
     "sway/language",
     "pulseaudio",
     "bluetooth",
@@ -19,8 +20,7 @@
     "max-length": 30
   },
   "sway/language": {
-    "format-en": "En",
-    "format-ru": "Ru"
+    "format": "{short}"
   },
   "tray": {
     "icon-size": 20,
@@ -42,6 +42,7 @@
     "format-off": "",
     "format-on": "󰂯",
     "format-connected": "󰂱 {device_alias}",
+    "format-connected-battery": "󰂱 {device_alias} {device_battery_percentage}",
     "max-length": 16
   },
   "network": {
@@ -72,7 +73,7 @@
   },
   "clock": {
     "interval": 30,
-    "format": "{:%H:%M}",
+    "format": "{:%a, %d %b %G %H:%M}",
     "tooltip-format": "{:%a, %d %b %G}"
   },
   "sway/workspaces": {
@@ -103,7 +104,7 @@
       "10": []
     },
     "sort-by-number": true,
-    "disable-scroll": true
+    "disable-scroll": false
   },
   "sway/mode": {
     "format": "{}"
