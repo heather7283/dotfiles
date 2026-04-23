@@ -52,6 +52,6 @@ ZSH_HIGHLIGHT_STYLES[numeric-fd]='fg=yellow'
 ZSH_HIGHLIGHT_STYLES[arg0]='fg=red,bold'
 ZSH_HIGHLIGHT_STYLES[default]=''
 
-# background in visual mode (requires patched plugin)
+# background in visual mode
 zle_highlight+=('region:bg=#543A48')
 
