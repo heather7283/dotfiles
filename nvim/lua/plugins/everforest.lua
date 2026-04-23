@@ -23,6 +23,10 @@ local options = {
     hl.DiagnosticUnderlineError = vim.tbl_deep_extend('keep', {
       fg = palette.none,
     }, hl.DiagnosticUnderlineError)
+
+    hl.Comment = vim.tbl_deep_extend('keep', {
+      italic = false,
+    }, hl.Comment)
   end
 }
 

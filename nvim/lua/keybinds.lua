@@ -23,8 +23,8 @@ end
 
 -- navigate within insert mode
 map("i", "<C-h>", "<Left>", "Move left")
-map("i", "<C-j>", "<C-o>gj", "Move down") -- FIXME: this seems cursed, there should be a better way
-map("i", "<C-k>", "<C-o>gk", "Move up")
+map("i", "<C-j>", "<Down>", "Move down")
+map("i", "<C-k>", "<Up>", "Move up")
 map("i", "<C-l>", "<Right>", "Move right")
 
 -- Allow moving the cursor through wrapped lines with j, k

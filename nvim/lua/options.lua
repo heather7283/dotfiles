@@ -37,6 +37,8 @@ o.timeoutlen = 400
 o.undofile = true
 o.autochdir = true
 
+o.colorcolumn = "101"
+
 -- interval for writing swap file to disk, also used by gitsigns
 o.updatetime = 250
 
