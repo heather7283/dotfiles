@@ -8,10 +8,14 @@ elif pager="$(command -v less)"; then
     set -- "$pager"
 fi
 
-# remove fancy qoutes that make my shell shit itself when I copy commands from man pages
+# remove fancy characters that make my shell shit itself when I copy commands from man pages
+process() {
+    sed -e "s/[‘’]/'/g" -e 's/[“”]/"/g' -e 's/˜/~/g' -e 's/ˆ/^/g' "$1"
+}
+
 if [ -z "$pager" ]; then
-    sed -e "s/[‘’]/'/g;"'s/[“”]/"/g' "$f"
+    process "$f"
 else
-    sed -e "s/[‘’]/'/g;"'s/[“”]/"/g' "$f" | "$@"
+    process "$f" | "$@"
 fi
 

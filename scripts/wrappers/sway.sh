@@ -1,26 +1,12 @@
-uid="$(id -u)"
-if [ -z "${uid}" ]; then
-    die "unable to determine current user's id"
-fi
+# there is no way to set envvars in sway config
+export XDG_CURRENT_DESKTOP=sway
 
-export XDG_RUNTIME_DIR="${TMPDIR:-/tmp}/${uid}-runtime-dir"
-export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/dbus.sock"
+"$real_exe" "$@"
+rc="$?"
 
-if [ ! -d "$XDG_RUNTIME_DIR" ]; then
-    mkdir -pv "$XDG_RUNTIME_DIR" || die "failed to create ${XDG_RUNTIME_DIR}"
-fi
+# there is no way to run commands at shutdown in sway itself so do it here
+systemctl --user stop sway-session.target
+systemctl --user unset-environment DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP SWAYSOCK
 
-#gpu=/dev/dri/by-name/amdgpu-card
-#if [ ! -e "$gpu" ]; then
-#  echo "${gpu} doesn't exist!" >&2
-#  exit 1
-#fi
-#
-#real_gpu="$(realpath "$gpu")"
-#export WLR_DRM_DEVICES="$real_gpu"
-
-"$real_exe" --unsupported-gpu "$@"
-
-# cleanup
-exec s6-svscanctl -t "${XDG_RUNTIME_DIR}/s6/service"
+exit "$rc"
 
