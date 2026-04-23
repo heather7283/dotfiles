@@ -8,14 +8,20 @@ setopt globdots
 # allow comments in interactive shells
 setopt INTERACTIVE_COMMENTS
 
-# history size
-HISTSIZE=2147483647
-SAVEHIST=2147483647
-
-# save each shell history into its own file (for funny statistics later)
-zsh_history_dir="${XDG_DATA_HOME:-${HOME}/.local/share}/zsh/history/"
+# TODO: this should be removed when it's no longer needed
+zsh_history_dir="${XDG_DATA_HOME}/zsh/history"
 [ ! -d "$zsh_history_dir" ] && mkdir -p "$zsh_history_dir"
-HISTFILE="${zsh_history_dir}/histfile-${$}-${RANDOM}-${RANDOM}"
+
+if zmodload x_heather7283/sqlite_history 2>/dev/null \
+    && sqlite_history_open "${XDG_DATA_HOME}/zsh/history.sqlite3"
+then
+    have_sqlite_history=1
+else
+    echo "this build of zsh does not have x_heather7283/sqlite_history, using fallback"
+    HISTSIZE=2147483647
+    SAVEHIST=2147483647
+    HISTFILE="${zsh_history_dir}/histfile-$(date -Is)"
+fi
 
 # don't load unnecessary eye candy
 zsh_load_bloat=0
@@ -208,15 +214,29 @@ zle -N fzf-history-search
 bindkey -M viins '\C-r' fzf-history-search
 bindkey -M vicmd '\C-r' fzf-history-search
 
-# search global history with fzf on C-g
-fzf-global-history-search() {
-    local cmd="$(ls -tc "$zsh_history_dir" | sed "s|^|${zsh_history_dir}|" \
-                 | xargs cat 2>/dev/null | fzf --scheme=history)"
+# TODO: this should be removed when it is no longer needed
+fzf-global-history-search-old() {
+    local cmd="$(ls -tc "$zsh_history_dir" | sed "s|^|${zsh_history_dir}/|" \
+                 | xargs tac 2>/dev/null | fzf --scheme=history)"
     [ -n "$cmd" ] && BUFFER="$cmd"
 }
+
+if [ -n "$have_sqlite_history" ]; then
+    fzf-global-history-search() {
+        local cmd="$(sqlite_history_list -z | fzf --read0 --scheme=history)"
+        [ -n "$cmd" ] && BUFFER="$cmd"
+    }
+else
+    fzf-global-history-search() {
+        fzf-global-history-search-old
+    }
+fi
 zle -N fzf-global-history-search
+zle -N fzf-global-history-search-old
 bindkey -M viins '\C-g' fzf-global-history-search
 bindkey -M vicmd '\C-g' fzf-global-history-search
+bindkey -M viins '\C-o' fzf-global-history-search-old
+bindkey -M vicmd '\C-o' fzf-global-history-search-old
 
 clipboard-paste-but-better() {
     local paste="$(wl-paste -t 'text/plain;charset=utf-8' || tmux show-buffer)"
@@ -600,6 +620,14 @@ cleanup_tmp_files() {
     rm "${TMPDIR:-/tmp}/zsh_${$}_tmpfile_"* 2>/dev/null
 }
 zshexit_functions+=(cleanup_tmp_files)
+
+# sqlite_history stuff
+if [ -n "$have_sqlite_history" ]; then
+    sqlite_history_save_wrapper() { sqlite_history_save || true }
+    sqlite_history_close_wrapper() { sqlite_history_close || true }
+    precmd_functions+=( sqlite_history_save_wrapper )
+    zshexit_functions+=( sqlite_history_close_wrapper )
+fi
 # ========== Hooks ==========
 
 
