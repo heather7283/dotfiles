@@ -223,7 +223,7 @@ fzf-global-history-search-old() {
 
 if [ -n "$have_sqlite_history" ]; then
     fzf-global-history-search() {
-        local cmd="$(sqlite_history_list -z | fzf --read0 --scheme=history)"
+        local cmd="$(sqlite_history_list -rz | fzf --read0 --scheme=history)"
         [ -n "$cmd" ] && BUFFER="$cmd"
     }
 else
