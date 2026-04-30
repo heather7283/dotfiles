@@ -10,7 +10,7 @@ fi
 
 # remove fancy characters that make my shell shit itself when I copy commands from man pages
 process() {
-    sed -e "s/[‘’]/'/g" -e 's/[“”]/"/g' -e 's/˜/~/g' -e 's/ˆ/^/g' "$1"
+    sed -e "s/[‘’]/'/g" -e 's/[“”]/"/g' -e 's/˜/~/g' -e 's/ˆ/^/g' -e "s/´/'/g" "$1"
 }
 
 if [ -z "$pager" ]; then
