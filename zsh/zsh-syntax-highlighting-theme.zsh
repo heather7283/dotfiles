@@ -53,5 +53,5 @@ ZSH_HIGHLIGHT_STYLES[arg0]='fg=red,bold'
 ZSH_HIGHLIGHT_STYLES[default]=''
 
 # background in visual mode
-zle_highlight+=('region:bg=#543A48')
+zle_highlight+=('region:bg=#543A48' 'paste:none')
 
