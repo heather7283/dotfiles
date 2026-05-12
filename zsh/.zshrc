@@ -301,7 +301,7 @@ bindkey -M vicmd '\C-e' edit-buffer-in-editor
 ln_help_displayed=0
 zle-line-pre-redraw() {
     if [ "$BUFFER" = "ln" ] && [ "$ln_help_displayed" = 0 ]; then
-        echo
+        echo "\033[0m"
         echo "ln [OPTION]... [-T] TARGET LINK_NAME"
         echo "ln [OPTION]... TARGET"
         echo "ln [OPTION]... TARGET... DIRECTORY"
