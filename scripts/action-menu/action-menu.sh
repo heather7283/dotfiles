@@ -14,7 +14,6 @@ newline='
 items="\
 Internet [s]earch${tab}~/.config/scripts/firefox-web-search.sh
 [7]tv browser${tab}~/.config/scripts/7tv-browser/7tv-browser.sh
-[t]ranslator${tab}~/.config/scripts/deeplx-translator/deeplx-translator.sh
 [e]moji picker${tab}~/.config/scripts/emoji-picker/picker.sh
 [u]nicode picker${tab}~/.config/scripts/unicode-picker/picker.sh
 [b]rowser history${tab}~/.config/scripts/firefox-history-fzf/firefox-history-fzf.sh
