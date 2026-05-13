@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Android Studio
+Comment=Android development environment based on IntelliJ IDEA
+Icon=android-studio
+Categories=Development;IDE;
+Exec=android-studio -Dawt.toolkit.name=WLToolkit
+TryExec=android-studio
+StartupWMClass=jetbrains-studio
