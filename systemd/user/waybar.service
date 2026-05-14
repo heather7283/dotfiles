@@ -5,7 +5,9 @@ PartOf=graphical-session.target
 [Service]
 Type=dbus
 BusName=fr.arouillard.waybar
-ExecStart=waybar
+# Fucking systemd refuses to use my custom PATH even if I set-environment it
+# FUCK YOU SYSTEMD, KILL YOURSELF, FUCK YOU FUCK YOU FUCK YOU FUCK YOU!!!!!!
+ExecStart=/home/heather/bin/waybar
 
 [Install]
 WantedBy=graphical-session.target

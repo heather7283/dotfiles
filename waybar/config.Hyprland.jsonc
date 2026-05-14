@@ -73,8 +73,8 @@
     "format": ""
   },
   "clock": {
-    "interval": 30,
-    "format": "{:%a, %d %b %G %H:%M}",
+    "interval": 1,
+    "format": "{:%a, %b %G-%m-%d %H:%M:%S}",
     "tooltip-format": "{:%a, %d %b %G}"
   },
   "hyprland/workspaces": {
