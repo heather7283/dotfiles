@@ -70,9 +70,6 @@ if clangd_path ~= "" then
   })
 end
 
--- cooked af
-vim.cmd(":LspStart")
-
 vim.keymap.set('n', 'K', vim.lsp.buf.hover)
 vim.keymap.set('n', '<leader>r', vim.lsp.buf.rename)
 

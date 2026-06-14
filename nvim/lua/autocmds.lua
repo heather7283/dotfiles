@@ -52,11 +52,37 @@ vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
 })
 
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "html", "xml", "lua", "css", },
+  pattern = { "lua", "css", "nix", "vue" },
   callback = function()
     vim.bo.tabstop = 2      -- Set tab width to 2 spaces
     vim.bo.shiftwidth = 2   -- Set indentation width to 2 spaces
     vim.bo.expandtab = true -- Convert tabs to spaces
   end
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "html", "xml", "json", "jsonc" },
+  callback = function()
+    vim.bo.tabstop = 1
+    vim.bo.shiftwidth = 1
+    vim.bo.expandtab = true
+  end
+})
+
+-- https://github.com/neovim/neovim/issues/34086#issuecomment-3464120391
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+      if
+        vim.api.nvim_buf_is_loaded(bufnr) and vim.bo[bufnr].filetype == "man"
+      then
+        vim.api.nvim_feedkeys(
+          vim.api.nvim_replace_termcodes("KK", true, false, true),
+          "n",
+          false
+        )
+      end
+    end
+  end,
 })
 
