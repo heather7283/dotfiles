@@ -1,0 +1,18 @@
+/* credit to @d1bg */
+
+/* hide by default */
+.members_c8ffbb {
+    width: 20px !important;
+    padding-left: var(--member-mini) !important;
+}
+
+.membersWrap_c8ffbb {
+    min-width: 0px !important;
+}
+
+/* extend on hover */
+.members_c8ffbb:hover {
+    width: initial !important;
+    padding-left: initial !important;
+}
+

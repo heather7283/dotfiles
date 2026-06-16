@@ -1,0 +1,11 @@
+img[class*='avatarDecoration'] {
+    display: none;
+}
+
+[class^="profileEffects"] {
+  display: none;
+}
+
+.avatarDecoration__44b0c {
+    display: none;
+}

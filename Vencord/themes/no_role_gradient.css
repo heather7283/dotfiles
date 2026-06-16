@@ -1,0 +1,6 @@
+/* disable retarded gradient role colors */
+.e5de7811b2777bfa-usernameGradient {
+  color: var(--custom-gradient-color-1) !important;
+  -webkit-text-fill-color: none var(--custom-gradient-color-1);
+}
+
