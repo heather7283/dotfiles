@@ -57,7 +57,8 @@
         },
         "Settings": {
             "enabled": true,
-            "settingsLocation": "aboveActivity"
+            "settingsLocation": "aboveActivity",
+            "includeVencordInfoWhenCopying": true
         },
         "SupportHelper": {
             "enabled": true
@@ -707,6 +708,15 @@
         "CustomCommands": {
             "enabled": false,
             "clyde": true
+        },
+        "CharacterCounter": {
+            "enabled": false
+        },
+        "NoMiddleClickPaste": {
+            "enabled": true
+        },
+        "ConcatenatedComponentExtractor": {
+            "enabled": true
         }
     },
     "notifications": {
@@ -719,11 +729,12 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1776103149214
+        "settingsSyncVersion": 1781728820283
     },
     "eagerPatches": false,
     "uiElements": {
         "chatBarButtons": {},
         "messagePopoverButtons": {}
-    }
+    },
+    "windowsMaterial": "none"
 }
