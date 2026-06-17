@@ -1,0 +1,24 @@
+[Desktop Entry]
+Name=Telegram
+Comment=New era of messaging
+TryExec=/usr/bin/telegram-desktop
+# setting this envvar makes telegram use GTK file picker
+Exec=env XDG_CURRENT_DESKTOP=gnome QT_QPA_PLATFORMTHEME=flatpak /usr/bin/telegram-desktop -- %U
+Icon=org.telegram.desktop
+Terminal=false
+StartupWMClass=TelegramDesktop
+Type=Application
+Categories=Chat;Network;InstantMessaging;Qt;
+MimeType=x-scheme-handler/tg;x-scheme-handler/tonsite;
+Keywords=tg;chat;im;messaging;messenger;sms;tdesktop;
+Actions=quit;
+DBusActivatable=true
+SingleMainWindow=true
+X-GNOME-UsesNotifications=true
+X-GNOME-SingleWindow=true
+
+[Desktop Action quit]
+Exec=/usr/bin/telegram-desktop -quit
+Name=Quit Telegram
+Icon=application-exit
+
