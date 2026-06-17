@@ -26,9 +26,12 @@ export MANPAGER=~/.config/scripts/manpager.sh
 export HOST="$HOST"
 
 if [[ ! -v PARSED_CONFIG_ENVIRONMENT_D ]]; then
-    set -a
-    . ~/.config/environment.d/*.conf
-    set +a
+    while IFS='=' read -r key val; do
+        if [[ -z "$key" ]] || [[ "$key" = \#* ]]; then
+            continue
+        fi
+        export "$key"="${(e)val}"
+    done <~/.config/environment.d/*.conf
 fi
 
 # I'll put it here I guess
