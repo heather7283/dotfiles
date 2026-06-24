@@ -13,7 +13,7 @@ zsh_history_dir="${XDG_DATA_HOME}/zsh/history"
 [ ! -d "$zsh_history_dir" ] && mkdir -p "$zsh_history_dir"
 
 if zmodload x_heather7283/sqlite_history 2>/dev/null \
-    && sqlite_history_open "${XDG_DATA_HOME}/zsh/history.sqlite3"
+    && sqlite-history-open -v "${XDG_DATA_HOME}/zsh/history.sqlite3"
 then
     have_sqlite_history=1
 else
@@ -223,7 +223,7 @@ fzf-global-history-search-old() {
 
 if [ -n "$have_sqlite_history" ]; then
     fzf-global-history-search() {
-        local cmd="$(sqlite_history_list -rz | fzf --read0 --scheme=history)"
+        local cmd="$(sqlite-history-list -rz | fzf --read0 --scheme=history)"
         [ -n "$cmd" ] && BUFFER="$cmd"
     }
 else
@@ -625,12 +625,12 @@ cleanup_tmp_files() {
 }
 zshexit_functions+=(cleanup_tmp_files)
 
-# sqlite_history stuff
+# sqlite-history stuff
 if [ -n "$have_sqlite_history" ]; then
-    sqlite_history_save_wrapper() { sqlite_history_save || true }
-    sqlite_history_close_wrapper() { sqlite_history_close || true }
-    precmd_functions+=( sqlite_history_save_wrapper )
-    zshexit_functions+=( sqlite_history_close_wrapper )
+    sqlite-history-save-wrapper() { sqlite-history-save || true }
+    sqlite-history-close-wrapper() { sqlite-history-close || true }
+    precmd_functions+=( sqlite-history-save-wrapper )
+    zshexit_functions+=( sqlite-history-close-wrapper )
 fi
 # ========== Hooks ==========
 
