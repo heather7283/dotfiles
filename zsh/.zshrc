@@ -13,7 +13,7 @@ zsh_history_dir="${XDG_DATA_HOME}/zsh/history"
 [ ! -d "$zsh_history_dir" ] && mkdir -p "$zsh_history_dir"
 
 if zmodload x_heather7283/sqlite_history 2>/dev/null \
-    && sqlite-history-open -v "${XDG_DATA_HOME}/zsh/history.sqlite3"
+    && sqlite-history-open "${XDG_DATA_HOME}/zsh/history.sqlite3"
 then
     have_sqlite_history=1
 else
