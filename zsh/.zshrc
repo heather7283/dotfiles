@@ -12,13 +12,13 @@ setopt INTERACTIVE_COMMENTS
 zsh_history_dir="${XDG_DATA_HOME}/zsh/history"
 [ ! -d "$zsh_history_dir" ] && mkdir -p "$zsh_history_dir"
 
+HISTSIZE=2147483647
 if zmodload x_heather7283/sqlite_history 2>/dev/null \
     && sqlite-history-open "${XDG_DATA_HOME}/zsh/history.sqlite3"
 then
     have_sqlite_history=1
 else
     echo "this build of zsh does not have x_heather7283/sqlite_history, using fallback"
-    HISTSIZE=2147483647
     SAVEHIST=2147483647
     HISTFILE="${zsh_history_dir}/histfile-$(date -Is)"
 fi
