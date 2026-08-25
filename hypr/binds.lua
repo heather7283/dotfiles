@@ -89,14 +89,14 @@ for i = 1, 10 do
 end
 
 -- Audio control with pactl
-super_bind("XF86AudioRaiseVolume", hl.dsp.exec_raw("wpctl set-volume @DEFAULT_SINK@ 5%+"), {
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_raw("wpctl set-volume @DEFAULT_SINK@ 5%+"), {
   repeating = true
 })
-super_bind("XF86AudioLowerVolume", hl.dsp.exec_raw("wpctl set-volume @DEFAULT_SINK@ 5%-"), {
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_raw("wpctl set-volume @DEFAULT_SINK@ 5%-"), {
   repeating = true
 })
-hl.bind("XF86AudioMute", hl.dsp.exec_raw("wpctl set-volume @DEFAULT_SINK@ toggle"))
-hl.bind("XF86AudioMicMute", hl.dsp.exec_raw("wpctl set-volume @DEFAULT_SOURCE@ toggle"))
+hl.bind("XF86AudioMute", hl.dsp.exec_raw("wpctl set-mute @DEFAULT_SINK@ toggle"))
+hl.bind("XF86AudioMicMute", hl.dsp.exec_raw("wpctl set-mute @DEFAULT_SOURCE@ toggle"))
 -- VoidSymbol is capslock
 hl.bind("VoidSymbol", hl.dsp.exec_raw("wpctl set-mute @DEFAULT_SOURCE@ toggle"))
 
@@ -113,7 +113,7 @@ hl.bind("code:160", function()
 end)
 
 -- Bind F10 key to toggle player play/pause
-super_bind("XF86TouchpadToggle", hl.dsp.exec_raw("playerctl play-pause"))
+hl.bind("XF86TouchpadToggle", hl.dsp.exec_raw("playerctl play-pause"))
 
 super_bind("KP_Multiply", hl.dsp.exec_raw("pkill -USR1 gpu-scree"))
 
