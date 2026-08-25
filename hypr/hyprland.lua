@@ -7,9 +7,17 @@ require('autostart')
 hl.monitor {
   output = "eDP-1",
   mode = "1920x1080",
+  position = "0x0",
   scale = 1,
   vrr = true,
 }
+
+for i = 1, 10 do
+  hl.workspace_rule {
+    workspace = tostring(i),
+    monitor = "eDP-1",
+  }
+end
 
 hlc.input = {
   kb_layout = "us,ru", -- English and Russian layouts
