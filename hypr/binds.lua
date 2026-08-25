@@ -109,7 +109,7 @@ hl.bind("XF86MonBrightnessDown", hl.dsp.exec_raw("brightnessctl set 10%-"), { re
 hl.bind("code:160", function()
   hl.timer(function()
     hl.dispatch(hl.dsp.dpms({ action = "disable" }))
-  end, { timeout = 500, type = "oneshot" })
+  end, { timeout = 100, type = "oneshot" })
 end)
 
 -- Bind F10 key to toggle player play/pause
