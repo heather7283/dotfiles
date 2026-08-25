@@ -53,6 +53,7 @@ super_bind("SHIFT + S", hl.dsp.exec_cmd([[
 super_bind("CTRL + S", hl.dsp.exec_cmd([[
   frzscr -c sh -c 'grim -g "$(slurp -d)" -' \
   | ssedit -f png \
+  | tee ~/pictures/sshots/"$(date --iso-8601=ns)".png \
   | wl-copy -t "image/png"
 ]]))
 
