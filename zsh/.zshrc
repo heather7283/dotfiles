@@ -7,6 +7,8 @@ KEYTIMEOUT=10
 setopt globdots
 # allow comments in interactive shells
 setopt INTERACTIVE_COMMENTS
+# split unquoted variable substitution ($var)
+setopt SH_WORD_SPLIT
 
 # TODO: this should be removed when it's no longer needed
 zsh_history_dir="${XDG_DATA_HOME}/zsh/history"
