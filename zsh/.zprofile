@@ -34,6 +34,13 @@ if [[ ! -v PARSED_CONFIG_ENVIRONMENT_D ]]; then
     done <~/.config/environment.d/*.conf
 fi
 
+if [[ -v XDG_RUNTIME_DIR ]] && [[ -d "${XDG_RUNTIME_DIR}/env" ]]; then
+    # TODO: will shit itself if envvar name contains /
+    for f in "${XDG_RUNTIME_DIR}"/env/*; do
+        export "${f##*/}"="$(<"$f")"
+    done
+fi
+
 # I'll put it here I guess
 typeset -U path
 path=(~/bin ~/opt/bin $path)
