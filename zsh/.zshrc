@@ -233,12 +233,21 @@ else
         fzf-global-history-search-old
     }
 fi
+
+fzf-global-history-search-path() {
+    local cmd="$(sqlite-history-list -rzd "$PWD" | fzf --read0 --scheme=history)"
+    [ -n "$cmd" ] && BUFFER="$cmd"
+}
+
 zle -N fzf-global-history-search
 zle -N fzf-global-history-search-old
+zle -N fzf-global-history-search-path
 bindkey -M viins '\C-g' fzf-global-history-search
 bindkey -M vicmd '\C-g' fzf-global-history-search
 bindkey -M viins '\C-o' fzf-global-history-search-old
 bindkey -M vicmd '\C-o' fzf-global-history-search-old
+bindkey -M viins '\C-w' fzf-global-history-search-path
+bindkey -M vicmd '\C-w' fzf-global-history-search-path
 
 clipboard-paste-but-better() {
     local paste="$(wl-paste -t 'text/plain;charset=utf-8' || tmux show-buffer)"
@@ -632,8 +641,17 @@ zshexit_functions+=(cleanup_tmp_files)
 
 # sqlite-history stuff
 if [ -n "$have_sqlite_history" ]; then
-    sqlite-history-save-wrapper() { sqlite-history-save || true }
-    sqlite-history-close-wrapper() { sqlite-history-close || true }
+    sqlite-history-save-wrapper() {
+        sqlite-history-save "$sqlite_history_pwd" || true;
+        unset sqlite_history_pwd
+    }
+    sqlite-history-save-pwd() {
+        sqlite_history_pwd="$PWD"
+    }
+    sqlite-history-close-wrapper() {
+        sqlite-history-close || true
+    }
+    preexec_functions+=( sqlite-history-save-pwd )
     precmd_functions+=( sqlite-history-save-wrapper )
     zshexit_functions+=( sqlite-history-close-wrapper )
 fi
