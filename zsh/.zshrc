@@ -642,8 +642,10 @@ zshexit_functions+=(cleanup_tmp_files)
 # sqlite-history stuff
 if [ -n "$have_sqlite_history" ]; then
     sqlite-history-save-wrapper() {
-        sqlite-history-save "$sqlite_history_pwd" || true;
-        unset sqlite_history_pwd
+        if [ -n "$sqlite_history_pwd" ]; then
+            sqlite-history-save "$sqlite_history_pwd"
+            unset sqlite_history_pwd
+        fi
     }
     sqlite-history-save-pwd() {
         sqlite_history_pwd="$PWD"
