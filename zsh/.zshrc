@@ -250,7 +250,7 @@ bindkey -M viins '\C-w' fzf-global-history-search-path
 bindkey -M vicmd '\C-w' fzf-global-history-search-path
 
 clipboard-paste-but-better() {
-    local paste="$(wl-paste -t 'text/plain;charset=utf-8' || tmux show-buffer)"
+    local paste="$(wl-paste -t 'text/plain;charset=utf-8' 2>&1 || tmux show-buffer 2>&1)"
     local oldcursor="$CURSOR"
     BUFFER="${LBUFFER}${paste}${RBUFFER}"
     CURSOR="$(("$oldcursor" + "${#paste}"))"
